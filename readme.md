@@ -1,6 +1,6 @@
 # Tiny wrapper over Net::SSH and Net::SFTP
 
-Becouse they are too hard to use and have terrible API design.
+Because they are too hard to use and have terrible API design.
 
     box = Rsh::Box.new host: 'webapp.com', ssh: {user: 'root', password: 'secret'}
 
