@@ -14,9 +14,9 @@ So, for now it's just a small wrapper to do ssh/io operations not so painfull.
 # Ros - Small rake addon for configuration management and depoyment automation
 
 It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for your needs.
-**It's extremely easy**, there's only 3 methods.
+**It's extremely easy**, there are only 3 methods.
 
-Define your **packages** (**it's just an** good old **rake tasks**, so you probably already knows how to work with them):
+Define your packages, they are just rake tasks, so you probably knows how to work with them:
 
     namespace :os do
       package :ruby do
@@ -38,22 +38,21 @@ Define your **packages** (**it's just an** good old **rake tasks**, so you proba
     
 Define to what it should be applied:
 
-    module Ros
-      def self.each_box &b
-        host = ENV['host'] || raise(":host not defined!")
-        box = Rsh::Box.new host: host, ssh: {user: 'root', password: 'secret'}
-        b.call box
-      end
+    def each_box &b
+      host = ENV['host'] || raise(":host not defined!")
+      box = Rsh::Box.new host: host, ssh: {user: 'root', password: 'secret'}
+      b.call box
     end
     
 Run it:
 
     $ rake os:rails host=webapp.com
     
-The same way you can use it also for deployment.
-It's idempotent, and checks if the package already has been applied to box, so you can evolve your configuration and apply 
-it multiple times, it will apply only missing packages.
-And by the way, the 'box.mark ...' is just an example check, you can use anything there.
+**You can use it also for deployment**, exactly the same way, configure it the way you like, it's just rake 
+tasks. And by the way, the *box.mark ...* is just an example check, you can use anything there.
+
+It checks if the package already has been applied to box, so you can evolve your configuration and apply 
+it multiple times, it will apply only missing packages (or drop the *applied?* clause and it will be applied every run).
 
 ## TODO
 

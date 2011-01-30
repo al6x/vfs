@@ -39,8 +39,8 @@ module Ros
   class << self
     def each_box_cached &b
       unless @each_box_cached
-        unless Ros.respond_to? :each_box
-          raise "you must define 'Ros.each_box' method!"
+        unless Object.private_instance_methods(false).include?(:each_box)
+          raise "you must define 'each_box' method!"
         end
         
         @each_box_cached = []
