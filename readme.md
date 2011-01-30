@@ -1,4 +1,4 @@
-# Rsh - Tiny wrapper over Net::SSH and Net::SFTP
+# Rsh - Tiny wrapper over Net::SSH/SFTP
 
 Because they are too hard to use and have terrible API design.
 
@@ -11,12 +11,12 @@ Honestly my wrapper also not very good. I would like to make API looks like the 
 but it requires a lots of time, maybe I'll do it later.
 So, for now it's just a small wrapper to do ssh/io operations not so painfull.
 
-# Ros - Small rake addon for configuration management and depoyment automation
+# Ros - Small rake addon for configuration/depoyment management and automation
 
 It may be **usefull if Your claster has about 1-10 boxes**, and tools like Chef, Puppet, Capistrano are too complex and proprietary for your needs.
 **It's extremely easy**, there are only 3 methods.
 
-Define your packages, they are just rake tasks, so you probably knows how to work with them:
+Define your packages, they are just rake tasks, so you probably know how to work with them:
 
     namespace :os do
       package :ruby do
