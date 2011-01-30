@@ -1,7 +1,7 @@
 require 'rake_ext'
 
 project(
-  name: "rssh",
+  name: "rsh2",
   version: "0.0.1",
   summary: "ruby ssh and io",
 

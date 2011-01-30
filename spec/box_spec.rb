@@ -98,8 +98,12 @@ describe Rsh::Box do
   end
   
   describe "shell" do
-    it 'exec' do
-      @box.bash("echo 'ok'").should == ["ok\n", ""]
+    it 'bash' do
+      @box.bash("echo 'ok'").should == "ok\n"
     end  
+    
+    it "exec" do
+      @box.exec("echo 'ok'").should == [0, "ok\n", ""]
+    end
   end
 end

@@ -132,9 +132,14 @@ module Rsh
     end
     
     def bash cmd
-      code, stdout, stderr = driver.exec cmd
+      code, stdout, stderr = exec cmd
       raise "can't execute '#{cmd}'!" unless code == 0
-      return stdout, stderr
+      raise stderr unless stderr.empty?
+      stdout
+    end
+    
+    def exec cmd
+      driver.exec cmd
     end
     
     protected
