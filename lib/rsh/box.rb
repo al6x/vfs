@@ -3,19 +3,20 @@ module Rsh
     attr_accessor :options
     
     def initialize options = {}
+      @options = options
       options[:host] ||= 'localhost'
     end
     
     def driver
       unless @driver
-        klass = options[:host] == 'localhost' ? LocalDriver : RemoteDriver
+        klass = options[:host] == 'localhost' ? Drivers::Local : Drivers::Ssh
         @driver = klass.new options
       end
       @driver
     end
     
     def local_driver
-      @local_driver ||= LocalDriver.new
+      @local_driver ||= Drivers::Local.new
     end
     
     def bulk &b
@@ -39,7 +40,7 @@ module Rsh
     def download_file from_remote_path, to_local_path, options = {}
       bulk do
         raise "file #{from_remote_path} not exists!" unless driver.file_exist?(from_remote_path)
-        if local_driver.file_exist(to_local_path)
+        if local_driver.file_exist? to_local_path
           if options[:override]
             local_driver.remove_file to_local_path
           else
@@ -97,6 +98,10 @@ module Rsh
           remove_directory tmp_dir if directory_exist? tmp_dir
         end
       end
+    end
+    
+    def bash *a, &b
+      driver.exec *a, &b
     end
     
     protected

@@ -32,8 +32,8 @@ module Rsh
         FileUtils.rm_r path
       end
     
-      def exec command
-        code, stdout, stderr = Open3.popen3 'ls' do |stdin, stdout, stderr, waitth|  
+      def exec command        
+        code, stdout, stderr = Open3.popen3 command do |stdin, stdout, stderr, waitth|  
           [waitth.value.to_i, stdout.read, stderr.read]
         end
       
