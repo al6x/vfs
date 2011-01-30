@@ -142,7 +142,33 @@ module Rsh
       driver.exec cmd
     end
     
+    def home path = nil
+      @home ||= bash('cd ~; pwd').gsub("\n", '')    
+      "#{@home}#{path}"
+    end
+    
+    def mark key
+      ensure_mark_requrements!
+      bash "touch #{marks_dir}/#{key}"
+    end
+
+    def has_mark? key
+      ensure_mark_requrements!
+      file_exist? "#{marks_dir}/#{key}"
+    end
+
     protected
+      def marks_dir
+        home "/.marks"
+      end
+
+      def ensure_mark_requrements!
+        unless @ensure_mark_requrements
+          create_directory marks_dir unless directory_exist? marks_dir
+          @ensure_mark_requrements = true
+        end
+      end
+    
       def method_missing m, *a, &b
         driver.send m, *a, &b
       end

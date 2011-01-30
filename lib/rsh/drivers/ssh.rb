@@ -9,14 +9,14 @@ module Rsh
     
       def upload_file from_local_path, to_remote_path
         remote do |ssh, sftp|
-          sftp.upload! from_local_path, to_remote_path
+          sftp.upload! from_local_path, fix_path(to_remote_path)
         end
       end
 
       def download_file from_remote_path, to_local_path
         File.open to_local_path, "w" do |out|
           remote do |ssh, sftp|
-            sftp.download! from_remote_path, out #, :recursive => true          
+            sftp.download! fix_path(from_remote_path), out #, :recursive => true          
           end
         end
       end
@@ -24,7 +24,7 @@ module Rsh
       def exist? remote_file_path
         remote do |ssh, sftp|
           begin
-            fattrs = sftp.stat! remote_file_path
+            fattrs = sftp.stat! fix_path(remote_file_path)
             fattrs.directory? or fattrs.file? or fattrs.symlink?
           rescue Net::SFTP::StatusException
             false
@@ -36,7 +36,7 @@ module Rsh
 
       def remove_file remote_file_path
         remote do |ssh, sftp|
-          sftp.remove! remote_file_path
+          sftp.remove! fix_path(remote_file_path)
         end
       end
 
@@ -82,17 +82,31 @@ module Rsh
       
       def upload_directory from_local_path, to_remote_path
         remote do |ssh, sftp|
-          sftp.upload! from_local_path, to_remote_path
+          sftp.upload! from_local_path, fix_path(to_remote_path)
         end
       end
       
       def download_directory from_remote_path, to_local_path
         remote do |ssh, sftp|
-          sftp.download! from_remote_path, to_local_path, :recursive => true
+          sftp.download! fix_path(from_remote_path), to_local_path, :recursive => true
         end
       end
     
       protected
+        def fix_path path
+          path.sub(/^\~/, home)
+        end
+        
+        def home
+          unless @home
+            command = 'cd ~; pwd'
+            code, stdout, stderr = exec command
+            raise "can't execute '#{command}'!" unless code == 0
+            @home = stdout.gsub("\n", '')    
+          end
+          @home
+        end
+      
         # taken from here http://stackoverflow.com/questions/3386233/how-to-get-exit-status-with-rubys-netssh-library/3386375#3386375
         def hacked_exec!(ssh, command, &block)
           stdout_data = ""
