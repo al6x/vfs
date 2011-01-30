@@ -52,10 +52,10 @@ module Rsh
       end    
     
       def open_connection      
-        options = self.options[:ssh].clone
-        host = options.delete(:host) || raise('host not provided!')
-        user = options.delete(:user) || raise('user not provied!')
-        @ssh = Net::SSH.start(host, user, options)
+        ssh_options = self.options[:ssh].clone
+        host = options[:host] || raise('host not provided!')
+        user = ssh_options.delete(:user) || raise('user not provied!')
+        @ssh = Net::SSH.start(host, user, ssh_options)
         @sftp = @ssh.sftp.connect
       end
     
@@ -70,13 +70,26 @@ module Rsh
       end
     
       def create_directory path
-        remote do |ssh, sftp|
+        remote do |ssh, sftp|          
           sftp.mkdir! path
+          # exec "mkdir #{path}"
         end        
       end
     
       def remove_directory path
         exec "rm -r #{path}"
+      end
+      
+      def upload_directory from_local_path, to_remote_path
+        remote do |ssh, sftp|
+          sftp.upload! from_local_path, to_remote_path
+        end
+      end
+      
+      def download_directory from_remote_path, to_local_path
+        remote do |ssh, sftp|
+          sftp.download! from_remote_path, to_local_path, :recursive => true
+        end
       end
     
       protected

@@ -66,6 +66,13 @@ module Rsh
       driver.file_exist? remote_file_path
     end
     
+    def remove_directory remote_directory_path
+      bulk do
+        raise "directory #{remote_directory_path} not exists!" unless driver.directory_exist? remote_directory_path
+        driver.remove_directory remote_directory_path
+      end
+    end
+    
     def create_directory remote_path, options = {}
       bulk do
         if driver.directory_exist?(remote_path)
@@ -83,8 +90,32 @@ module Rsh
       driver.directory_exist? remote_path
     end
     
-    def remove_directory remote_path
-      driver.remove_directory remote_path
+    def upload_directory from_local_path, to_remote_path, options = {}
+      bulk do
+        raise "directory '#{from_local_path}' not exists!" unless local_driver.directory_exist? from_local_path
+        if driver.directory_exist?(to_remote_path)
+          if options[:override]
+            driver.remove_directory to_remote_path
+          else
+            raise "directory '#{to_remote_path}' already exists!"
+          end
+        end        
+        driver.upload_directory from_local_path, to_remote_path
+      end
+    end
+    
+    def download_directory from_remote_path, to_local_path, options = {}
+      bulk do
+        raise "directory #{from_remote_path} not exists!" unless driver.directory_exist?(from_remote_path)
+        if local_driver.directory_exist? to_local_path
+          if options[:override]
+            local_driver.remove_directory to_local_path
+          else
+            raise "directory #{to_local_path} already exists!" 
+          end
+        end
+        driver.download_directory from_remote_path, to_local_path
+      end
     end
     
     def with_tmp_dir &block
@@ -100,8 +131,10 @@ module Rsh
       end
     end
     
-    def bash *a, &b
-      driver.exec *a, &b
+    def bash cmd
+      code, stdout, stderr = driver.exec cmd
+      raise "can't execute '#{cmd}'!" unless code == 0
+      return stdout, stderr
     end
     
     protected

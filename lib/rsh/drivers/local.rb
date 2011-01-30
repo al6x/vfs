@@ -31,6 +31,14 @@ module Rsh
       def remove_directory path
         FileUtils.rm_r path
       end
+      
+      def upload_directory from_local_path, to_remote_path
+        FileUtils.cp_r from_local_path, to_remote_path
+      end
+      
+      def download_directory from_remote_path, to_local_path
+        FileUtils.cp_r from_remote_path, to_local_path
+      end
     
       def exec command        
         code, stdout, stderr = Open3.popen3 command do |stdin, stdout, stderr, waitth|  
