@@ -9,6 +9,8 @@ module Vfs
       options[:host] ||= 'localhost'
     end
     
+    
+    
     def driver
       unless @driver
         klass = options[:host] == 'localhost' ? Drivers::Local : Drivers::Ssh
@@ -48,5 +50,11 @@ module Vfs
     def close
       driver.close; @opened = false if opened?
     end
+    
+    
+    def inspect
+      "<Box: #{options[:host]}>"
+    end
+    alias_method :to_s, :inspect
   end
 end
