@@ -1,9 +1,9 @@
 require 'abstract_driver'
 
-describe Rsh::Drivers::Local do
+describe Vfs::Drivers::Local do
   it_should_behave_like "abstract driver"    
     
   before :each do
-    @driver = Rsh::Drivers::Local.new
+    @driver = Vfs::Drivers::Local.new
   end
 end

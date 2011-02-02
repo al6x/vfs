@@ -1,5 +1,5 @@
 require 'rspec_ext'
-require 'rsh'
+require 'Vfs'
 
 rspec do
   def config

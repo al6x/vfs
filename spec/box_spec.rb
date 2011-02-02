@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Rsh::Box do  
+describe Vfs::Box do  
   with_tmp_spec_dir before: :each
   
   before :each do
-    @box = Rsh::Box.new
+    @box = Vfs::Box.new
 
     @local_dir = spec_dir    
     @remote_dir = @box.generate_tmp_dir_name        
@@ -19,6 +19,28 @@ describe Rsh::Box do
   
   describe "io" do
     describe "files" do
+      def copy from, to
+        while buff = from.gets do
+          to.write buff
+        end
+      end
+      
+      def upload_file from_local, to_remote, mode = 'w'
+        File.open from_local, 'r' do |from|
+          @box.open_file to_remote, mode do |to|
+            copy from, to
+          end
+        end
+      end
+      
+      def download_file from_remote, to_local, mode = 'r'
+        @box.open_file from_remote, mode do |from|
+          File.open to_local, 'w' do |to|          
+            copy from, to
+          end
+        end
+      end
+      
       before :each do
         @local_file = "#{@local_dir}/local_file"
         @check_file = "#{@local_dir}/check_file"
@@ -27,31 +49,31 @@ describe Rsh::Box do
       
       it "file_exist?" do
         @box.file_exist?(@remote_file).should be_false
-        @box.upload_file(@local_file, @remote_file)
+        upload_file(@local_file, @remote_file)
         @box.file_exist?(@remote_file).should be_true
       end
 
       it "upload_file" do
-        @box.upload_file(@local_file, @remote_file)
+        upload_file(@local_file, @remote_file)
         @box.file_exist?(@remote_file).should be_true
 
-        lambda{@box.upload_file(@local_file, @remote_file)}.should raise_error(/exists/)
+        lambda{upload_file(@local_file, @remote_file)}.should raise_error(/exists/)
 
         # upload with override
-        @box.upload_file(@local_file, @remote_file, override: true)
+        upload_file(@local_file, @remote_file, 'w+')
         @box.file_exist?(@remote_file).should be_true
       end
 
       it "download_file" do
-        lambda{@box.download_file(@remote_file, @check_file)}.should raise_error(/not exists/)
-        @box.upload_file(@local_file, @remote_file)
-        @box.download_file(@remote_file, @check_file)
+        lambda{download_file(@remote_file, @check_file)}.should raise_error(/not exists/)
+        upload_file(@local_file, @remote_file)
+        download_file(@remote_file, @check_file)
         File.read(@local_file).should == File.read(@check_file)
       end          
 
       it "remove_file" do
         lambda{@box.remove_file(@remote_file)}.should raise_error(/not exists/)
-        @box.upload_file(@local_file, @remote_file)
+        upload_file(@local_file, @remote_file)
         @box.file_exist?(@remote_file).should be_true
         @box.remove_file(@remote_file)
         @box.file_exist?(@remote_file).should be_false

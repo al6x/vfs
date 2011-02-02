@@ -1,15 +1,15 @@
 require 'abstract_driver'
 require 'yaml'
 
-describe Rsh::Drivers::Ssh do
+describe Vfs::Drivers::Ssh do
   it_should_behave_like "abstract driver"    
 
   before :each do
-    @driver = Rsh::Drivers::Ssh.new config[:remote_driver]
-    @driver.open_connection
+    @driver = Vfs::Drivers::Ssh.new config[:remote_driver]
+    @driver.open
   end
   
   after :each do
-    @driver.close_connection
+    @driver.close
   end  
 end

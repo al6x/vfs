@@ -1,6 +1,6 @@
 raise 'ruby 1.9.2 or higher required!' if RUBY_VERSION < '1.9.2'
 
-require 'rsh/gems'
+require 'vfs/gems'
 
 require 'open3'
 
@@ -14,5 +14,7 @@ require 'net/sftp'
   drivers/local
   drivers/ssh
 
+  box/marks
+  box/operations
   box
-).each{|f| require "rsh/#{f}"}
+).each{|f| require "vfs/#{f}"}

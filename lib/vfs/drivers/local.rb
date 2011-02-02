@@ -1,16 +1,8 @@
-module Rsh
+module Vfs
   module Drivers
-    class Local < Abstract
-      def bulk &b
-        b.call
-      end
-    
-      def upload_file from_local_path, to_remote_path
-        FileUtils.copy from_local_path, to_remote_path
-      end
-    
-      def download_file from_remote_path, to_local_path
-        FileUtils.copy from_remote_path, to_local_path
+    class Local < Abstract    
+      def open_file path, mode, &block
+        File.open path, mode, &block
       end
     
       def exist? remote_file_path

@@ -18,6 +18,20 @@ shared_examples_for 'abstract driver' do
     end
   
     describe "files" do  
+      def copy from, to
+        while buff = from.gets do
+          to.write buff
+        end
+      end
+      
+      def upload_file from_local, to_remote
+        File.open from_local, 'r' do |from|
+          @driver.open_file to_remote, 'w' do |to|
+            copy from, to
+          end
+        end
+      end
+      
       before :each do
         @local_file = "#{@local_dir}/local_file"
         @check_file = "#{@local_dir}/check_file"
@@ -26,20 +40,24 @@ shared_examples_for 'abstract driver' do
             
       it "file_exist?" do
         @driver.file_exist?(@remote_file).should be_false
-        @driver.upload_file(@local_file, @remote_file)
+        upload_file(@local_file, @remote_file)
         @driver.file_exist?(@remote_file).should be_true
       end
 
       it "upload & download file" do
-        @driver.upload_file(@local_file, @remote_file)
+        upload_file @local_file, @remote_file
         @driver.file_exist?(@remote_file).should be_true
-      
-        @driver.download_file(@remote_file, @check_file)
+          
+        @driver.open_file @remote_file, 'r' do |from| 
+          File.open @check_file, 'w' do |to|          
+            copy from, to
+          end
+        end   
         File.read(@local_file).should == File.read(@check_file)
       end
     
       it "remove_file" do
-        @driver.upload_file(@local_file, @remote_file)
+        upload_file @local_file, @remote_file
         @driver.file_exist?(@remote_file).should be_true
         @driver.remove_file(@remote_file)
         @driver.file_exist?(@remote_file).should be_false
