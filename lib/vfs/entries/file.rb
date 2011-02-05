@@ -9,7 +9,8 @@ module Vfs
     #
     # CRUD
     #
-    def read raise_if_not_exist = true, &block
+    def read options = {}, &block
+      options[:bang] = true unless options.include? :bang
       if block
         storage.read_file path, &block
       else
@@ -26,7 +27,7 @@ module Vfs
       elsif attrs[:dir]
         raise Error, "You are trying to read Dir '#{self}' as if it's a File!"
       else
-        if raise_if_not_exist
+        if options[:bang]
           raise Error, "file #{self} not exist!"
         else
           block ? block.call('') : ''
@@ -34,26 +35,28 @@ module Vfs
       end      
     end
     
-    def create override = false
-      write '', override
+    def create options = {}
+      write '', options
       self
     end    
-    def create!
-      create true
+    def create! options = {}
+      options[:override] = true
+      create options
     end
         
     def write *args, &block
       if block
-        override = args.first
+        options = args.first || {}
         storage.write_file(path, &block)
       else
-        data, override = *args
+        data, options = *args
+        options ||= {}
         storage.write_file(path){|writer| writer.call data}
       end
     rescue StandardError => error
       entry = self.entry
       if entry.exist?
-        if override
+        if options[:override]
           entry.destroy
         else
           raise Error, "entry #{self} already exist!"
@@ -64,24 +67,25 @@ module Vfs
           # some unknown error
           raise error          
         else
-          parent.create(override)        
+          parent.create(options)        
         end
       end
       
       retry
     end    
     def write! *args, &block
-      args << true
+      args << {} unless args.last.is_a? Hash
+      args.last[:override] = true
       write *args, &block
     end
     
-    def destroy force = false
+    def destroy options = {}
       storage.delete_file path          
       self
     rescue StandardError => e
       attrs = get
       if attrs[:dir]
-        if force
+        if options[:force]
           dir.destroy          
         else
           raise Error, "can't destroy Dir #{dir} (you are trying to destroy it as if it's a File)"
@@ -94,15 +98,16 @@ module Vfs
       end
       self
     end
-    def destroy!
-      destroy true
+    def destroy! options = {}
+      options[:force] = true
+      destroy options
     end
     
     
     #
     # Transfers
     #      
-    def copy_to to, override = false
+    def copy_to to, options = {}
       raise Error, "you can't copy to itself" if self == to
      
       target = if to.is_a? File
@@ -115,23 +120,25 @@ module Vfs
         raise "can't copy to unknown Entry!"
       end      
       
-      target.write override do |writer|
-        read{|buff| writer.call buff}
+      target.write options do |writer|
+        read(options){|buff| writer.call buff}
       end
       
       target
     end
-    def copy_to! to
-      copy_to to, true
+    def copy_to! to, options = {}
+      options[:override] = true
+      copy_to to, options
     end
     
-    def move_to to, override = false
-      copy_to to, override
-      destroy override
+    def move_to to, options = {}
+      copy_to to, options
+      destroy options
       to
     end
-    def move_to! to
-      move_to to, true
+    def move_to! to, options = {}
+      options[:override] = true
+      move_to to, options
     end
   end
 end

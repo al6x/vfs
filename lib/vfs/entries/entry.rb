@@ -51,6 +51,7 @@ module Vfs
     end
     alias_method :to_entry, :entry
                 
+                
     # 
     # Attributes
     # 

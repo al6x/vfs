@@ -25,15 +25,15 @@ describe 'File' do
     end
     
     it 'should not raise error in silent mode' do  
-      @path.read(false).should == ''     
-      data = ""; @path.read(false){|buff| data << buff}; data.should == ''
+      @path.read(bang: false).should == ''     
+      data = ""; @path.read(bang: false){|buff| data << buff}; data.should == ''
     end
       
     it "reading" do
       @path.write('something')
       
       @path.read.should == 'something'
-      @path.read(false).should == 'something'      
+      @path.read(bang: false).should == 'something'      
       data = ""; @path.read{|buff| data << buff}; data.should == 'something'      
     end
   end
@@ -42,10 +42,10 @@ describe 'File' do
     it 'create' do
       file = @path.file
     
-      file.should_receive(:write).with('', false)
+      file.should_receive(:write).with('', {})
       file.create
     
-      file.should_receive(:write).with('', true)
+      file.should_receive(:write).with('', override: true)
       file.create!
     end
     
@@ -133,11 +133,11 @@ describe 'File' do
   describe 'moving' do
     it 'move_to' do
       from, to = @path.file('from'), @path.file('to')
-      from.should_receive(:copy_to).with(to, false)
-      from.should_receive(:destroy).with(false)
+      from.should_receive(:copy_to).with(to, {})
+      from.should_receive(:destroy).with({})
       from.move_to to
     
-      from.should_receive(:move_to).with(to, true)
+      from.should_receive(:move_to).with(to, override: true)
       from.move_to! to
     end
     

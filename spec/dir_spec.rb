@@ -79,7 +79,7 @@ describe 'Dir' do
     
     it 'entries' do
       -> {@path['non_existing'].entries}.should raise_error(Vfs::Error, /not exist/)
-      @path['non_existing'].entries(false).should == []
+      @path['non_existing'].entries(bang: false).should == []
       @path.entries.to_set.should be_eql([@path.dir('dir'), @path.file('file')].to_set)
       list = []
       @path.entries{|e| list << e}
@@ -96,15 +96,17 @@ describe 'Dir' do
     
     it 'has? & include?'
   end
+  
+  it 'copy'
     
   describe 'moving' do
     it 'move_to' do
       from, to = @path.file('from'), @path.file('to')
-      from.should_receive(:copy_to).with(to, false)
-      from.should_receive(:destroy).with(false)
+      from.should_receive(:copy_to).with(to, {})
+      from.should_receive(:destroy).with({})
       from.move_to to
     
-      from.should_receive(:move_to).with(to, true)
+      from.should_receive(:move_to).with(to, override: true)
       from.move_to! to
     end
     
