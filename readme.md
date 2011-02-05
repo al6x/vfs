@@ -13,7 +13,7 @@ Currently there are following implementations available:
 - **high performance** - the same as by using low-level API of underlying system, there should be no extra calls.
 - same API for different storages (Local FS, SSH, Hadoop, or any other , ...).
 - should work **simultaneously with different storages**.
-- simple, small codebase and good specs, easy to understand, hack and extend by others.
+- small codebase, easy to understand and extend by others.
 - simple driver implemenation, should be easy to add new storage types (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
 
 # Code samples:
