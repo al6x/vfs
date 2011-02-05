@@ -1,4 +1,0 @@
-:ssh:
-  :host: some_host.com
-  :user: some_user
-  :password: some_password

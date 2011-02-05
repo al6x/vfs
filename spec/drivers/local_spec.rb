@@ -1,4 +1,5 @@
-require 'abstract_driver'
+require 'drivers/abstract'
+require 'vfs/drivers/local'
 
 describe Vfs::Drivers::Local do
   it_should_behave_like "abstract driver"    

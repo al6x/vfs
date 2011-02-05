@@ -1,43 +1,100 @@
+require 'fileutils'
+require 'tmpdir'
+
 module Vfs
   module Drivers
-    class Local < Abstract    
-      def open_file path, mode, &block
-        File.open path, mode, &block
+    class Local    
+      DEFAULT_BUFFER = 1024*128
+      class << self
+        attr_accessor :buffer
+      end
+            
+      
+      # 
+      # Attributes
+      # 
+      def attributes path
+        stat = File.stat path
+        attrs = {}
+        attrs[:file] = stat.file?
+        attrs[:dir] = stat.directory?
+        attrs
+      rescue Errno::ENOENT
+        nil
+      end
+      
+      def set_attributes path, attrs      
+        raise 'not supported'
+      end
+      
+      
+      # 
+      # File
+      #       
+      def read_file path, &block
+        File.open path, 'r' do |is|
+          while buff = is.gets(self.class.buffer || DEFAULT_BUFFER)            
+            block.call buff
+          end
+        end
+      end
+      
+      def write_file path, &block        
+        File.open path, 'w' do |os|
+          callback = -> buff {os.write buff}
+          block.call callback
+        end
+      end
+      
+      def delete_file path
+        File.delete path
+      end
+      
+      def move_file path
+        raise 'not supported'
       end
     
-      def exist? remote_file_path
-        File.exist? remote_file_path
-      end
-    
-      alias_method :directory_exist?, :exist?
-      alias_method :file_exist?, :exist?
-    
-      def remove_file remote_file_path
-        File.delete remote_file_path
-      end    
-    
-      def create_directory path
+      
+      # 
+      # Dir
+      #
+      def create_dir path
         Dir.mkdir path
       end
     
-      def remove_directory path
+      def delete_dir path
         FileUtils.rm_r path
+      end      
+      
+      def move_dir path
+        raise 'not supported'
       end
       
-      def upload_directory from_local_path, to_remote_path
-        FileUtils.cp_r from_local_path, to_remote_path
-      end
+      # def upload_directory from_local_path, to_remote_path
+      #   FileUtils.cp_r from_local_path, to_remote_path
+      # end
+      # 
+      # def download_directory from_remote_path, to_local_path
+      #   FileUtils.cp_r from_remote_path, to_local_path
+      # end
       
-      def download_directory from_remote_path, to_local_path
-        FileUtils.cp_r from_remote_path, to_local_path
-      end
-    
-      def exec command        
-        code, stdout, stderr = Open3.popen3 command do |stdin, stdout, stderr, waitth|  
-          [waitth.value.to_i, stdout.read, stderr.read]
+      
+      # 
+      # tmp
+      # 
+      def tmp &block
+        tmp_dir = "#{Dir.tmpdir}/#{rand(10**3)}"        
+        if block
+          begin
+            create_dir tmp_dir
+            block.call tmp_dir
+          ensure
+            delete_dir tmp_dir
+          end
+        else
+          create_dir tmp_dir
+          tmp_dir
         end
-      
-        return code, stdout, stderr
       end
     end
   end

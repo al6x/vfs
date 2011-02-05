@@ -1,10 +1,10 @@
 require 'rake_ext'
 
 project(
-  name: "vos",
+  name: "vfs",
   version: "0.0.4",
-  summary: "Tiny wrapper over Net::SSH/SFTP + small rake addon for cluster configuration management",
+  summary: "Virtual File System",
 
   author: "Alexey Petrushin",
-  homepage: "http://github.com/alexeypetrushin/vos"
+  homepage: "http://github.com/alexeypetrushin/vfs"
 )
