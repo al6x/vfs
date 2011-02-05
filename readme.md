@@ -12,9 +12,9 @@ Currently there are following implementations available:
 - **handy, simple and clean** API over any storage that has FS-like structure.
 - **high performance** - the same as by using low-level API of underlying system, there should be no extra calls.
 - same API for different storages (Local FS, SSH, Hadoop, or any other , ...).
-- simultaneous usage and data exchange **with multiple different storages**.
+- should work simultaneously **with multiple different storages**.
 - simple and small codebase and good specs, easy to understand and extend.
-- simple driver implemenation, should be **easy to add new storages** (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
+- simple driver implemenation, should be easy to add new storage types (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
 
 # Code samples:
 
