@@ -9,7 +9,7 @@ Currently there are following implementations available:
 
 # Goals
 
-- **handy, simple and clean** API over any storage that has FS-like structure.
+- **handy, simple and clean** API.
 - **high performance** - the same as by using low-level API of underlying system, there should be no extra calls.
 - same API for different storages (Local FS, SSH, Hadoop, or any other , ...).
 - should work **simultaneously with different storages**.
