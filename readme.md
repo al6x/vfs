@@ -1,8 +1,8 @@
 # Vfs - Virtual File System
 
-Handy and simple abstraction over any storage that can represent (at least partly) concept of 'file' and 'directory'.
+Handy and simple abstraction over any storage that can represent concept of 'file' and 'directory' (or at least part of it).
 
-Currently there are following implementations available:
+Currently, there are following implementations available:
 
 - local file system
 - remote file system (over ssh)
