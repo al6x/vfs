@@ -1,5 +1,4 @@
 require 'base'
-require 'vfs/path'
 
 describe "Path" do
   before(:all){Path = Vfs::Path}

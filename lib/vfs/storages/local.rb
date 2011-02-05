@@ -1,9 +1,10 @@
-require 'fileutils'
-require 'tmpdir'
-
 module Vfs
-  module Drivers
+  module Storages
     class Local    
+      def driver
+        self
+      end
+      
       DEFAULT_BUFFER = 1024*128
       class << self
         attr_accessor :buffer
@@ -14,7 +15,7 @@ module Vfs
       # Attributes
       # 
       def attributes path
-        stat = File.stat path
+        stat = ::File.stat path
         attrs = {}
         attrs[:file] = stat.file?
         attrs[:dir] = stat.directory?
@@ -32,7 +33,7 @@ module Vfs
       # File
       #       
       def read_file path, &block
-        File.open path, 'r' do |is|
+        ::File.open path, 'r' do |is|
           while buff = is.gets(self.class.buffer || DEFAULT_BUFFER)            
             block.call buff
           end
@@ -40,14 +41,14 @@ module Vfs
       end
       
       def write_file path, &block        
-        File.open path, 'w' do |os|
+        ::File.open path, 'w' do |os|
           callback = -> buff {os.write buff}
           block.call callback
         end
       end
       
       def delete_file path
-        File.delete path
+        ::File.delete path
       end
       
       def move_file path
@@ -59,11 +60,11 @@ module Vfs
       # Dir
       #
       def create_dir path
-        Dir.mkdir path
+        ::Dir.mkdir path
       end
     
       def delete_dir path
-        FileUtils.rm_r path
+        ::FileUtils.rm_r path
       end      
       
       def move_dir path
@@ -71,11 +72,11 @@ module Vfs
       end
       
       # def upload_directory from_local_path, to_remote_path
-      #   FileUtils.cp_r from_local_path, to_remote_path
+      #   ::FileUtils.cp_r from_local_path, to_remote_path
       # end
       # 
       # def download_directory from_remote_path, to_local_path
-      #   FileUtils.cp_r from_remote_path, to_local_path
+      #   ::FileUtils.cp_r from_remote_path, to_local_path
       # end
       
       
@@ -83,7 +84,7 @@ module Vfs
       # tmp
       # 
       def tmp &block
-        tmp_dir = "#{Dir.tmpdir}/#{rand(10**3)}"        
+        tmp_dir = "#{::Dir.tmpdir}/#{rand(10**3)}"        
         if block
           begin
             create_dir tmp_dir

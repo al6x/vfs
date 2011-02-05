@@ -14,7 +14,7 @@ Currently there are following implementations available:
 - the same API for working with different storages (Local FS, SSH, Hadoop, or any other , ...).
 - ability to simultaneously work with different storages.
 - simple and small codebase, easy to understand and extend.
-- easy to add drivers for other FS-like storages (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
+- easy to add storages for other FS-like storages (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
 
 # Samples:
 
@@ -53,6 +53,6 @@ different API than local FS, and you has to remember all thouse little quirks).
 
 ### future
 
-- add drivers: Hadoop DFS, MongoDB, Amazon S3
+- add storages: Hadoop DFS, MongoDB, Amazon S3
 
 [rush]: http://github.com/adamwiggins/rush

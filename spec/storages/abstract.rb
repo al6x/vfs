@@ -1,4 +1,4 @@
-require 'drivers/base'
+require 'base'
 
 shared_examples_for 'abstract driver' do  
   def clean_tmp_dir
@@ -12,6 +12,11 @@ shared_examples_for 'abstract driver' do
 
   after :each do
     clean_tmp_dir
+  end
+  
+  it 'should have root dir' do    
+    @driver.attributes('/').should_not be_nil
+    @driver.attributes('/').subset(:file, :dir).should == {file: false, dir: true}
   end
     
   describe "files" do  

@@ -1,15 +1,30 @@
 # 
-# Very quick, dirty and uneficient In Memory FS, mainly for tests.
+# Dirty and uneficient In Memory FS, mainly for tests.
 # 
 module Vfs
-  module Drivers
+  module Storages
     class HashFs < Hash
+      # def initialize
+      
+      def initialize
+        super
+        self['/'] = {dir: true}
+      end
+      
+      def driver
+        self
+      end
+      
       # 
       # Attributes
       # 
       def attributes path
         base, name = split_path path
-        
+      
+        # if path == '/'
+        #   return {dir: true, file: false}
+        # end
+        # 
         stat = cd(base)[name]
         attrs = {}
         attrs[:file] = !!stat[:file]
@@ -100,6 +115,11 @@ module Vfs
         end
       end
       
+      def inspect
+        "hash_fs"
+      end
+      alias_method :to_s, :inspect
+      
       protected
         def assert obj, method, arg          
           raise "#{obj} should #{method} #{arg}" unless obj.send method, arg
@@ -111,7 +131,7 @@ module Vfs
       
         def split_path path
           parts = path[1..-1].split('/')
-
+          parts.unshift '/'
           name = parts.pop          
           return parts, name
         end
@@ -123,6 +143,7 @@ module Vfs
             current = current[iterator.first]
             iterator.shift
           end    
+# p [self, parts, current]          
           current
         end
     end

@@ -1,4 +1,4 @@
 module Vfs
-  class Error < RuntimeError
+  class Error < StandardError
   end
 end
