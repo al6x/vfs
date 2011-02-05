@@ -10,28 +10,35 @@ describe "Path" do
       /a 
       /a/b/c 
       /a/../c      
-      /a/...
-      /a/./c
-      ~/a      
+      /a/...      
+      ~/a   
+      ./a   
     ).each{|path| Path.should be_valid(path)}    
     
     special = ['']
     (%w(      
-      /a/~/c 
+      /a/~/c
+      /a/./c 
       /a/
       ~/
+      ./
     ) + special).each{|path| Path.should_not be_valid(path)}
   end
+  
+  # it 'tmp', focus: true do
+  #   (Path.new('.') + '..').should == './..'
+  # end
   
   it 'normalize' do
     special = ['/a/../..', nil]
     (%w(
       /a        /a
       ~/a       ~/a
-      /a/./b    /a/b
+      ./a       ./a
       /a/../c   /c
       /         /
       ~         ~
+      .         .
     ) + special).each_slice(2) do |path, normalized_path| 
       Path.normalize(path).should == normalized_path
     end
@@ -41,19 +48,25 @@ describe "Path" do
     special = [
       '/a', '../..', nil,
       '/',  '..',    nil,     
+      '.',  '..',    './..',     
     ]
     (%w(
       /         /a        /a
       /         ~/a       ~/a
+      /         ./a       ./a
       /a        b/c       /a/b/c
-      /a/b/c    .././d    /a/b/d
-    ) + special).each_slice(3) do |base, path, sum| 
+      /a/b/c    ../d      /a/b/d
+    ) + special).each_slice(3) do |base, path, sum|
       (Path.new(base) + path).should == sum
     end
   end
   
   it 'parent' do
-    special = ['/', nil]
+    special = [
+      '/', nil,
+      '~', nil,
+      '.', './..'
+    ]
     (%w(
       /a/b/c    /a/b   
     ) + special).each_slice(2) do |path, parent|
@@ -70,6 +83,7 @@ describe "Path" do
       '/a',      false,
       '/',       true,
       '~',       true,
+      '.',       true,
       '/a/..',   true,
       '/a/../b', false,
     ].each_slice 2 do |path, result|
@@ -86,6 +100,18 @@ describe "Path" do
       (path + '/a'),  false,      
     ].each_slice 2 do |path, result|
       path.probably_dir?.should == result
+    end
+  end
+  
+  it 'name' do
+    %w(
+      /a        a
+      /a/b/c    c
+      /         /
+      ~         ~      
+      .         .
+    ).each_slice 2 do |path, name|
+      Path.new(path).name.should == name
     end
   end
   

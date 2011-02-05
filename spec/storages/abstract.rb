@@ -26,22 +26,22 @@ shared_examples_for 'abstract driver' do
     
     it "file attributes" do
       @driver.attributes(@remote_file).should == nil
-      @driver.write_file(@remote_file){|w| w.call 'some content'}
+      @driver.write_file(@remote_file){|w| w.call 'something'}
       attrs = @driver.attributes(@remote_file)      
       @driver.attributes(@remote_file).subset(:file, :dir).should == {file: true, dir: false}
     end
 
     it "upload & download file" do
-      @driver.write_file(@remote_file){|w| w.call 'some content'}
+      @driver.write_file(@remote_file){|w| w.call 'something'}
       @driver.attributes(@remote_file)[:file].should be_true
       
       data = ""  
       @driver.read_file(@remote_file){|buff| data << buff}
-      data.should == 'some content'
+      data.should == 'something'
     end
   
     it "delete_file" do
-      @driver.write_file(@remote_file){|w| w.call 'some content'}        
+      @driver.write_file(@remote_file){|w| w.call 'something'}        
       @driver.attributes(@remote_file)[:file].should be_true
       @driver.delete_file(@remote_file)
       @driver.attributes(@remote_file).should be_nil
@@ -63,6 +63,20 @@ shared_examples_for 'abstract driver' do
       @driver.attributes(@remote_dir).subset(:file, :dir).should == {file: false, dir: true}
       @driver.delete_dir(@remote_dir)
       @driver.attributes(@remote_dir).should be_nil
+    end
+    
+    it 'each' do
+      list = {}
+      @driver.each(@tmp_dir){|path, type| list[path] = type}
+      list.should be_empty
+      
+      dir, file = "#{@tmp_dir}/dir", "#{@tmp_dir}/file"
+      @driver.create_dir(dir)
+      @driver.write_file(file){|w| w.call 'something'}
+      
+      list = {}
+      @driver.each(@tmp_dir){|path, type| list[path] = type}
+      list.should == {'dir' => :dir, 'file' => :file}
     end
   
     # it "upload_directory & download_directory" do

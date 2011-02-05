@@ -51,9 +51,9 @@ module Vfs
         ::File.delete path
       end
       
-      def move_file path
-        raise 'not supported'
-      end
+      # def move_file from, to
+      #   FileUtils.mv from, to
+      # end
     
       
       # 
@@ -64,19 +64,30 @@ module Vfs
       end
     
       def delete_dir path
-        ::FileUtils.rm_r path
+        FileUtils.rm_r path
       end      
       
-      def move_dir path
-        raise 'not supported'
+      def each path, &block
+        ::Dir.foreach path do |relative_name|
+          next if relative_name == '.' or relative_name == '..'
+          if ::File.directory? "#{path}/#{relative_name}"
+            block.call relative_name, :dir
+          else
+            block.call relative_name, :file
+          end
+        end
       end
       
+      # def move_dir path
+      #   raise 'not supported'
+      # end
+      
       # def upload_directory from_local_path, to_remote_path
-      #   ::FileUtils.cp_r from_local_path, to_remote_path
+      #   FileUtils.cp_r from_local_path, to_remote_path
       # end
       # 
       # def download_directory from_remote_path, to_local_path
-      #   ::FileUtils.cp_r from_remote_path, to_local_path
+      #   FileUtils.cp_r from_remote_path, to_local_path
       # end
       
       

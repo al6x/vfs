@@ -38,16 +38,15 @@ different API than local FS, and you has to remember all thouse little quirks).
 
 ### v 0.1
 
-- copy_to
-- move_to, rename
+
 - Vos: Dir.bash
+- File.append
+- list of entries/files/dirs
 
 ### v 0.2
 
-- File.append
-- Storage.==
+- efficient (not copy/destroy) versions of move_to, rename
 - glob search for directories: Dir['**/*.yml']
-- list of entries/files/dirs
 - access via attributes and helpers for unix chmod
 - add driver: remote FS over HTTP.
 

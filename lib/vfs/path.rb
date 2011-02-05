@@ -34,20 +34,28 @@ module Vfs
       !!@probably_dir
     end
     
+    def name
+      unless @name
+        root = self[0..0]
+        @name ||= split('/').last || root
+      end
+      @name
+    end
+    
     class << self
       def absolute? path
-        path =~ /^[\/~]/
+        path =~ /^[\/~]|^\.$|^\.\//
       end
       
       def valid? path, forbid_relative = true, &block
         result, err = if forbid_relative and !absolute?(path)
-          [false, "path must be started with / or ~"]
-        elsif path =~ /.+[\/~]$/
-          [false, "path can't be ended with / or ~"]
-        elsif path =~ /\/[\/~]/
-          [false, "path can't include any of // /~ ~~ combinations!"]
-        elsif path =~ /.+~/
-          [false, "~ can be present only at the begining of string"]
+          [false, "path must be started with '/', '~', or '.'"]
+        elsif path =~ /.+[\/~]$|\/\.$/
+          [false, "path can't be ended with '/', '~', or '/.'"]
+        elsif path =~ /\/[\/~]|\/\.\//
+          [false, "path can't include '/./', '/~/', '//' combinations!"]
+        elsif path =~ /.+[~]|\/\.\//
+          [false, "'~', or '.' can be present only at the begining of string"]
         else
           [true, nil]
         end
@@ -73,15 +81,15 @@ module Vfs
         root = path[0..0]        
         result, probably_dir = [], false
         
-        parts = path.split(/[\/~]/)[1..-1]
+        parts = path.split('/')[1..-1]
         if parts
           parts.each do |part|
-            if part == '..'
+            if part == '..' and root != '.'
               return nil, false unless result.size > 0
               result.pop
               probably_dir ||= true
-            elsif part == '.'
-              # do nothing
+            # elsif part == '.'
+            #   # do nothing
             else
               result << part
               probably_dir &&= false
@@ -92,7 +100,7 @@ module Vfs
           
         probably_dir ||= true if normalized_path.empty?
 
-        return "#{root}#{normalized_path}", probably_dir
+        return "#{root}#{'/' unless root == '/' or normalized_path.empty?}#{normalized_path}", probably_dir
       end
     end    
     

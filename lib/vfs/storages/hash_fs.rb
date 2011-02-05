@@ -65,9 +65,9 @@ module Vfs
         cd(base).delete name
       end
       
-      def move_file path
-        raise 'not supported'
-      end
+      # def move_file path
+      #   raise 'not supported'
+      # end
     
       
       # 
@@ -85,8 +85,21 @@ module Vfs
         cd(base).delete name
       end      
       
-      def move_dir path
-        raise 'not supported'
+      # def move_dir path
+      #   raise 'not supported'
+      # end
+      
+      def each path, &block
+        base, name = split_path path
+        assert cd(base)[name], :include?, :dir
+        cd(base)[name].each do |relative_name, content|
+          next if relative_name.is_a? Symbol
+          if content[:dir]
+            block.call relative_name, :dir
+          else
+            block.call relative_name, :file
+          end
+        end
       end
       
       # def upload_directory from_local_path, to_remote_path
@@ -115,10 +128,9 @@ module Vfs
         end
       end
       
-      def inspect
-        "hash_fs"
+      def to_s
+        'hash_fs'
       end
-      alias_method :to_s, :inspect
       
       protected
         def assert obj, method, arg          

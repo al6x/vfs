@@ -16,7 +16,7 @@ module Vfs
     end
     
     protected :==, :equal?, :!, :!=
-    protected
+    protected    
       attr_writer :_target
       
       def method_missing m, *a, &b

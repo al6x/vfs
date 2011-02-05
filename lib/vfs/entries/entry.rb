@@ -11,9 +11,13 @@ module Vfs
     # Navigation
     # 
     def parent
-      self['..']
+      Dir.new(storage, path_cache + '..')
     end
-        
+    
+    
+    #     
+    # Transformations
+    #     
     def dir path = nil
       if path
         new_path = path_cache + path
@@ -36,30 +40,17 @@ module Vfs
     
     def entry path = nil
       entry = if path
+        
         new_path = path_cache + path
-        UniversalEntry.new storage, new_path
+        klass = new_path.probably_dir? ? Dir : UniversalEntry
+        entry = klass.new storage, new_path        
       else
         UniversalEntry.new storage, path_cache
       end
       EntryProxy.new entry
     end
     alias_method :to_entry, :entry
-    
-    def [] path
-      path = path.to_s
-      entry = if path =~ /.+[\/]$/
-        path = path.sub /\/$/, ''
-        new_path = path_cache + path
-        Dir.new storage, new_path
-      else
-        new_path = path_cache + path
-        klass = new_path.probably_dir? ? Dir : UniversalEntry
-        klass.new storage, new_path
-      end
-      EntryProxy.new(entry)
-    end
-        
-    
+                
     # 
     # Attributes
     # 
@@ -82,12 +73,34 @@ module Vfs
     
     
     # 
+    # Micelaneous
+    # 
+    def name
+      path_cache.name
+    end
+        
+    
+    # 
     # Utils
     #             
     def inspect
       "#{storage}:#{path}"
     end
-    alias_method :to_s, :inspect
+    alias_method :to_s, :inspect    
+    
+    def == other
+      return false unless other.is_a? Entry
+      storage == other.storage and path == other.path
+    end
+    
+    def hash      
+      storage.hash + path.hash
+    end
+    
+    def eql? other
+      return false unless other.class == self.class
+      storage.eql?(other.storage) and path.eql?(other.path)
+    end
     
     protected
       attr_reader :path_cache

@@ -36,6 +36,7 @@ module Vfs
     
     def create override = false
       write '', override
+      self
     end    
     def create!
       create true
@@ -76,6 +77,7 @@ module Vfs
     
     def destroy force = false
       storage.delete_file path          
+      self
     rescue StandardError => e
       attrs = get
       if attrs[:dir]
@@ -90,9 +92,46 @@ module Vfs
       else
         # do nothing, file already not exist
       end
+      self
     end
     def destroy!
       destroy true
+    end
+    
+    
+    #
+    # Transfers
+    #      
+    def copy_to to, override = false
+      raise Error, "you can't copy to itself" if self == to
+     
+      target = if to.is_a? File
+        to
+      elsif to.is_a? Dir
+        to.file(name)  
+      elsif to.is_a? UniversalEntry
+        to.file      
+      else
+        raise "can't copy to unknown Entry!"
+      end      
+      
+      target.write override do |writer|
+        read{|buff| writer.call buff}
+      end
+      
+      target
+    end
+    def copy_to! to
+      copy_to to, true
+    end
+    
+    def move_to to, override = false
+      copy_to to, override
+      destroy override
+      to
+    end
+    def move_to! to
+      move_to to, true
     end
   end
 end
