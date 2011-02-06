@@ -13,7 +13,7 @@ module Vfs
         @storage, @path = storage, path_cache.to_s
       end
       raise "storage not defined!" unless self.storage
-    end  
+    end      
         
     
     # 
@@ -63,10 +63,10 @@ module Vfs
                 
     # 
     # Attributes
-    # 
+    #         
     def get attr_name = nil
       attrs = storage.open_fs{|fs| fs.attributes(path)}
-      attr_name ? (attrs && attrs[attr_name]) : (attrs || {})
+      attr_name ? attrs[attr_name] : attrs
     end
     
     def set options
@@ -80,7 +80,7 @@ module Vfs
     def file?
       !!get(:file)
     end
-    
+      
     
     # 
     # Micelaneous
@@ -88,13 +88,13 @@ module Vfs
     def name
       path_cache.name
     end
-        
+    
     
     # 
     # Utils
     #             
     def inspect
-      "#{storage}:#{path}"
+      "#{storage}#{':' unless storage.to_s.empty?}#{path}"
     end
     alias_method :to_s, :inspect    
     

@@ -30,7 +30,7 @@ module Vfs
         attrs[:dir] = !!stat[:dir]
         attrs
       rescue Exception
-        nil
+        {}
       end
       
       def set_attributes path, attrs      
@@ -57,8 +57,8 @@ module Vfs
           assert_not cd(base), :include?, name
           ''
         end
-        callback = -> buff {os << buff}       
-        block.call callback
+        writer = -> buff {os << buff}       
+        block.call writer
 
         cd(base)[name] = {file: true, content: os}
       end

@@ -75,7 +75,7 @@ module Vfs
             # do nothing, file already not exist
           end
         end
-      end
+      end      
       self
     end
     def destroy! options = {}

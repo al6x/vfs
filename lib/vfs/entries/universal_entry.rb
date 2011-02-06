@@ -13,8 +13,8 @@ module Vfs
     # CRUD
     #
     def destroy
-      attrs = get
-      storage.open_fs do |fs| 
+      storage.open_fs do |fs|
+        attrs = get 
         fs.delete_dir path if attrs[:dir]
         fs.delete_file path if attrs[:file]
       end
