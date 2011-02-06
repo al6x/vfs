@@ -1,5 +1,3 @@
-require 'base'
-
 shared_examples_for 'abstract storage' do  
   def clean_tmp_dir
     attrs = @storage.attributes(@tmp_dir)

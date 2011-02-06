@@ -1,3 +1,5 @@
+require 'tmpdir'
+
 module Vfs
   module Storages
     class Local    

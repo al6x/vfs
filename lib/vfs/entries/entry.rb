@@ -13,7 +13,8 @@ module Vfs
         @storage, @path = storage, path_cache.to_s
       end
       raise "storage not defined!" unless self.storage
-    end      
+    end  
+        
     
     # 
     # Navigation
