@@ -40,8 +40,9 @@ module Vfs
         end
       end
       
-      def write_file path, &block        
-        ::File.open path, 'w' do |os|
+      def write_file path, append, &block        
+        option = append ? 'a' : 'w'
+        ::File.open path, option do |os|
           callback = -> buff {os.write buff}
           block.call callback
         end

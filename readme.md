@@ -39,6 +39,7 @@ different API than local FS, and you has to remember all thouse little quirks).
 
 - Vos: Dir.bash
 - File.append
+- list of entries/files/dirs
 
 ### v 0.2
 

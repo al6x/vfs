@@ -48,12 +48,17 @@ module Vfs
         block.call cd(base)[name][:content]
       end
       
-      def write_file path, &block
+      def write_file path, append, &block
         base, name = split_path path
-        assert_not cd(base), :include?, name
-        
-        os = ""
-        callback = -> buff {os << buff}
+                    
+        os = if append
+          file = cd(base)[name]
+          file ? file[:content] : ''
+        else
+          assert_not cd(base), :include?, name
+          ''
+        end
+        callback = -> buff {os << buff}       
         block.call callback
 
         cd(base)[name] = {file: true, content: os}
@@ -155,7 +160,6 @@ module Vfs
             current = current[iterator.first]
             iterator.shift
           end    
-# p [self, parts, current]          
           current
         end
     end

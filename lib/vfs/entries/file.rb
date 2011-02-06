@@ -44,16 +44,20 @@ module Vfs
       create options
     end
         
-    def write *args, &block
+    def write *args, &block            
       if block
-        options = args.first || {}
-        storage.write_file(path, &block)
+        options = args.first || {}        
       else
         data, options = *args
-        options ||= {}
-        storage.write_file(path){|writer| writer.call data}
+        options ||= {}        
       end
-    rescue StandardError => error
+      raise "can't do :override and :append at the same time!" if options[:override] and options[:append]      
+      if block        
+        storage.write_file(path, options[:append], &block)
+      else
+        storage.write_file(path, options[:append]){|writer| writer.call data}
+      end
+    rescue StandardError => error      
       entry = self.entry
       if entry.exist?
         if options[:override]
@@ -101,6 +105,24 @@ module Vfs
     def destroy! options = {}
       options[:force] = true
       destroy options
+    end
+    
+    def append *args, &block
+      if block
+        options = args.first || {}        
+      else
+        data, options = *args
+        options ||= {}        
+      end
+      
+      options[:append] = true
+      write data, options, &block
+    end
+    
+    def update options = {}, &block
+      options[:override] = true
+      data = read options
+      write block.call(data), options
     end
     
     

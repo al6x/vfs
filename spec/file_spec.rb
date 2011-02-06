@@ -81,12 +81,27 @@ describe 'File' do
     it 'writing' do
       @path.write 'something'
       @path.read.should == 'something'
-      
+
       @path.write! do |writer|
         writer.call 'another'
       end
       @path.read.should == 'another'
     end
+    
+    it 'append' do
+      file = @path.file
+      file.should_receive(:write).with('something', append: true)
+      file.append 'something'
+    end
+  end
+  
+  it 'update' do
+    @path.write 'something'
+    @path.update do |data| 
+      data.should == 'something'
+      'another'
+    end
+    @path.read.should == 'another'
   end
   
   describe 'copying' do

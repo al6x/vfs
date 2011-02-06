@@ -26,22 +26,28 @@ shared_examples_for 'abstract driver' do
     
     it "file attributes" do
       @driver.attributes(@remote_file).should == nil
-      @driver.write_file(@remote_file){|w| w.call 'something'}
+      @driver.write_file(@remote_file, false){|w| w.call 'something'}
       attrs = @driver.attributes(@remote_file)      
       @driver.attributes(@remote_file).subset(:file, :dir).should == {file: true, dir: false}
     end
 
-    it "upload & download file" do
-      @driver.write_file(@remote_file){|w| w.call 'something'}
+    it "read, write & append" do
+      @driver.write_file(@remote_file, false){|w| w.call 'something'}
       @driver.attributes(@remote_file)[:file].should be_true
       
       data = ""  
       @driver.read_file(@remote_file){|buff| data << buff}
       data.should == 'something'
+      
+      # append
+      @driver.write_file(@remote_file, true){|w| w.call ' another'}
+      data = ""  
+      @driver.read_file(@remote_file){|buff| data << buff}
+      data.should == 'something another'
     end
   
     it "delete_file" do
-      @driver.write_file(@remote_file){|w| w.call 'something'}        
+      @driver.write_file(@remote_file, false){|w| w.call 'something'}        
       @driver.attributes(@remote_file)[:file].should be_true
       @driver.delete_file(@remote_file)
       @driver.attributes(@remote_file).should be_nil
@@ -72,7 +78,7 @@ shared_examples_for 'abstract driver' do
       
       dir, file = "#{@tmp_dir}/dir", "#{@tmp_dir}/file"
       @driver.create_dir(dir)
-      @driver.write_file(file){|w| w.call 'something'}
+      @driver.write_file(file, false){|w| w.call 'something'}
       
       list = {}
       @driver.each(@tmp_dir){|path, type| list[path] = type}
