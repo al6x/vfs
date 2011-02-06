@@ -1,9 +1,9 @@
 require 'storages/abstract'
 
 describe Vfs::Storages::HashFs do
-  it_should_behave_like "abstract driver"    
+  it_should_behave_like "abstract storage"    
     
   before :each do
-    @driver = Vfs::Storages::HashFs.new
+    @storage = Vfs::Storages::HashFs.new
   end
 end

@@ -1,13 +1,14 @@
 module Vfs
   module Storages
     class Local    
-      def driver
-        self
-      end
-      
       DEFAULT_BUFFER = 1024*128
       class << self
         attr_accessor :buffer
+      end
+      
+      
+      def open_fs &block
+        block.call self
       end
             
       

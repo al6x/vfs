@@ -25,27 +25,31 @@ module Vfs
     # CRUD
     #
     def create options = {}
-      driver.create_dir path
-      self
-    rescue StandardError => error
-      entry = self.entry
-      if entry.exist?
-        if options[:override]
-          entry.destroy
-        else
-          raise Error, "entry #{self} already exist!"
-        end
-      else
-        parent = self.parent
-        if parent.exist?
-          # some unknown error
-          raise error          
-        else
-          parent.create(options)        
-        end        
-      end
+      storage.open_fs do |fs|
+        begin
+          fs.create_dir path          
+        rescue StandardError => error
+          entry = self.entry
+          if entry.exist?
+            if options[:override]
+              entry.destroy
+            else
+              raise Error, "entry #{self} already exist!"
+            end
+          else
+            parent = self.parent
+            if parent.exist?
+              # some unknown error
+              raise error          
+            else
+              parent.create(options)        
+            end        
+          end
       
-      retry
+          retry
+        end
+      end
+      self
     end    
     def create! options = {}
       options[:override] = true
@@ -53,21 +57,24 @@ module Vfs
     end
             
     def destroy options = {}
-      driver.delete_dir path
-      self        
-    rescue StandardError => e
-      attrs = get
-      if attrs[:file]
-        if options[:force]
-          file.destroy          
-        else
-          raise Error, "can't destroy File #{dir} (You are trying to destroy it as if it's a Dir)"
+      storage.open_fs do |fs|
+        begin
+          fs.delete_dir path    
+        rescue StandardError => e
+          attrs = get
+          if attrs[:file]
+            if options[:force]
+              file.destroy          
+            else
+              raise Error, "can't destroy File #{dir} (You are trying to destroy it as if it's a Dir)"
+            end
+          elsif attrs[:dir]
+            # unknown internal error
+            raise e
+          else
+            # do nothing, file already not exist
+          end
         end
-      elsif attrs[:dir]
-        # unknown internal error
-        raise e
-      else
-        # do nothing, file already not exist
       end
       self
     end
@@ -81,27 +88,31 @@ module Vfs
     # Content
     # 
     def entries options = {}, &block
-      options[:bang] = true unless options.include? :bang
-      list = []
-      driver.each path do |name, type|
-        next if options[:filter] and options[:filter] != type
-        entry = if type == :dir
-          dir(name)
-        elsif type == :file
-          file(name)
-        else
-          raise 'invalid entry type!'
+      options[:bang] = true unless options.include? :bang      
+      storage.open_fs do |fs| 
+        begin
+          list = []
+          fs.each path do |name, type|
+            next if options[:filter] and options[:filter] != type
+            entry = if type == :dir
+              dir(name)
+            elsif type == :file
+              file(name)
+            else
+              raise 'invalid entry type!'
+            end
+            block ? block.call(entry) : (list << entry)
+          end
+          block ? nil : list
+        rescue StandardError => error
+          if !exist?
+            raise Error, "'#{self}' not exist!" if options[:bang]
+            []
+          else
+            # unknown error
+            raise error
+          end
         end
-        block ? block.call(entry) : (list << entry)
-      end
-      block ? nil : list
-    rescue StandardError => error
-      if !exist?
-        raise Error, "'#{self}' not exist!" if options[:bang]
-        []
-      else
-        # unknown error
-        raise error
       end
     end
     alias_method :each, :entries

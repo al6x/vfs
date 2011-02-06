@@ -11,27 +11,31 @@ module Vfs
     #
     def read options = {}, &block
       options[:bang] = true unless options.include? :bang
-      if block
-        storage.read_file path, &block
-      else
-        data = ""
-        storage.read_file(path){|buff| data << buff}
-        data
-      end
-    rescue StandardError => e
-      raise Vrs::Error, "can't read Dir #{self}!" if dir.exist?
-      attrs = get
-      if attrs[:file]
-        # unknown internal error
-        raise e
-      elsif attrs[:dir]
-        raise Error, "You are trying to read Dir '#{self}' as if it's a File!"
-      else
-        if options[:bang]
-          raise Error, "file #{self} not exist!"
-        else
-          block ? block.call('') : ''
-        end        
+      storage.open_fs do |fs|
+        begin
+          if block
+            fs.read_file path, &block
+          else
+            data = ""
+            fs.read_file(path){|buff| data << buff}
+            data
+          end
+        rescue StandardError => e
+          raise Vrs::Error, "can't read Dir #{self}!" if dir.exist?
+          attrs = get
+          if attrs[:file]
+            # unknown internal error
+            raise e
+          elsif attrs[:dir]
+            raise Error, "You are trying to read Dir '#{self}' as if it's a File!"
+          else
+            if options[:bang]
+              raise Error, "file #{self} not exist!"
+            else
+              block ? block.call('') : ''
+            end        
+          end
+        end
       end      
     end
     
@@ -44,38 +48,43 @@ module Vfs
       create options
     end
         
-    def write *args, &block            
-      if block
-        options = args.first || {}        
-      else
-        data, options = *args
-        options ||= {}        
-      end
-      raise "can't do :override and :append at the same time!" if options[:override] and options[:append]      
-      if block        
-        storage.write_file(path, options[:append], &block)
-      else
-        storage.write_file(path, options[:append]){|writer| writer.call data}
-      end
-    rescue StandardError => error      
-      entry = self.entry
-      if entry.exist?
-        if options[:override]
-          entry.destroy
-        else
-          raise Error, "entry #{self} already exist!"
-        end
-      else
-        parent = self.parent
-        if parent.exist?
-          # some unknown error
-          raise error          
-        else
-          parent.create(options)        
-        end
-      end
+    def write *args, &block    
+      storage.open_fs do |fs|        
+        begin
+          if block
+            options = args.first || {}        
+          else
+            data, options = *args
+            options ||= {}        
+          end
+          raise "can't do :override and :append at the same time!" if options[:override] and options[:append]      
+          if block        
+            fs.write_file(path, options[:append], &block)
+          else
+            fs.write_file(path, options[:append]){|writer| writer.call data}
+          end
+        rescue StandardError => error      
+          entry = self.entry
+          if entry.exist?
+            if options[:override]
+              entry.destroy
+            else
+              raise Error, "entry #{self} already exist!"
+            end
+          else
+            parent = self.parent
+            if parent.exist?
+              # some unknown error
+              raise error          
+            else
+              parent.create(options)        
+            end
+          end
       
-      retry
+          retry
+        end
+      end
+      self
     end    
     def write! *args, &block
       args << {} unless args.last.is_a? Hash
@@ -84,21 +93,25 @@ module Vfs
     end
     
     def destroy options = {}
-      storage.delete_file path          
-      self
-    rescue StandardError => e
-      attrs = get
-      if attrs[:dir]
-        if options[:force]
-          dir.destroy          
-        else
-          raise Error, "can't destroy Dir #{dir} (you are trying to destroy it as if it's a File)"
+      storage.open_fs do |fs| 
+        begin
+          fs.delete_file path          
+          self
+        rescue StandardError => e
+          attrs = get
+          if attrs[:dir]
+            if options[:force]
+              dir.destroy          
+            else
+              raise Error, "can't destroy Dir #{dir} (you are trying to destroy it as if it's a File)"
+            end
+          elsif attrs[:file]
+            # unknown internal error
+            raise e
+          else
+            # do nothing, file already not exist
+          end
         end
-      elsif attrs[:file]
-        # unknown internal error
-        raise e
-      else
-        # do nothing, file already not exist
       end
       self
     end

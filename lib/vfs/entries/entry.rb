@@ -1,10 +1,18 @@
 module Vfs
   class Entry
-    attr_reader :storage, :path
+    attr_reader :storage, :path, :path_cache
     
-    def initialize storage, path
-      @path_cache = path.is_a?(Path) ? path : Path.new(path)
-      @storage, @path = storage, path_cache.to_s
+    def initialize *args
+      if args.size == 1 and args.first.is_a? Entry
+        entry = args.first
+        @path_cache = entry.path_cache       
+        @storage, @path = entry.storage, entry.path
+      else
+        storage, path = *args
+        @path_cache = Path.new path
+        @storage, @path = storage, path_cache.to_s
+      end
+      raise "storage not defined!" unless self.storage
     end      
     
     # 
@@ -23,7 +31,7 @@ module Vfs
         new_path = path_cache + path
         Dir.new storage, new_path
       else
-        Dir.new storage, path_cache
+        Dir.new self
       end
     end
     alias_method :to_dir, :dir
@@ -33,7 +41,7 @@ module Vfs
         new_path = path_cache + path
         File.new storage, new_path
       else
-        File.new storage, path_cache
+        File.new self
       end
     end
     alias_method :to_file, :file
@@ -45,7 +53,7 @@ module Vfs
         klass = new_path.probably_dir? ? Dir : UniversalEntry
         entry = klass.new storage, new_path        
       else
-        UniversalEntry.new storage, path_cache
+        UniversalEntry.new self
       end
       EntryProxy.new entry
     end
@@ -56,7 +64,7 @@ module Vfs
     # Attributes
     # 
     def get attr_name = nil
-      attrs = storage.attributes(path)
+      attrs = storage.open_fs{|fs| fs.attributes(path)}
       attr_name ? (attrs && attrs[attr_name]) : (attrs || {})
     end
     
@@ -102,12 +110,5 @@ module Vfs
       return false unless other.class == self.class
       storage.eql?(other.storage) and path.eql?(other.path)
     end
-    
-    protected
-      attr_reader :path_cache
-      
-      def driver
-        storage.driver
-      end
   end
 end

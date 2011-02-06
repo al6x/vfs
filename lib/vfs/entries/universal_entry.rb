@@ -1,7 +1,5 @@
 module Vfs
   class UniversalEntry < Entry
-    attr_reader :storage, :path    
-    
     # 
     # Attributes
     # 
@@ -16,8 +14,11 @@ module Vfs
     #
     def destroy
       attrs = get
-      storage.delete_dir path if attrs[:dir]
-      storage.delete_file path if attrs[:file]
+      storage.open_fs do |fs| 
+        fs.delete_dir path if attrs[:dir]
+        fs.delete_file path if attrs[:file]
+      end
+      self
     end
   end
 end

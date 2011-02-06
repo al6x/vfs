@@ -4,15 +4,14 @@
 module Vfs
   module Storages
     class HashFs < Hash
-      # def initialize
-      
       def initialize
         super
         self['/'] = {dir: true}
       end
       
-      def driver
-        self
+      
+      def open_fs &block
+        block.call self
       end
       
       # 

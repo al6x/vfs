@@ -1,9 +1,9 @@
 require 'storages/abstract'
 
 describe Vfs::Storages::Local do
-  it_should_behave_like "abstract driver"    
+  it_should_behave_like "abstract storage"    
     
   before :each do
-    @driver = Vfs::Storages::Local.new
+    @storage = Vfs::Storages::Local.new
   end
 end

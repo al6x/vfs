@@ -14,7 +14,7 @@ Currently, there are following implementations available:
 - same API for different storages (Local FS, SSH, Hadoop, or any other , ...).
 - should work **simultaneously with different storages**.
 - small codebase, easy to understand and extend by others.
-- simple driver implemenation, should be easy to add new storage types (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
+- simple storage implemenation, should be easy to add new storage types (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
 
 # Code samples:
 
@@ -46,7 +46,7 @@ different API than local FS, and you has to remember all thouse little quirks).
 - efficient (not copy/destroy) versions of move_to, rename
 - glob search for directories: Dir['**/*.yml']
 - access via attributes and helpers for unix chmod
-- add driver: remote FS over HTTP.
+- add storages: remote FS over HTTP.
 
 ### future
 
