@@ -115,66 +115,58 @@ module Vfs
       options[:filter] = :dir
       entries options, &block
     end    
-  end
-  
-  
-  # 
-  # Transfers
-  # 
-  def copy_to entry, options = {}
-    raise Error, 'invalid argument' unless entry.is_a? Entry
-    raise Error, "you can't copy to itself" if self == entry
     
-    target = if entry.is_a? File
-      raise "can't copy Dir to File ('#{self}')!" unless options[:override]
-      entry.dir
-    elsif entry.is_a? Dir
-      entry
-    elsif entry.is_a? UniversalEntry
-      raise "can't copy Dir to File ('#{self}')!" if entry.file? and !options[:override]
-      entry.dir.create
-    else
-      raise "can't copy to unknown Entry!"
+    def include? name
+      entry[name].exist?
     end
+    alias_method :has?, :include?
     
-    entries do |entry|      
-      
-      
-      
-      
+    
+    # 
+    # Transfers
+    # 
+    def copy_to entry, options = {}
+      raise Error, 'invalid argument' unless entry.is_a? Entry
+      raise Error, "you can't copy to itself" if self == entry
 
-
-
-
-
-
-
-
-
-
-      
-      
-      
-      
-      
-      entry.copy_to en
-      entry.file.write options do |writer|
-        read{|buff| writer.call buff}
+      target = if entry.is_a? File
+        raise "can't copy Dir to File ('#{self}')!" unless options[:override]
+        entry.dir
+      elsif entry.is_a? Dir
+        entry.dir #(name)
+      elsif entry.is_a? UniversalEntry
+        # raise "can't copy Dir to File ('#{self}')!" if entry.file? and !options[:override]
+        entry.dir #.create
+      else
+        raise "can't copy to unknown Entry!"
       end
+
+      target.create options
+      entries do |e|
+        if e.is_a? Dir
+          e.copy_to target.dir(e.name), options
+        elsif e.is_a? File
+          e.copy_to target.file(e.name), options
+        else
+          raise 'internal error'
+        end        
+      end
+
+      target
     end
-  end
-  def copy_to! to, options = {}
-    options[:override] = true
-    copy_to to, options
-  end
-  
-  def move_to to, options = {}
-    copy_to to, options
-    destroy options
-    to
-  end
-  def move_to! to, options = {}
-    options[:override] = true
-    move_to to, options
+    def copy_to! to, options = {}
+      options[:override] = true
+      copy_to to, options
+    end
+
+    def move_to to, options = {}
+      copy_to to, options
+      destroy options
+      to
+    end
+    def move_to! to, options = {}
+      options[:override] = true
+      move_to to, options
+    end
   end
 end

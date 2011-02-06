@@ -94,10 +94,63 @@ describe 'Dir' do
       @path.dirs.should be_eql([@path.dir('dir')])
     end
     
-    it 'has? & include?'
+    it 'has? & include?' do
+      @path.include?('dir').should be_true
+      @path.include?('dir/another_dir').should be_true
+      @path.include?('file').should be_true
+      @path.include?('non_existing').should be_false
+    end
   end
   
-  it 'copy'
+  describe 'copying' do
+    before :each do 
+      @from = @path.dir
+      @from.create
+      @from.file('file').write 'something'
+      @from.dir('dir').create.tap do |dir|
+        dir.file('file2').write 'something2'        
+      end
+    end
+    
+    it 'should not copy to itself' do
+      -> {@from.copy_to @from}.should raise_error(Vfs::Error, /itself/)
+    end
+    
+    def check_copy_for to, error_re = nil
+      begin
+        target = @from.copy_to to                  
+        target['file'].read.should == 'something'
+        target['dir/file2'].read.should == 'something2'
+        target.should == to
+      rescue Exception => e
+        raise e unless e.message =~ error_re
+      end      
+      
+      @from['dir/file2'].write! 'another'
+      -> {@from.copy_to to}.should raise_error(Vfs::Error, /exist/)
+      target = @from.copy_to! to
+      target['file'].read.should == 'something'
+      target['dir/file2'].read.should == 'another'            
+    end
+    
+    it 'should copy to file (and overwrite if forced)' do
+      check_copy_for @fs['to'], /can't copy Dir to File/
+    end
+    
+    it 'should copy to dir (and overwrite if forced)' do
+      check_copy_for @fs['to']
+    end
+    
+    it 'should copy to UniversalEntry (and overwrite if forced)' do
+      check_copy_for @fs['to']
+    end
+    
+    it 'should be chainable' do
+      to = @fs['to']
+      @from.copy_to(to).should == to
+      @from.copy_to!(to).should == to
+    end
+  end
     
   describe 'moving' do
     it 'move_to' do
@@ -110,11 +163,11 @@ describe 'Dir' do
       from.move_to! to
     end
     
-    it 'should be chainable' do
-      pending
-      # from, to = @path.dir('from'), @path.dir('to')
-      # from.move_to(from).should == to['from']
-      # from.move_to!(from).should == to['from']
+    it 'should be chainable' do      
+      from, to = @path.dir('from').create, @path.dir('to')
+      from.move_to(to).should == to
+      from.create
+      from.move_to!(to).should == to
     end
   end
 end

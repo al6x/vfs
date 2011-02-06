@@ -28,7 +28,7 @@ Currently, there are following implementations available:
 To easy my work: with local FS, remote FS (cluster management, deployment automation), and some specific systems like Hadoop DFS.
 
 Because the API of standard File/Dir/FileUtils classes are just terrible. And there's the reason for it - the goal of thouse tools
-is to provide 1-to-1 clone of underlying OS API, instead of provididing handy tool for working with FS.
+is to provide 1-to-1 clone of underlying OS API, instead of provididing handy tool.
 
 And if you want to use remote FS - things are getting even worse and more complicated (Net::SSH & Net::SFTP use a little
 different API than local FS, and you has to remember all thouse little quirks).
@@ -37,10 +37,8 @@ different API than local FS, and you has to remember all thouse little quirks).
 
 ### v 0.1
 
-
 - Vos: Dir.bash
 - File.append
-- list of entries/files/dirs
 
 ### v 0.2
 

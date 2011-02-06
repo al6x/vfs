@@ -113,7 +113,7 @@ module Vfs
       target = if to.is_a? File
         to
       elsif to.is_a? Dir
-        to.file(name)  
+        to.file #(name)  
       elsif to.is_a? UniversalEntry
         to.file      
       else

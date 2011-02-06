@@ -99,28 +99,28 @@ describe 'File' do
       -> {@from.copy_to @from}.should raise_error(Vfs::Error, /itself/)
     end
     
-    def check_copy_for type, target_path
-      to = @fs.send type, 'to'
+    def check_copy_for to
       target = @from.copy_to to
       target.read.should == 'something'
-      target.should == target_path
+      target.should == to
       
       @from.write! 'another'
       -> {@from.copy_to to}.should raise_error(Vfs::Error, /exist/)
       target = @from.copy_to! to
       target.read.should == 'another'
+      target.should == to
     end
     
     it 'should copy to file (and overwrite if forced)' do
-      check_copy_for :file, @fs['to']
+      check_copy_for @fs.file('to')
     end
     
     it 'should copy to dir (and overwrite if forced)' do
-      check_copy_for :dir, @fs["to/#{@from.name}"]
+      check_copy_for @fs.dir("to")
     end
     
     it 'should copy to UniversalEntry (and overwrite if forced)' do
-      check_copy_for :file, @fs['to']
+      check_copy_for @fs.entry('to')
     end
     
     it 'should be chainable' do
