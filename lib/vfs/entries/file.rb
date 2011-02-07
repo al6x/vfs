@@ -50,7 +50,9 @@ module Vfs
         
     def write *args, &block    
       storage.open_fs do |fs|        
+        try = 0
         begin
+          try += 1
           if block
             options = args.first || {}        
           else
@@ -81,7 +83,7 @@ module Vfs
             end
           end
       
-          retry
+          retry if try < 2
         end
       end
       self

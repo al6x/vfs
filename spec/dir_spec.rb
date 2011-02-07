@@ -35,6 +35,11 @@ describe 'Dir' do
       @path.should be_dir
     end
     
+    it 'should silently exit if dir already exist' do
+      @path.dir.create
+      @path.dir.create
+    end
+    
     it 'should override existing file if override specified' do
       @path.file.create
       @path.should be_file
@@ -46,7 +51,6 @@ describe 'Dir' do
     it 'should override existing dir if override specified' do
       @path.dir.create
       @path.should be_dir
-      -> {@path.dir.create}.should raise_error(Vfs::Error, /exist/)
       @path.dir.create!
       @path.should be_dir
     end

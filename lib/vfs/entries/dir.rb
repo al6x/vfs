@@ -26,16 +26,22 @@ module Vfs
     #
     def create options = {}
       storage.open_fs do |fs|
+        try = 0
         begin
-          fs.create_dir path          
-        rescue StandardError => error
+          try += 1
+          fs.create_dir path
+        rescue StandardError => error          
+          tried = true
           entry = self.entry
-          if entry.exist?
+          attrs = entry.get          
+          if attrs[:file] #entry.exist?
             if options[:override]
               entry.destroy
             else
               raise Error, "entry #{self} already exist!"
             end
+          elsif attrs[:dir]
+            # do nothing
           else
             parent = self.parent
             if parent.exist?
@@ -46,7 +52,7 @@ module Vfs
             end        
           end
       
-          retry
+          retry if try < 2
         end
       end
       self
