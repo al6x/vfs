@@ -82,6 +82,16 @@ shared_examples_for 'vfs storage' do
       end
     end
     
+    it 'should delete not-empty directories' do
+      @storage.open_fs do |fs|
+        fs.create_dir(@remote_dir)
+        fs.create_dir("#{@remote_dir}/dir")
+        fs.write_file("#{@remote_dir}/dir/file", false){|w| w.call 'something'}         
+        fs.delete_dir(@remote_dir)
+        fs.attributes(@remote_dir).should == {}
+      end
+    end
+    
     it 'each' do
       @storage.open_fs do |fs|
         list = {}

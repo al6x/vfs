@@ -2,7 +2,7 @@ require 'base'
 
 describe 'Dir' do
   before :each do
-    @fs = '/'.to_fs_on(Vfs::Storages::HashFs.new)
+    @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
     @path = @fs['/a/b/c']
   end
   
@@ -66,6 +66,18 @@ describe 'Dir' do
     
     it "shouldn't raise if dir not exist" do
       @path.dir.destroy
+    end
+    
+    it 'should destroy recursivelly' do
+      dir = @path.dir
+      dir.create
+      dir.file('file').write 'something'
+      dir.dir('dir').create.tap do |dir|
+        dir.file('file2').write 'something2'        
+      end
+      
+      dir.destroy
+      dir.should_not exist
     end
     
     it 'should be chainable' do

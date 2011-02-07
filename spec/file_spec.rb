@@ -2,7 +2,7 @@ require 'base'
 
 describe 'File' do
   before :each do
-    @fs = '/'.to_fs_on(Vfs::Storages::HashFs.new)
+    @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
     @path = @fs['/a/b/c']
   end
   
@@ -35,6 +35,11 @@ describe 'File' do
       @path.read.should == 'something'
       @path.read(bang: false).should == 'something'      
       data = ""; @path.read{|buff| data << buff}; data.should == 'something'      
+    end
+    
+    it 'content' do
+      @path.write('something')
+      @path.content.should == 'something'
     end
   end
   

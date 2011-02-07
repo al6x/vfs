@@ -39,6 +39,10 @@ module Vfs
       end      
     end
     
+    def content options = {}
+      read options
+    end
+    
     def create options = {}
       write '', options
       self

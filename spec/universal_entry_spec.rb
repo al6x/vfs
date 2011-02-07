@@ -2,7 +2,7 @@ require 'base'
 
 describe 'UniversalEntry' do
   before :each do
-    @fs = '/'.to_fs_on(Vfs::Storages::HashFs.new)
+    @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
     @path = @fs['/a/b/c']
   end
   

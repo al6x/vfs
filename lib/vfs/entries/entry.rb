@@ -89,6 +89,18 @@ module Vfs
       path_cache.name
     end
     
+    def tmp &block
+      storage.open_fs do |fs|
+        if block
+          fs.tmp do |path|
+            block.call Dir.new(storage, path)
+          end
+        else
+          Dir.new storage, fs.tmp
+        end
+      end
+    end
+    
     
     # 
     # Utils

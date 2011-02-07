@@ -86,6 +86,11 @@ module Vfs
       def delete_dir path
         base, name = split_path path        
         assert cd(base)[name], :include?, :dir
+        # empty = true
+        # cd(base)[name].each do |key, value|
+        #   empty = false if key.is_a? String
+        # end
+        # raise 'you are trying to delete not empty dir!' unless empty
         cd(base).delete name
       end      
       

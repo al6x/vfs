@@ -2,7 +2,7 @@ require 'base'
 
 describe 'Container' do
   before :each do
-    @fs = '/'.to_fs_on(Vfs::Storages::HashFs.new)
+    @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
   end
   
   it "should threat paths as UniversalEntry except it ends with '/'" do
