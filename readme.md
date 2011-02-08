@@ -7,7 +7,7 @@ Currently, there are following implementations available:
 - local file system
 - remote file system (over ssh)
 
-# Goals
+## Goals
 
 - **handy, simple and clean** API.
 - **high performance** - the same as by using low-level storage API, there should be no extra calls.
@@ -16,12 +16,65 @@ Currently, there are following implementations available:
 - small codebase, easy to extend by others.
 - simple storage-driver implementation, easy add new storage types (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
 
-# Code samples:
+## Code samples:
+      gem 'vfs'                                  # Virtual File System
+      require 'vfs'                              
 
-    box = Vfs::Box.new host: 'webapp.com', ssh: {user: 'root', password: 'secret'}
+      gem 'vos'                                  # Virtual Operating System
+      require 'vos'
 
-    box.upload_directory '/my_project', '/apps/my_project'
-    box.bash 'nohup /apps/my_project/server_start'
+
+      # Connection
+      server = Vfs::Box.new(host: 'cool_app.com', ssh: {user: 'me', password: 'secret'})
+      me = '~'.to_dir
+
+      cool_app = server['apps/cool_app']
+      projects = me['projects']
+
+
+      # Working with dirs, copying dir from any source to any destination (local/remote/custom_storage_type)
+      projects['cool_app'].copy_to cool_app        
+
+
+      # Working with files
+      dbc = cool_app.file('config/database.yml')   # <= the 'config' dir not exist yet
+      dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' will be created
+      dbc.content =~ /database/                    # => false, we forgot to add the database
+      dbc.append("\ndatabase: mysql")              # let's do it
+
+      dbc.update do |content|                      # and add host info
+        content + "\nhost: cool_app.com "
+      end                                       
+
+      projects['cool_app/config/database.yml'].    # or just overwrite it with our local dev version
+        copy_to! dbc
+
+
+      # Checks
+      cool_app['config'].exist?                    # => true
+      cool_app.dir('config').exist?                # => true
+      cool_app.file('config').exist?               # => false
+
+      cool_app['config'].dir?                      # => true
+      cool_app['config'].file?                     # => false
+
+      # Navigation
+      config = cool_app['config']
+      config.parent                                # => </apps/cool_app>
+      config['../..']                              # => </>
+      config['../..'].dir?                         # => true
+
+      cool_app.entries                             # => list of dirs and files, also support &block
+      cool_app.files                               # => list of files, also support &block
+      cool_app.dirs                                # => list of dirs, also support &block
+
+      # For more please go to specs (create/update/move/copy/destroy/...)
+      
+## Integration with [Vos][vos] (Virtual Operating System)
+    
+      server['apps/cool_app'].bash 'rails production'
+
+For more details please go to [Vos][vos] project page.
 
 # Why?
 
@@ -53,4 +106,4 @@ different API than local FS, and you has to remember all thouse little quirks).
 
 - add storages: Hadoop DFS, MongoDB, Amazon S3
 
-[rush]: http://github.com/adamwiggins/rush
+[vos]: http://github.com/alexeypetrushin/vos
