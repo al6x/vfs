@@ -38,7 +38,7 @@ Currently, there are following implementations available:
 
       # Working with files
       dbc = cool_app.file('config/database.yml')   # <= the 'config' dir not exist yet
-      dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' will be created
+      dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' has been created
       dbc.content =~ /database/                    # => false, we forgot to add the database
       dbc.append("\ndatabase: mysql")              # let's do it
 
@@ -48,6 +48,8 @@ Currently, there are following implementations available:
 
       projects['cool_app/config/database.yml'].    # or just overwrite it with our local dev version
         copy_to! dbc
+        
+      # there are also streaming support (read/write/append), please go to specs for docs
 
 
       # Checks
@@ -58,6 +60,7 @@ Currently, there are following implementations available:
       cool_app['config'].dir?                      # => true
       cool_app['config'].file?                     # => false
 
+
       # Navigation
       config = cool_app['config']
       config.parent                                # => </apps/cool_app>
@@ -67,6 +70,7 @@ Currently, there are following implementations available:
       cool_app.entries                             # => list of dirs and files, also support &block
       cool_app.files                               # => list of files, also support &block
       cool_app.dirs                                # => list of dirs, also support &block
+
 
       # For more please go to specs (create/update/move/copy/destroy/...)
       
