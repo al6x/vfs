@@ -1,6 +1,7 @@
 # Vfs - Virtual File System
 
-Handy and simple abstraction over any storage that can represent concept of File and Directory (or at least part of it).
+Handy and simple abstraction over any storage that can represent concept of File and Directory (or at least part of it). 
+The Vfs for File System Storages is the same as ActiveRecord is for Relational Databases.
 
 Currently, there are following implementations available:
 
