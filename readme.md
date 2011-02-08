@@ -88,7 +88,7 @@ ASAP by using copy+destroy approach, will be fixed as soon as I'll have free tim
     server['apps/cool_app'].bash 'rails production'
 
 For more details please go to [Vos][vos] project page. 
-Or checkout sample configuration I use to control my production servers [My Cluster][my_cluster] in conjunction with small 
+Or checkout configuration I use to control my production servers [My Cluster][my_cluster] in conjunction with small 
 configuration tool [Cluster Management][cluster_management].
 
 # Why?
@@ -110,7 +110,7 @@ different API than local FS, and you has to remember all thouse little quirks).
 - list of entries/files/dirs
 - support for efficient copy for Local and SSH storages
 
-### v 0.2 (not started)
+### v 0.2
 
 - efficient (not copy/destroy) versions of move_to, rename
 - glob search for directories: Dir['**/*.yml']
