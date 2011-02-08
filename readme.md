@@ -87,7 +87,9 @@ ASAP by using copy+destroy approach, will be fixed as soon as I'll have free tim
     
     server['apps/cool_app'].bash 'rails production'
 
-For more details please go to [Vos][vos] project page.
+For more details please go to [Vos][vos] project page. 
+Or checkout sample configuration I use to control my production servers [My Cluster][my_cluster] in conjunction with small 
+configuration tool [Cluster Management][cluster_management].
 
 # Why?
 
@@ -120,3 +122,5 @@ different API than local FS, and you has to remember all thouse little quirks).
 - add storages: Hadoop DFS, MongoDB, Amazon S3
 
 [vos]: http://github.com/alexeypetrushin/vos
+[cluster_management]: http://github.com/alexeypetrushin/cluster_management
+[my_cluster]: http://github.com/alexeypetrushin/my_cluster
