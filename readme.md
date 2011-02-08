@@ -24,7 +24,7 @@ Currently, there are following implementations available:
       require 'vos'
 
 
-      # Connection
+      # Connections, let's deploy our 'cool_app' project from our local box to remote server
       server = Vfs::Box.new(host: 'cool_app.com', ssh: {user: 'me', password: 'secret'})
       me = '~'.to_dir
 
