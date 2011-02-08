@@ -3,13 +3,13 @@ require 'tempfile'
 module Vfs
   module Storages
     class Local
-      module Helper
+      module LocalVfsHelper
         DEFAULT_BUFFER = 1024*128
         
         attr_writer :buffer
         def buffer
           @buffer || DEFAULT_BUFFER
-        end
+        end        
         
         # 
         # Attributes
@@ -78,6 +78,19 @@ module Vfs
             end
           end
         end
+        
+        def efficient_dir_copy from, to
+          from.storage.open_fs do |from_fs|          
+            to.storage.open_fs do |to_fs|
+              if from_fs.local? and to_fs.local?
+                FileUtils.cp_r from.path, to.path
+                true
+              else
+                false
+              end
+            end
+          end
+        end
 
         # def move_dir path
         #   raise 'not supported'
@@ -93,8 +106,10 @@ module Vfs
 
 
         # 
-        # tmp
+        # Other
         # 
+        def local?; true end
+        
         def tmp &block
           tmp_dir = "#{::Dir.tmpdir}/#{rand(10**3)}"        
           if block
@@ -109,12 +124,11 @@ module Vfs
             tmp_dir
           end
         end
-
+        
         def to_s; '' end
       end
       
-      
-      include Helper
+      include LocalVfsHelper
       
       def open_fs &block
         block.call self

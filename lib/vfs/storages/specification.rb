@@ -16,6 +16,10 @@ shared_examples_for 'vfs storage' do
     end
   end
   
+  it 'should respond to :local?' do
+    @storage.open_fs{|fs| fs.should respond_to(:local?)}
+  end
+  
   it 'should have root dir' do
     @storage.open_fs do |fs|
       fs.attributes('/').subset(:file, :dir).should == {file: false, dir: true}

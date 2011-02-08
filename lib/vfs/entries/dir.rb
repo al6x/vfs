@@ -31,7 +31,6 @@ module Vfs
           try += 1
           fs.create_dir path
         rescue StandardError => error          
-          tried = true
           entry = self.entry
           attrs = entry.get          
           if attrs[:file] #entry.exist?
@@ -111,12 +110,15 @@ module Vfs
           end
           block ? nil : list
         rescue StandardError => error
-          if !exist?
-            raise Error, "'#{self}' not exist!" if options[:bang]
-            []
-          else
+          attrs = get
+          if attrs[:file]
+            raise Error, "can't query entries on File ('#{self}')!"
+          elsif attrs[:dir]
             # unknown error
             raise error
+          else
+            raise Error, "'#{self}' not exist!" if options[:bang]
+            []            
           end
         end
       end
@@ -142,33 +144,72 @@ module Vfs
     # 
     # Transfers
     # 
-    def copy_to entry, options = {}
-      raise Error, 'invalid argument' unless entry.is_a? Entry
-      raise Error, "you can't copy to itself" if self == entry
+    def copy_to to, options = {}
+      options[:bang] = true unless options.include? :bang
+      
+      raise Error, 'invalid argument' unless to.is_a? Entry
+      raise Error, "you can't copy to itself" if self == to
 
-      target = if entry.is_a? File
-        raise "can't copy Dir to File ('#{self}')!" unless options[:override]
-        entry.dir
-      elsif entry.is_a? Dir
-        entry.dir #(name)
-      elsif entry.is_a? UniversalEntry
-        # raise "can't copy Dir to File ('#{self}')!" if entry.file? and !options[:override]
-        entry.dir #.create
+      target = if to.is_a? File
+        raise Error, "can't copy Dir to File ('#{self}')!" unless options[:override]
+        to.dir
+      elsif to.is_a? Dir
+        to.dir #(name)
+      elsif to.is_a? UniversalEntry
+        # raise "can't copy Dir to File ('#{self}')!" if to.file? and !options[:override]
+        to.dir #.create
       else
         raise "can't copy to unknown Entry!"
       end
+      
+      storage.open_fs do |fs|
+        try = 0
+        begin
+          try += 1          
+          self.class.efficient_dir_copy(self, target) || self.class.unefficient_dir_copy(self, target)       
+        rescue StandardError => error          
+          unknown_errors = 0
 
-      target.create options
-      entries do |e|
-        if e.is_a? Dir
-          e.copy_to target.dir(e.name), options
-        elsif e.is_a? File
-          e.copy_to target.file(e.name), options
-        else
-          raise 'internal error'
-        end        
+          attrs = get
+          if attrs[:file]
+            raise Error, "can't copy File as a Dir ('#{self}')!"
+          elsif attrs[:dir]
+            # some unknown error (but it also maybe caused by to be fixed error in 'target')
+            unknown_errors += 1            
+          else
+            raise Error, "'#{self}' not exist!" if options[:bang]            
+            return target
+          end
+          
+          attrs = target.get          
+          if attrs[:file]
+            if options[:override]
+              to.destroy
+            else
+              raise Vfs::Error, "entry #{target} already exist!"
+            end
+          elsif attrs[:dir]
+            if options[:override]
+              to.destroy
+            else
+              raise Vfs::Error, "entry #{target} already exist!"
+            end
+          else
+            parent = to.parent
+            if parent.exist?
+              # some unknown error (but it also maybe caused by already fixed error in 'from')
+              unknown_errors += 1
+            else
+              parent.create(options)        
+            end        
+          end
+          
+          raise error if unknown_errors > 1
+                
+          retry if try < 2
+        end
       end
-
+      
       target
     end
     def copy_to! to, options = {}
@@ -185,5 +226,47 @@ module Vfs
       options[:override] = true
       move_to to, options
     end
+    
+    protected
+      def self.unefficient_dir_copy from, to        
+        from.storage.open_fs do |from_fs|
+          to.storage.open_fs do |to_fs|
+            to_fs.create_dir to.path            
+            from_fs.each from.path do |name, type|
+              if type == :dir
+                unefficient_dir_copy from.dir(name), to.dir(name)
+              elsif type == :file
+                to_fs.write_file to.file(name).path, false do |writer|
+                  from_fs.read_file from.file(name).path do |buff|
+                    writer.call buff
+                  end
+                end
+              else
+                raise 'invalid entry type!'
+              end
+            end
+          end
+        end
+        
+          # target.create options
+          # entries do |e|
+          #   if e.is_a? Dir
+          #     e.copy_to target.dir(e.name), options
+          #   elsif e.is_a? File
+          #     e.copy_to target.file(e.name), options
+          #   else
+          #     raise 'internal error'
+          #   end        
+          # end
+      end
+      
+      def self.efficient_dir_copy from, to
+        from.storage.open_fs{|fs|
+          fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to)
+        } or
+        to.storage.open_fs{|fs|
+          fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to)
+        }
+      end
   end
 end

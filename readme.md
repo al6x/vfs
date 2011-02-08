@@ -35,13 +35,14 @@ different API than local FS, and you has to remember all thouse little quirks).
   
 ## TODO
 
-### v 0.1
+### v 0.1 (all done)
 
 - Vos: Dir.bash
 - File.append
 - list of entries/files/dirs
+- support for efficient copy for Local and SSH storages
 
-### v 0.2
+### v 0.2 (not started)
 
 - efficient (not copy/destroy) versions of move_to, rename
 - glob search for directories: Dir['**/*.yml']

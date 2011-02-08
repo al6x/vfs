@@ -111,6 +111,29 @@ module Vfs
         end
       end
       
+      def efficient_dir_copy from, to
+        from.storage.open_fs do |from_fs|          
+          to.storage.open_fs do |to_fs|
+            if from_fs == to_fs
+              for_spec_helper_effective_copy_used
+
+              from_base, from_name = split_path from.path
+              assert cd(from_base)[from_name], :include?, :dir
+
+              to_base, to_name = split_path to.path
+              assert_not cd(to_base), :include?, to_name
+
+              cd(to_base)[to_name] = cd(from_base)[from_name]
+
+              true
+            else
+              false
+            end
+          end
+        end
+      end      
+      def for_spec_helper_effective_copy_used; end
+      
       # def upload_directory from_local_path, to_remote_path
       #   FileUtils.cp_r from_local_path, to_remote_path
       # end
@@ -121,8 +144,12 @@ module Vfs
       
       
       # 
-      # tmp
+      # Other
       # 
+      def local?; true end
+      
+      def to_s; 'hash_fs' end
+      
       def tmp &block
         tmp_dir = "/tmp_#{rand(10**6)}"
         create_dir tmp_dir
@@ -135,10 +162,6 @@ module Vfs
         else          
           tmp_dir
         end
-      end
-      
-      def to_s
-        'hash_fs'
       end
       
       protected

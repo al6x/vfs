@@ -1,4 +1,4 @@
-require 'base'
+require 'spec_helper'
 
 describe 'Container' do
   before :each do

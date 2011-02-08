@@ -1,4 +1,4 @@
-require 'base'
+require 'spec_helper'
 
 describe 'File' do
   before :each do

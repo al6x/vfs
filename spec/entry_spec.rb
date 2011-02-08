@@ -1,4 +1,4 @@
-require 'base'
+require 'spec_helper'
 
 describe 'Entry' do
   before :each do

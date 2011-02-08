@@ -1,4 +1,4 @@
-require 'base'
+require 'spec_helper'
 
 describe 'Dir' do
   before :each do
@@ -102,6 +102,11 @@ describe 'Dir' do
       list.to_set.should be_eql([@path.dir('dir'), @path.file('file')].to_set)
     end
     
+    it 'should raise error if trying :entries on file' do
+      @path.file('some_file').create
+      -> {@path.dir('some_file').entries}.should raise_error(/File/)
+    end
+    
     it 'files' do
       @path.files.should be_eql([@path.file('file')])
     end
@@ -132,33 +137,63 @@ describe 'Dir' do
       -> {@from.copy_to @from}.should raise_error(Vfs::Error, /itself/)
     end
     
-    def check_copy_for to, error_re = nil
+    def check_copy_for to, error_re1, error_re2 
       begin
         target = @from.copy_to to                  
         target['file'].read.should == 'something'
         target['dir/file2'].read.should == 'something2'
         target.should == to
       rescue Exception => e
-        raise e unless e.message =~ error_re
+        raise e unless e.message =~ error_re1
       end      
       
-      @from['dir/file2'].write! 'another'
-      -> {@from.copy_to to}.should raise_error(Vfs::Error, /exist/)
+      @from['dir/file2'].write! 'another'      
+      -> {@from.copy_to to}.should raise_error(Vfs::Error, error_re2)
       target = @from.copy_to! to
       target['file'].read.should == 'something'
       target['dir/file2'].read.should == 'another'            
     end
     
-    it 'should copy to file (and overwrite if forced)' do
-      check_copy_for @fs['to'], /can't copy Dir to File/
+    describe 'general copy' do   
+      before :each do
+        # we using here another HashFs storage, to prevent :effective_dir_copy to be used
+        @to = '/'.to_entry_on(Vfs::Storages::HashFs.new)['to']
+        
+        @from.storage.should_not_receive(:for_spec_helper_effective_copy_used)
+      end      
+    
+      it 'should copy to file (and overwrite if forced)' do
+        check_copy_for @to.file, /can't copy Dir to File/, /can't copy Dir to File/
+      end
+    
+      it 'should copy to dir (and overwrite if forced)' do
+        check_copy_for @to.dir, nil, /exist/
+      end
+    
+      it 'should copy to UniversalEntry (and overwrite if forced)' do
+        check_copy_for @to.entry, nil, /exist/
+      end
     end
     
-    it 'should copy to dir (and overwrite if forced)' do
-      check_copy_for @fs['to']
-    end
+    describe 'effective copy' do
+      before :each do
+        # we using the same HashFs storage, so :effective_dir_copy will be used
+        @to = @fs['to']
+        
+        @from.storage.should_receive(:for_spec_helper_effective_copy_used).at_least(1).times
+      end
+      
+      it 'should copy to file (and overwrite if forced)' do
+        check_copy_for @to.file, /can't copy Dir to File/, /can't copy Dir to File/
+      end
     
-    it 'should copy to UniversalEntry (and overwrite if forced)' do
-      check_copy_for @fs['to']
+      it 'should copy to dir (and overwrite if forced)' do
+        check_copy_for @to.dir, nil, /exist/
+      end
+    
+      it 'should copy to UniversalEntry (and overwrite if forced)' do
+        check_copy_for @to.entry, nil, /exist/
+      end
     end
     
     it 'should be chainable' do
