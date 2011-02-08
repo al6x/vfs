@@ -35,7 +35,7 @@ ASAP by using copy+destroy approach, will be fixed as soon as I'll have free tim
 
     # Connections, let's deploy our 'cool_app' project from our local box to remote server
     server = Vfs::Box.new(host: 'cool_app.com', ssh: {user: 'me', password: 'secret'})
-    me = '~'.to_dir
+    me = '~'.to_dir                              # handy shortcut for local FS
 
     cool_app = server['apps/cool_app']
     projects = me['projects']
