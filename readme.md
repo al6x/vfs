@@ -18,7 +18,7 @@ Currently, there are following implementations available:
 - simple storage-driver implementation, easy add new storage types (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
 
 ** all methods should have the same performance as native system calls, except for :move and :rename. Right now they are implemented 
-by using copy+destroy, will be fixed as soon as I'll have free time to do it.
+ASAP by using copy+destroy approach, will be fixed as soon as I'll have free time to do it.
 
 ## Code samples:
       gem 'vfs'                                    # Virtual File System
