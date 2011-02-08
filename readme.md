@@ -17,10 +17,10 @@ Currently, there are following implementations available:
 - simple storage-driver implementation, easy add new storage types (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
 
 ## Code samples:
-      gem 'vfs'                                  # Virtual File System
+      gem 'vfs'                                    # Virtual File System
       require 'vfs'                              
 
-      gem 'vos'                                  # Virtual Operating System
+      gem 'vos'                                    # Virtual Operating System
       require 'vos'
 
 
