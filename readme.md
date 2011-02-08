@@ -20,67 +20,72 @@ Currently, there are following implementations available:
 ** all methods should have the same performance as native system calls, except for :move and :rename. Right now they are implemented 
 ASAP by using copy+destroy approach, will be fixed as soon as I'll have free time to do it.
 
+## Installation
+
+    $ gem install vfs
+    $ gem install vos
+
 ## Code samples:
-      gem 'vfs'                                    # Virtual File System
-      require 'vfs'                              
+    gem 'vfs'                                    # Virtual File System
+    require 'vfs'                              
 
-      gem 'vos'                                    # Virtual Operating System
-      require 'vos'
-
-
-      # Connections, let's deploy our 'cool_app' project from our local box to remote server
-      server = Vfs::Box.new(host: 'cool_app.com', ssh: {user: 'me', password: 'secret'})
-      me = '~'.to_dir
-
-      cool_app = server['apps/cool_app']
-      projects = me['projects']
+    gem 'vos'                                    # Virtual Operating System
+    require 'vos'
 
 
-      # Working with dirs, copying dir from any source to any destination (local/remote/custom_storage_type)
-      projects['cool_app'].copy_to cool_app        
+    # Connections, let's deploy our 'cool_app' project from our local box to remote server
+    server = Vfs::Box.new(host: 'cool_app.com', ssh: {user: 'me', password: 'secret'})
+    me = '~'.to_dir
+
+    cool_app = server['apps/cool_app']
+    projects = me['projects']
 
 
-      # Working with files
-      dbc = cool_app.file('config/database.yml')   # <= the 'config' dir not exist yet
-      dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' has been created
-      dbc.content =~ /database/                    # => false, we forgot to add the database
-      dbc.append("\ndatabase: mysql")              # let's do it
-
-      dbc.update do |content|                      # and add host info
-        content + "\nhost: cool_app.com "
-      end                                       
-
-      projects['cool_app/config/database.yml'].    # or just overwrite it with our local dev version
-        copy_to! dbc
-        
-      # there are also streaming support (read/write/append), please go to specs for docs
+    # Working with dirs, copying dir from any source to any destination (local/remote/custom_storage_type)
+    projects['cool_app'].copy_to cool_app        
 
 
-      # Checks
-      cool_app['config'].exist?                    # => true
-      cool_app.dir('config').exist?                # => true
-      cool_app.file('config').exist?               # => false
+    # Working with files
+    dbc = cool_app.file('config/database.yml')   # <= the 'config' dir not exist yet
+    dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' has been created
+    dbc.content =~ /database/                    # => false, we forgot to add the database
+    dbc.append("\ndatabase: mysql")              # let's do it
 
-      cool_app['config'].dir?                      # => true
-      cool_app['config'].file?                     # => false
+    dbc.update do |content|                      # and add host info
+      content + "\nhost: cool_app.com "
+    end                                       
 
-
-      # Navigation
-      config = cool_app['config']
-      config.parent                                # => </apps/cool_app>
-      config['../..']                              # => </>
-      config['../..'].dir?                         # => true
-
-      cool_app.entries                             # => list of dirs and files, also support &block
-      cool_app.files                               # => list of files, also support &block
-      cool_app.dirs                                # => list of dirs, also support &block
+    projects['cool_app/config/database.yml'].    # or just overwrite it with our local dev version
+      copy_to! dbc
+      
+    # there are also streaming support (read/write/append), please go to specs for docs
 
 
-      # For more please go to specs (create/update/move/copy/destroy/...)
+    # Checks
+    cool_app['config'].exist?                    # => true
+    cool_app.dir('config').exist?                # => true
+    cool_app.file('config').exist?               # => false
+
+    cool_app['config'].dir?                      # => true
+    cool_app['config'].file?                     # => false
+
+
+    # Navigation
+    config = cool_app['config']
+    config.parent                                # => </apps/cool_app>
+    config['../..']                              # => </>
+    config['../..'].dir?                         # => true
+
+    cool_app.entries                             # => list of dirs and files, also support &block
+    cool_app.files                               # => list of files, also support &block
+    cool_app.dirs                                # => list of dirs, also support &block
+
+
+    # For more please go to specs (create/update/move/copy/destroy/...)
       
 ## Integration with [Vos][vos] (Virtual Operating System)
     
-      server['apps/cool_app'].bash 'rails production'
+    server['apps/cool_app'].bash 'rails production'
 
 For more details please go to [Vos][vos] project page.
 
