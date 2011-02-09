@@ -46,7 +46,7 @@ ASAP by using copy+destroy approach, will be fixed as soon as I'll have free tim
 
 
     # Working with files
-    dbc = deploy_dir.file('config/database.yml')   # <= the 'config' dir not exist yet
+    dbc = deploy_dir.file('config/database.yml') # <= the 'config' dir not exist yet
     dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' has been created
     dbc.content =~ /database/                    # => false, we forgot to add the database
     dbc.append("\ndatabase: mysql")              # let's do it
