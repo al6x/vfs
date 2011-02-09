@@ -37,16 +37,16 @@ ASAP by using copy+destroy approach, will be fixed as soon as I'll have free tim
     server = Box.new('cool_app.com')             # it will use id_rsa, or You can add {user: 'me', password: 'secret'}                                                  
     me = '~'.to_dir                              # handy shortcut for local FS
 
-    cool_app = server['apps/cool_app']
+    deploy_dir = server['apps/cool_app']
     projects = me['projects']
 
 
     # Working with dirs, copying dir from any source to any destination (local/remote/custom_storage_type)
-    projects['cool_app'].copy_to cool_app        
+    projects['cool_app'].copy_to deploy_dir        
 
 
     # Working with files
-    dbc = cool_app.file('config/database.yml')   # <= the 'config' dir not exist yet
+    dbc = deploy_dir.file('config/database.yml')   # <= the 'config' dir not exist yet
     dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' has been created
     dbc.content =~ /database/                    # => false, we forgot to add the database
     dbc.append("\ndatabase: mysql")              # let's do it
@@ -58,27 +58,27 @@ ASAP by using copy+destroy approach, will be fixed as soon as I'll have free tim
     projects['cool_app/config/database.yml'].    # or just overwrite it with our local dev version
       copy_to! dbc
       
-    # there are also streaming support (read/write/append), please go to specs for docs
+    # there are also streaming support (read/write/append) with &block, please go to specs for details
 
 
     # Checks
-    cool_app['config'].exist?                    # => true
-    cool_app.dir('config').exist?                # => true
-    cool_app.file('config').exist?               # => false
+    deploy_dir['config'].exist?                  # => true
+    deploy_dir.dir('config').exist?              # => true
+    deploy_dir.file('config').exist?             # => false
 
-    cool_app['config'].dir?                      # => true
-    cool_app['config'].file?                     # => false
+    deploy_dir['config'].dir?                    # => true
+    deploy_dir['config'].file?                   # => false
 
 
     # Navigation
-    config = cool_app['config']
+    config = deploy_dir['config']
     config.parent                                # => </apps/cool_app>
     config['../..']                              # => </>
     config['../..'].dir?                         # => true
 
-    cool_app.entries                             # => list of dirs and files, also support &block
-    cool_app.files                               # => list of files, also support &block
-    cool_app.dirs                                # => list of dirs, also support &block
+    deploy_dir.entries                           # => list of dirs and files, also support &block
+    deploy_dir.files                             # => list of files, also support &block
+    deploy_dir.dirs                              # => list of dirs, also support &block
 
 
     # For more please go to specs (create/update/move/copy/destroy/...)
