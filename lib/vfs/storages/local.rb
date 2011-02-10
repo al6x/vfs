@@ -19,6 +19,10 @@ module Vfs
           attrs = {}
           attrs[:file] = stat.file?
           attrs[:dir] = stat.directory?
+          
+          # attributes special for file system
+          attrs[:created_at] = stat.ctime
+          attrs[:updated_at] = stat.mtime
           attrs
         rescue Errno::ENOENT
           {}

@@ -7,4 +7,10 @@ describe Vfs::Storages::Local do
   before :each do
     @storage = Vfs::Storages::Local.new
   end
+  
+  describe 'attributes' do
+    it 'created_at'
+    
+    it 'updated_at'
+  end
 end

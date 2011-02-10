@@ -21,7 +21,7 @@ module Vfs
             data
           end
         rescue StandardError => e
-          raise Vrs::Error, "can't read Dir #{self}!" if dir.exist?
+          raise Vfs::Error, "can't read Dir #{self}!" if dir.exist?
           attrs = get
           if attrs[:file]
             # unknown internal error

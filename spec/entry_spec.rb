@@ -21,4 +21,10 @@ describe 'Entry' do
     end
     tmp.should_not exist
   end
+  
+  describe 'attributes' do
+    it 'created_at'
+    
+    it 'updated_at'
+  end
 end

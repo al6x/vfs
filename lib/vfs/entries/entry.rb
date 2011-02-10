@@ -73,14 +73,11 @@ module Vfs
       not_implemented
     end
     
-    def dir?
-      !!get(:dir)
-    end
+    def dir?; !!get(:dir) end
+    def file?; !!get(:file) end        
     
-    def file?
-      !!get(:file)
-    end
-      
+    include SpecialAttributes
+    
     
     # 
     # Micelaneous
