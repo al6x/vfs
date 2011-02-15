@@ -166,15 +166,7 @@ module Vfs
         raise "can't copy to unknown Entry!"
       end
       
-      unless options[:override]
-        efficient_dir_copy(target, options) || unefficient_dir_copy(target, options)
-      else
-        # We can't use efficient_dir_copy with :override option, 
-        # because we have no way to pass this option into :efficient_dir_copy
-        # Actually it's possible to do in some cases, but it makes realisation of storage.efficient_dir_copy 
-        # too complicated, it's not worth it.
-        unefficient_dir_copy(target, options)
-      end
+      efficient_dir_copy(target, options) || unefficient_dir_copy(target, options)      
       
       target
     end
@@ -212,7 +204,7 @@ module Vfs
           try = 0
           begin                                
             try += 1                    
-            self.class.efficient_dir_copy(self, to)
+            self.class.efficient_dir_copy(self, to, options[:override])
           rescue StandardError => error          
             unknown_errors = 0
           
@@ -258,12 +250,12 @@ module Vfs
         end
       end
       
-      def self.efficient_dir_copy from, to
+      def self.efficient_dir_copy from, to, override
         from.storage.open_fs{|fs|
-          fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to)
+          fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)
         } or
         to.storage.open_fs{|fs|
-          fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to)
+          fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)
         }
       end
   end

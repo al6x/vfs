@@ -83,7 +83,9 @@ module Vfs
           end
         end
         
-        def efficient_dir_copy from, to
+        def efficient_dir_copy from, to, override          
+          return false if override # FileUtils.cp_r doesn't support this behaviour
+            
           from.storage.open_fs do |from_fs|          
             to.storage.open_fs do |to_fs|
               if from_fs.local? and to_fs.local?

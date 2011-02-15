@@ -111,13 +111,13 @@ module Vfs
         end
       end
       
-      def efficient_dir_copy from, to
+      def efficient_dir_copy from, to, override        
         from.storage.open_fs do |from_fs|          
           to.storage.open_fs do |to_fs|
             if from_fs == to_fs
               for_spec_helper_effective_copy_used
 
-              _efficient_dir_copy from.path, to.path
+              _efficient_dir_copy from.path, to.path, override
               true
             else
               false
@@ -126,7 +126,7 @@ module Vfs
         end
       end  
       
-      def _efficient_dir_copy from_path, to_path
+      def _efficient_dir_copy from_path, to_path, override
         from_base, from_name = split_path from_path
         assert cd(from_base)[from_name], :include?, :dir
 
@@ -137,9 +137,9 @@ module Vfs
           if cd(to_base)[to_name][:dir]
             each_entry from_path do |name, type|
               if type == :dir
-                _efficient_dir_copy "#{from_path}/#{name}", "#{to_path}/#{name}"
+                _efficient_dir_copy "#{from_path}/#{name}", "#{to_path}/#{name}", override
               else
-                raise "file #{to_path}/#{name} already exist!" if cd(to_base)[to_name].include? name
+                raise "file #{to_path}/#{name} already exist!" if cd(to_base)[to_name].include?(name) and !override                  
                 cd(to_base)[to_name][name] = cd(from_base)[from_name][name].clone
               end
             end
@@ -148,7 +148,7 @@ module Vfs
           end                
         else
           cd(to_base)[to_name] = {dir: true}
-          _efficient_dir_copy from_path, to_path
+          _efficient_dir_copy from_path, to_path, override
         end
       end
       protected :_efficient_dir_copy
