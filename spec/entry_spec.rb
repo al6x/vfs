@@ -22,6 +22,10 @@ describe 'Entry' do
     tmp.should_not exist
   end
   
+  it 'should respond to local?'
+  
+  it 'should respond to host'
+  
   describe 'attributes' do
     it 'created_at'
     

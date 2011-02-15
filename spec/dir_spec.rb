@@ -121,6 +121,8 @@ describe 'Dir' do
       @path.include?('file').should be_true
       @path.include?('non_existing').should be_false
     end
+    
+    it 'empty?'
   end
   
   describe 'copying' do
@@ -137,69 +139,81 @@ describe 'Dir' do
       -> {@from.copy_to @from}.should raise_error(Vfs::Error, /itself/)
     end
     
-    def check_copy_for to, error_re1, error_re2 
-      begin
-        target = @from.copy_to to                  
-        target['file'].read.should == 'something'
-        target['dir/file2'].read.should == 'something2'
-        target.should == to
-      rescue Exception => e
-        raise e unless e.message =~ error_re1
+    shared_examples_for 'copy_to behavior' do
+      it 'should not copy to file (and overwrite if forced)' do
+        -> {@from.copy_to @to.file}.should raise_error(/can't copy Dir to File/)
+        
+        @from.copy_to! @to.file
+        @to['file'].read.should == 'something'
+      end
+      
+      it 'should not override files (and override if forced)' do
+        @from.copy_to @to
+        -> {@from.copy_to @to}.should raise_error(/already exist/)
+        
+        @from['dir/file2'].write! 'another'
+        @from.copy_to! @to
+        @to['dir/file2'].read.should == 'another'
+      end
+    
+      it 'should copy to UniversalEntry (and overwrite if forced)' do
+        @from.copy_to @to.entry
+        -> {@from.copy_to @to.entry}.should raise_error(/already exist/)
+        
+        @from.copy_to! @to.entry
+        @to['file'].read.should == 'something'        
+      end
+      
+      it "shouldn't delete existing content of directory" do
+        @to.dir.create!
+        @to.file('existing_file').write 'existing_content'
+        @to.dir('existing_dir').create
+        @to.file('dir/existing_file2').write 'existing_content2'
+
+        @from.copy_to @to
+        # copied files
+        @to['file'].read.should == 'something'
+        @to['dir/file2'].read.should == 'something2'
+        # shouldn't delete already existing files
+        @to.file('existing_file').read.should == 'existing_content'
+        @to.dir('existing_dir').should exist
+        @to.file('dir/existing_file2').read.should == 'existing_content2'
       end      
       
-      @from['dir/file2'].write! 'another'      
-      -> {@from.copy_to to}.should raise_error(Vfs::Error, error_re2)
-      target = @from.copy_to! to
-      target['file'].read.should == 'something'
-      target['dir/file2'].read.should == 'another'            
+      it 'should be chainable' do
+        @from.copy_to(@to).should == @to
+        @from.copy_to!(@to).should == @to
+      end
+      
+      it "should override without deleting other files" do
+        @from.copy_to(@to).should == @to 
+        @to.file('other_file').write 'other'
+                       
+        @from.copy_to!(@to).should == @to
+        @to.file('other_file').read.should == 'other'
+      end
     end
     
     describe 'general copy' do   
+      it_should_behave_like 'copy_to behavior'
+      
       before :each do
         # we using here another HashFs storage, to prevent :effective_dir_copy to be used
         @to = '/'.to_entry_on(Vfs::Storages::HashFs.new)['to']
         
         @from.storage.should_not_receive(:for_spec_helper_effective_copy_used)
-      end      
-    
-      it 'should copy to file (and overwrite if forced)' do
-        check_copy_for @to.file, /can't copy Dir to File/, /can't copy Dir to File/
-      end
-    
-      it 'should copy to dir (and overwrite if forced)' do
-        check_copy_for @to.dir, nil, /exist/
-      end
-    
-      it 'should copy to UniversalEntry (and overwrite if forced)' do
-        check_copy_for @to.entry, nil, /exist/
-      end
-    end
+      end            
+    end    
     
     describe 'effective copy' do
+      it_should_behave_like 'copy_to behavior'
+      
       before :each do
         # we using the same HashFs storage, so :effective_dir_copy will be used
         @to = @fs['to']
         
-        @from.storage.should_receive(:for_spec_helper_effective_copy_used).at_least(1).times
+        # @from.storage.should_receive(:for_spec_helper_effective_copy_used).at_least(1).times
       end
-      
-      it 'should copy to file (and overwrite if forced)' do
-        check_copy_for @to.file, /can't copy Dir to File/, /can't copy Dir to File/
-      end
-    
-      it 'should copy to dir (and overwrite if forced)' do
-        check_copy_for @to.dir, nil, /exist/
-      end
-    
-      it 'should copy to UniversalEntry (and overwrite if forced)' do
-        check_copy_for @to.entry, nil, /exist/
-      end
-    end
-    
-    it 'should be chainable' do
-      to = @fs['to']
-      @from.copy_to(to).should == to
-      @from.copy_to!(to).should == to
     end
   end
     

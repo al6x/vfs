@@ -20,6 +20,8 @@ shared_examples_for 'vfs storage' do
     @storage.open_fs{|fs| fs.should respond_to(:local?)}
   end
   
+  it 'should respond to :host'
+  
   it 'should have root dir' do
     @storage.open_fs do |fs|
       fs.attributes('/').subset(:file, :dir).should == {file: false, dir: true}
@@ -99,7 +101,7 @@ shared_examples_for 'vfs storage' do
     it 'each' do
       @storage.open_fs do |fs|
         list = {}
-        fs.each(@tmp_dir){|path, type| list[path] = type}
+        fs.each_entry(@tmp_dir){|path, type| list[path] = type}
         list.should be_empty
       
         dir, file = "#{@tmp_dir}/dir", "#{@tmp_dir}/file"
@@ -107,7 +109,7 @@ shared_examples_for 'vfs storage' do
         fs.write_file(file, false){|w| w.call 'something'}
       
         list = {}
-        fs.each(@tmp_dir){|path, type| list[path] = type}
+        fs.each_entry(@tmp_dir){|path, type| list[path] = type}
         list.should == {'dir' => :dir, 'file' => :file}
       end
     end

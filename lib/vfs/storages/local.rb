@@ -72,7 +72,7 @@ module Vfs
           FileUtils.rm_r path
         end      
 
-        def each path, &block
+        def each_entry path, &block
           ::Dir.foreach path do |relative_name|
             next if relative_name == '.' or relative_name == '..'
             if ::File.directory? "#{path}/#{relative_name}"

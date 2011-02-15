@@ -98,6 +98,10 @@ module Vfs
       end
     end
     
+    def local?
+      storage.local?
+    end
+    
     
     # 
     # Utils

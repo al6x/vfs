@@ -1,5 +1,5 @@
 # 
-# Dirty and uneficient In Memory FS, mainly for tests.
+# Very dirty and uneficient In Memory FS, mainly for tests.
 # 
 module Vfs
   module Storages
@@ -98,7 +98,7 @@ module Vfs
       #   raise 'not supported'
       # end
       
-      def each path, &block
+      def each_entry path, &block
         base, name = split_path path
         assert cd(base)[name], :include?, :dir
         cd(base)[name].each do |relative_name, content|
@@ -117,21 +117,41 @@ module Vfs
             if from_fs == to_fs
               for_spec_helper_effective_copy_used
 
-              from_base, from_name = split_path from.path
-              assert cd(from_base)[from_name], :include?, :dir
-
-              to_base, to_name = split_path to.path
-              assert_not cd(to_base), :include?, to_name
-
-              cd(to_base)[to_name] = cd(from_base)[from_name]
-
+              _efficient_dir_copy from.path, to.path
               true
             else
               false
             end
           end
         end
-      end      
+      end  
+      
+      def _efficient_dir_copy from_path, to_path
+        from_base, from_name = split_path from_path
+        assert cd(from_base)[from_name], :include?, :dir
+
+        to_base, to_name = split_path to_path
+        # assert_not cd(to_base), :include?, to_name
+        
+        if cd(to_base).include? to_name
+          if cd(to_base)[to_name][:dir]
+            each_entry from_path do |name, type|
+              if type == :dir
+                _efficient_dir_copy "#{from_path}/#{name}", "#{to_path}/#{name}"
+              else
+                raise "file #{to_path}/#{name} already exist!" if cd(to_base)[to_name].include? name
+                cd(to_base)[to_name][name] = cd(from_base)[from_name][name].clone
+              end
+            end
+          else
+            raise "can't copy dir #{from_path} to file #{to_path}!"
+          end                
+        else
+          cd(to_base)[to_name] = {dir: true}
+          _efficient_dir_copy from_path, to_path
+        end
+      end
+      protected :_efficient_dir_copy
       def for_spec_helper_effective_copy_used; end
       
       # def upload_directory from_local_path, to_remote_path
