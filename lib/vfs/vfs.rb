@@ -1,7 +1,7 @@
 module Vfs
   class << self
     def default_storage
-      ::Storages::Local.new
+      ::Vfs::Storages::Local.new
     end
     
     def to_entry
