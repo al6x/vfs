@@ -112,6 +112,7 @@ different API than local FS, and you has to remember all thouse little quirks).
 
 ### v 0.2
 
+- remove :host from Vfs to Vos
 - efficient (not copy/destroy) versions of move_to, rename
 - glob search for directories: Dir['**/*.yml']
 - access via attributes and helpers for unix chmod

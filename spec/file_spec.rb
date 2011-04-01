@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'File' do
-  before :each do
+  before do
     @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
     @path = @fs['/a/b/c']
   end
@@ -110,7 +110,7 @@ describe 'File' do
   end
   
   describe 'copying' do
-    before :each do 
+    before do 
       @from = @path.file
       @from.write('something')
     end
@@ -185,5 +185,9 @@ describe 'File' do
       @path.file.destroy.should == @path
       @path.file.destroy!.should == @path
     end
+  end
+  
+  describe "extra stuff" do
+    it 'render'
   end
 end

@@ -3,13 +3,13 @@ require 'rspec_ext'
 require 'ruby_ext'
 
 shared_examples_for 'vfs storage' do  
-  before :each do
+  before do
     @storage.open_fs do |fs|
       @tmp_dir = fs.tmp
     end
   end
 
-  after :each do
+  after do
     @storage.open_fs do |fs|
       attrs = fs.attributes(@tmp_dir)
       fs.delete_dir @tmp_dir if attrs && attrs[:dir]
@@ -29,7 +29,7 @@ shared_examples_for 'vfs storage' do
   end
     
   describe "files" do  
-    before :each do
+    before do
       @remote_file = "#{@tmp_dir}/remote_file"
     end
     
@@ -70,11 +70,11 @@ shared_examples_for 'vfs storage' do
   end
   
   describe 'directories' do
-    # before :each do
+    # before do
     #   @from_local, @remote_path, @to_local = "#{@local_dir}/dir", "#{@tmp_dir}/upload", "#{@local_dir}/download"
     # end
     
-    before :each do
+    before do
       @remote_dir = "#{@tmp_dir}/some_dir"
     end
     

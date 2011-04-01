@@ -181,5 +181,16 @@ module Vfs
       options[:override] = true
       move_to to, options
     end
+    
+    
+    # 
+    # Extra Stuff
+    # 
+    def render *args
+      require 'tilt'
+      
+      args.unshift Object.new if args.size == 1 and args.first.is_a?(Hash)
+      Tilt::ERBTemplate.new(path).render *args
+    end
   end
 end

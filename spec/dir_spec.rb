@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Dir' do
-  before :each do
+  before do
     @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
     @path = @fs['/a/b/c']
   end
@@ -87,7 +87,7 @@ describe 'Dir' do
   end
   
   describe 'content' do
-    before :each do
+    before do
       @path.dir('dir').create
       @path.dir('dir/another_dir').create
       @path.file('file').create      
@@ -126,7 +126,7 @@ describe 'Dir' do
   end
   
   describe 'copying' do
-    before :each do 
+    before do 
       @from = @path.dir
       @from.create
       @from.file('file').write 'something'
@@ -197,7 +197,7 @@ describe 'Dir' do
     describe 'general copy' do   
       it_should_behave_like 'copy_to behavior'
       
-      before :each do
+      before do
         # we using here another HashFs storage, to prevent :effective_dir_copy to be used
         @to = '/'.to_entry_on(Vfs::Storages::HashFs.new)['to']
         
@@ -208,7 +208,7 @@ describe 'Dir' do
     describe 'effective copy' do
       it_should_behave_like 'copy_to behavior'
       
-      before :each do
+      before do
         # we using the same HashFs storage, so :effective_dir_copy will be used
         @to = @fs['to']
         

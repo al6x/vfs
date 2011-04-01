@@ -1,7 +1,7 @@
 class String
   def to_entry_on storage = nil
     path = self
-    storage ||= Vfs::Storages::Local.new    
+    storage ||= Vfs.default_storage
     
     Vfs::Dir.new(storage, '/')[path]
   end

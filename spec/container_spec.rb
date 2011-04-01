@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Container' do
-  before :each do
+  before do
     @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
   end
   
