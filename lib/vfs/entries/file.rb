@@ -192,5 +192,13 @@ module Vfs
       args.unshift Object.new if args.size == 1 and args.first.is_a?(Hash)
       Tilt::ERBTemplate.new(path).render *args
     end
+    
+    def basename
+      ::File.basename(name, File.extname(name))
+    end
+    
+    def extension
+      ::File.extname(name).sub(/^\./, '')
+    end
   end
 end

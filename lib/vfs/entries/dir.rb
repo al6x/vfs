@@ -151,7 +151,7 @@ module Vfs
     def copy_to to, options = {}
       options[:bang] = true unless options.include? :bang
       
-      raise Error, 'invalid argument' unless to.is_a? Entry
+      raise Error, "invalid argument, destination should be a Entry (#{to})!" unless to.is_a? Entry
       raise Error, "you can't copy to itself" if self == to
 
       target = if to.is_a? File
