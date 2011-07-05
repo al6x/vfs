@@ -2,7 +2,7 @@ require 'rake_ext'
 
 project(
   name: "vfs",
-  version: "0.3.1",
+  gem: true,
   summary: "Virtual File System",
 
   author: "Alexey Petrushin",
