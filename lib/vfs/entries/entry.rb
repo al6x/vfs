@@ -80,7 +80,7 @@ module Vfs
     
     
     # 
-    # Micelaneous
+    # Miscellaneous
     # 
     def name
       path_cache.name
