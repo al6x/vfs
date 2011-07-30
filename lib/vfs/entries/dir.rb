@@ -92,12 +92,17 @@ module Vfs
     # 
     # Content
     # 
-    def entries options = {}, &block
+    def entries *args, &block
+      raise "invalid arguments #{args.inspect}!" if args.size > 2
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      filter = args.first
       options[:bang] = true unless options.include? :bang      
+      
       storage.open_fs do |fs| 
         begin
           list = []
-          fs.each_entry path do |name, type|
+          # filter option is optional and supported only for some storages (local fs for example) 
+          fs.each_entry path, filter do |name, type|
             next if options[:filter] and options[:filter] != type
             entry = if type == :dir
               dir(name)

@@ -98,7 +98,9 @@ module Vfs
       #   raise 'not supported'
       # end
       
-      def each_entry path, &block
+      def each_entry path, filter, &block
+        raise "hash_fs not support :each_entry with filter!" if filter
+        
         base, name = split_path path
         assert cd(base)[name], :include?, :dir
         cd(base)[name].each do |relative_name, content|
@@ -135,7 +137,7 @@ module Vfs
         
         if cd(to_base).include? to_name
           if cd(to_base)[to_name][:dir]
-            each_entry from_path do |name, type|
+            each_entry from_path, nil do |name, type|
               if type == :dir
                 _efficient_dir_copy "#{from_path}/#{name}", "#{to_path}/#{name}", override
               else

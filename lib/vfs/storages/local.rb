@@ -72,13 +72,25 @@ module Vfs
           FileUtils.rm_r path
         end      
 
-        def each_entry path, &block
-          ::Dir.foreach path do |relative_name|
-            next if relative_name == '.' or relative_name == '..'
-            if ::File.directory? "#{path}/#{relative_name}"
-              block.call relative_name, :dir
-            else
-              block.call relative_name, :file
+        def each_entry path, filter, &block
+          if filter
+            path_with_trailing_slash = path == '/' ? path : "#{path}/"
+            ::Dir["#{path_with_trailing_slash}#{filter}"].each do |absolute_path|
+              relative_path = absolute_path.sub path_with_trailing_slash, ''
+              if ::File.directory? absolute_path
+                block.call relative_path, :dir
+              else
+                block.call relative_path, :file
+              end
+            end
+          else
+            ::Dir.foreach path do |relative_name|
+              next if relative_name == '.' or relative_name == '..'
+              if ::File.directory? "#{path}/#{relative_name}"
+                block.call relative_name, :dir
+              else
+                block.call relative_name, :file
+              end
             end
           end
         end

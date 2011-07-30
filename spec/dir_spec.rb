@@ -86,7 +86,7 @@ describe 'Dir' do
     end
   end
   
-  describe 'content' do
+  describe 'entries, files, dirs' do
     before do
       @path.dir('dir').create
       @path.dir('dir/another_dir').create
@@ -101,6 +101,8 @@ describe 'Dir' do
       @path.entries{|e| list << e}
       list.to_set.should be_eql([@path.dir('dir'), @path.file('file')].to_set)
     end
+    
+    it "glob search support"
     
     it 'should raise error if trying :entries on file' do
       @path.file('some_file').create
