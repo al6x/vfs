@@ -1,5 +1,5 @@
 # 
-# Very dirty and uneficient In Memory FS, mainly for tests.
+# Very dirty and inefficient In Memory File System, mainly for tests.
 # 
 module Vfs
   module Storages
