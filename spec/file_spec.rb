@@ -136,7 +136,16 @@ describe 'File' do
     end
     
     it 'should copy to dir (and overwrite if forced)' do
-      check_copy_for @fs.dir("to")
+      target = @fs.dir("to")
+      @from.copy_to target
+      target[@from.name].read.should == 'something'
+      target[@from.name].should == to
+
+      @from.write! 'another'
+      -> {@from.copy_to target}.should raise_error(Vfs::Error, /exist/)
+      target = @from.copy_to! to
+      target[@from.name].read.should == 'another'
+      target[@from.name].should == to
     end
     
     it 'should copy to UniversalEntry (and overwrite if forced)' do
