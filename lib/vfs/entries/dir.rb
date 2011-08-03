@@ -95,14 +95,14 @@ module Vfs
     def entries *args, &block
       raise "invalid arguments #{args.inspect}!" if args.size > 2
       options = args.last.is_a?(Hash) ? args.pop : {}
-      filter = args.first
+      query = args.first
       options[:bang] = true unless options.include? :bang      
       
       storage.open_fs do |fs| 
         begin
           list = []
-          # filter option is optional and supported only for some storages (local fs for example) 
-          fs.each_entry path, filter do |name, type|
+          # query option is optional and supported only for some storages (local fs for example) 
+          fs.each_entry path, query do |name, type|
             next if options[:filter] and options[:filter] != type
             entry = if type == :dir
               dir(name)
@@ -130,14 +130,20 @@ module Vfs
     end
     alias_method :each, :entries
     
-    def files options = {}, &block
+    def files *args, &block
+      options = args.last.is_a?(Hash) ? args.pop : {}      
+      
       options[:filter] = :file
-      entries options, &block
+      args << options
+      entries *args, &block
     end
     
-    def dirs options = {}, &block
+    def dirs *args, &block
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      
       options[:filter] = :dir
-      entries options, &block
+      args << options
+      entries *args, &block
     end    
     
     def include? name

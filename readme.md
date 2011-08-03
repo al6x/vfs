@@ -107,7 +107,23 @@ is to provide 1-to-1 clone of underlying OS API, instead of provididing handy to
 And if you want to use remote FS - things are getting even worse and more complicated (Net::SSH & Net::SFTP use a little
 different API than local FS, and you has to remember all thouse little quirks).
   
-## TODO
+## Roadmap
+
+### some future
+
+- add storages: Hadoop DFS, MongoDB, Amazon S3
+
+### v 0.2
+
+- refactor specs with :fakefs
+- remove :host from Vfs to Vos
+- efficient (not copy/destroy) versions of move_to, rename
+- access via attributes and helpers for unix chmod
+- add storages: remote FS over HTTP.
+
+Done:
+
+- glob search for directories: Dir['**/*.yml']
 
 ### v 0.1 (all done)
 
@@ -115,18 +131,6 @@ different API than local FS, and you has to remember all thouse little quirks).
 - File.append
 - list of entries/files/dirs
 - support for efficient copy for Local and SSH storages
-
-### v 0.2
-
-- remove :host from Vfs to Vos
-- efficient (not copy/destroy) versions of move_to, rename
-- glob search for directories: Dir['**/*.yml']
-- access via attributes and helpers for unix chmod
-- add storages: remote FS over HTTP.
-
-### future
-
-- add storages: Hadoop DFS, MongoDB, Amazon S3
 
 [vos]: http://github.com/alexeypetrushin/vos
 [cluster_management]: http://github.com/alexeypetrushin/cluster_management

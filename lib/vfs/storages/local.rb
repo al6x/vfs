@@ -23,6 +23,7 @@ module Vfs
           # attributes special for file system
           attrs[:created_at] = stat.ctime
           attrs[:updated_at] = stat.mtime
+          attrs[:size] = stat.size
           attrs
         rescue Errno::ENOENT
           {}
@@ -72,10 +73,10 @@ module Vfs
           FileUtils.rm_r path
         end      
 
-        def each_entry path, filter, &block
-          if filter
+        def each_entry path, query, &block
+          if query
             path_with_trailing_slash = path == '/' ? path : "#{path}/"
-            ::Dir["#{path_with_trailing_slash}#{filter}"].each do |absolute_path|
+            ::Dir["#{path_with_trailing_slash}#{query}"].each do |absolute_path|
               relative_path = absolute_path.sub path_with_trailing_slash, ''
               if ::File.directory? absolute_path
                 block.call relative_path, :dir

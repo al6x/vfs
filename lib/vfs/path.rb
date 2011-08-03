@@ -44,22 +44,22 @@ module Vfs
     
     class << self
       def absolute? path
-        path =~ /^[\/~]|^\.$|^\.\//
+        path =~ /^[\/~\/]|^\.$|^\.\//
       end
-      
+            
       def valid? path, forbid_relative = true, &block
         result, err = if forbid_relative and !absolute?(path)
-          [false, "path must be started with '/', '~', or '.'"]
-        elsif path =~ /.+[\/~]$|\/\.$/
-          [false, "path can't be ended with '/', '~', or '/.'"]
-        elsif path =~ /\/[\/~]|\/\.\//
+          [false, "path must be started with '/', or '.'"]
+        elsif path =~ /.+\/~$|.+\/$|\/\.$/
+          [false, "path can't be ended with '/', '/~', or '/.'"]
+        elsif path =~ /\/\/|\/~\/|\/\.\//
           [false, "path can't include '/./', '/~/', '//' combinations!"]
-        elsif path =~ /.+[~]|\/\.\//
-          [false, "'~', or '.' can be present only at the begining of string"]
+        # elsif path =~ /.+[~]|\/\.\//
+        #   [false, "'~', or '.' can be present only at the begining of string"]
         else
           [true, nil]
         end
-    
+          
         block.call err if block and !result and err
         result
       end

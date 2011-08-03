@@ -30,5 +30,7 @@ describe 'Entry' do
     it 'created_at'
     
     it 'updated_at'
+    
+    it 'size'
   end
 end

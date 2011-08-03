@@ -12,7 +12,10 @@ describe "Path" do
       /a/../c      
       /a/...      
       ~/a   
-      ./a   
+      ./a
+      /~a
+      /a~b
+      /a.b~ 
     ).each{|path| Path.should be_valid(path)}    
     
     special = ['']
@@ -35,9 +38,10 @@ describe "Path" do
       /a        /a
       ~/a       ~/a
       ./a       ./a
-      /a/../c   /c
+      /a/../c   /c      
       /         /
       ~         ~
+      /a~/b    /a~/b
       .         .
     ) + special).each_slice(2) do |path, normalized_path| 
       Path.normalize(path).should == normalized_path

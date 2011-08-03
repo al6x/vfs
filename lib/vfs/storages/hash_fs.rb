@@ -98,8 +98,8 @@ module Vfs
       #   raise 'not supported'
       # end
       
-      def each_entry path, filter, &block
-        raise "hash_fs not support :each_entry with filter!" if filter
+      def each_entry path, query, &block
+        raise "hash_fs not support :each_entry with query!" if query
         
         base, name = split_path path
         assert cd(base)[name], :include?, :dir

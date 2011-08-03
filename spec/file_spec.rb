@@ -189,5 +189,7 @@ describe 'File' do
   
   describe "extra stuff" do
     it 'render'
+    
+    it 'size'
   end
 end
