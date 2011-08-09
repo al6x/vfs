@@ -4,7 +4,7 @@ module Vfs
   module Storages
     class Local
       module LocalVfsHelper
-        DEFAULT_BUFFER = 1024*128
+        DEFAULT_BUFFER = 1000 * 1024
         
         attr_writer :buffer
         def buffer
