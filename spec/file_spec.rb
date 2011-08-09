@@ -188,7 +188,23 @@ describe 'File' do
   end
   
   describe "extra stuff" do
-    it 'render'
+    it 'render' do
+      template = @fs / 'letter.erb'
+      template.write "Hello dear <%= name %>"
+      template.render(name: 'Mary').should == "Hello dear Mary"
+    end
+    
+    begin
+      require 'haml'
+      
+      it 'render using other template engines' do      
+        template = @fs / 'letter.haml'
+        template.write "Hello dear \#{name}"
+        template.render(name: 'Mary').should =~ /Hello dear Mary/
+      end
+    rescue LoadError
+      warn "no :haml template engine, skipping rendering with haml specs"
+    end
     
     it 'size'
   end

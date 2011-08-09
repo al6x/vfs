@@ -191,7 +191,7 @@ module Vfs
       
       args.unshift Object.new if args.size == 1 and args.first.is_a?(Hash)
       
-      template = Tilt.new path
+      template = Tilt.new(path){read}
       template.render *args
     end
     
