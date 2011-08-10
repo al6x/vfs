@@ -19,7 +19,7 @@ Currently, there are following implementations available:
 **Performance**:
 
 - sometimes there's extra call to check if file or dir exist before overriding it
-- copy: it doesn't use FileUtils.cp_r, it walks on the directory tree and copy each entry individually, so it's probably a little slover.
+- copy: right now it doesn't use FileUtils.cp_r, it walks on the directory tree and copy each entry individually, so it's probably a little slover.
 - right now :move and :rename implemented ASAP by copy & destroy, will be fixed as soon as I'll have time to do it.
 
 ## Installation
@@ -115,30 +115,9 @@ is to provide 1-to-1 clone of underlying OS API, instead of provididing handy to
 And if you want to use remote FS - things are getting even worse and more complicated (Net::SSH & Net::SFTP use a little
 different API than local FS, and you has to remember all thouse little quirks).
 
-## Roadmap
+Copyright (c) Alexey Petrushin http://petrush.in, released under the MIT license.
 
-### some future
-
-- add storages: Hadoop DFS, MongoDB, Amazon S3
-
-### v 0.2
-
-- refactor specs with :fakefs
-- remove :host from Vfs to Vos
-- efficient (not copy/destroy) versions of move_to, rename
-- access via attributes and helpers for unix chmod
-- add storages: remote FS over HTTP.
-
-Done:
-
-- glob search for directories: Dir['**/*.yml']
-
-### v 0.1 (all done)
-
-- Vos: Dir.bash
-- File.append
-- list of entries/files/dirs
-- support for efficient copy for Local and SSH storages
+## Please let me know about bugs and Your proposals, there's the 'Issues' tab at the top, feel free to submit.
 
 [vos]: http://github.com/alexeypetrushin/vos
 [cluster_management]: http://github.com/alexeypetrushin/cluster_management
