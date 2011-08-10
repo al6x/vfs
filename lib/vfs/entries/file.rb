@@ -69,7 +69,7 @@ module Vfs
           else
             fs.write_file(path, options[:append]){|writer| writer.call data}
           end
-        rescue StandardError => error                
+        rescue StandardError => error
           entry = self.entry
           if entry.exist?
             if options[:override]
@@ -86,7 +86,7 @@ module Vfs
               parent.create(options)        
             end
           end
-              
+
           retry if try < 2
         end
       end

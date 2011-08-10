@@ -1,3 +1,4 @@
+warn 'remove trailing spaces'
 require 'tempfile'
 
 module Vfs
@@ -46,6 +47,9 @@ module Vfs
         end
 
         def write_file path, append, &block
+          # TODO2 Performance lost, extra call to check file existence
+          raise "can't write, entry #{path} already exist!" if !append and ::File.exist?(path)
+          
           option = append ? 'a' : 'w'          
           ::File.open path, option do |os|
             writer = -> buff {os.write buff}
@@ -53,7 +57,7 @@ module Vfs
           end
         end
 
-        def delete_file path
+        def delete_file path          
           ::File.delete path
         end
 
@@ -70,6 +74,9 @@ module Vfs
         end
 
         def delete_dir path
+          # TODO2 Performance lost, extra call to check file existence
+          raise "can't delete file (#{path})!" if ::File.file?(path)
+          
           FileUtils.rm_r path
         end      
 
@@ -96,33 +103,20 @@ module Vfs
           end
         end
         
-        def efficient_dir_copy from, to, override          
-          return false if override # FileUtils.cp_r doesn't support this behaviour
-            
-          from.storage.open_fs do |from_fs|          
-            to.storage.open_fs do |to_fs|
-              if from_fs.local? and to_fs.local?
-                FileUtils.cp_r from.path, to.path
-                true
-              else
-                false
-              end
-            end
-          end
-        end
-
-        # def move_dir path
-        #   raise 'not supported'
+        # def efficient_dir_copy from, to, override          
+        #   return false if override # FileUtils.cp_r doesn't support this behaviour
+        #     
+        #   from.storage.open_fs do |from_fs|          
+        #     to.storage.open_fs do |to_fs|
+        #       if from_fs.local? and to_fs.local?
+        #         FileUtils.cp_r from.path, to.path
+        #         true
+        #       else
+        #         false
+        #       end
+        #     end
+        #   end
         # end
-
-        # def upload_directory from_local_path, to_remote_path
-        #   FileUtils.cp_r from_local_path, to_remote_path
-        # end
-        # 
-        # def download_directory from_remote_path, to_local_path
-        #   FileUtils.cp_r from_remote_path, to_local_path
-        # end
-
 
         # 
         # Other

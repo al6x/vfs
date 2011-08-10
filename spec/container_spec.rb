@@ -1,30 +1,29 @@
 require 'spec_helper'
 
 describe 'Container' do
-  before do
-    @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
-  end
+  with_test_fs
   
   it "should threat paths as UniversalEntry except it ends with '/'" do
-    @fs.should_receive(:entry).with('/a/b')
-    @fs['/a/b']
+    test_fs.should_receive(:entry).with('tmp/a/b')
+    test_fs['tmp/a/b']
     
-    @fs.should_receive(:dir).with('/a/b')
-    @fs['/a/b/']
+    test_fs.should_receive(:dir).with('tmp/a/b')
+    test_fs['tmp/a/b/']
   end
   
   it '/' do
-    @fs[:some_path].should == @fs / :some_path
+    test_fs[:some_path].should == test_fs / :some_path
+    test_fs[:some_path][:another_path].should == test_fs / :some_path / :another_path
   end
   
   it "UniversalEntry should be wrapped inside of proxy, Dir and File should not" do
-    -> {@fs.dir.proxy?}.should raise_error(NoMethodError)
-    -> {@fs.file.proxy?}.should raise_error(NoMethodError)
-    @fs.entry.proxy?.should be_true
+    -> {test_fs.dir.proxy?}.should raise_error(NoMethodError)
+    -> {test_fs.file.proxy?}.should raise_error(NoMethodError)
+    test_fs.entry.proxy?.should be_true
   end
   
   it "sometimes it also should inexplicitly guess that path is a Dir instead of UniversalEntry (but still wrap it inside of Proxy)" do
-    dir = @fs['/a/..']
+    dir = test_fs['tmp/a/..']
     dir.proxy?.should be_true
     dir.should be_a(Vfs::Dir)
   end

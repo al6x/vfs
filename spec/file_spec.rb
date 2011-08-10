@@ -1,12 +1,10 @@
 require 'spec_helper'
 
 describe 'File' do
-  include FakeFS::SpecHelpers
-  use_fakefs self
+  with_test_fs
   
   before do
-    @fs = '/'.to_entry #_on(Vfs::Storages::HashFs.new)
-    @path = @fs['/tmp/a/b/c']
+    @path = test_fs['a/b/c']
   end
   
   describe 'existence' do
@@ -70,15 +68,16 @@ describe 'File' do
       @path.read.should == 'something'
     end
     
-    it 'should override existing file if override specified', focus: true do
+    it 'should not override existing file, only if :override specified' do
       @path.write 'something'
       @path.should be_file
       -> {@path.write 'another'}.should raise_error(Vfs::Error, /exist/)
-      # @path.write! 'another'
-      # @path.read.should == 'another'
+      
+      @path.write! 'other'
+      @path.read.should == 'other'
     end
     
-    it 'should override existing dir if override specified' do
+    it 'should override existing dir if :override specified' do
       @path.dir.create
       @path.should be_dir
       -> {@path.write 'another'}.should raise_error(Vfs::Error, /exist/)
@@ -135,25 +134,25 @@ describe 'File' do
     end
     
     it 'should copy to file (and overwrite if forced)' do
-      check_copy_for @fs.file('to')
+      check_copy_for test_fs.file('to')
     end
     
     it 'should copy to dir (and overwrite if forced)' do
-      check_copy_for @fs.dir("to")
+      check_copy_for test_fs.dir("to")
     end
     
     it 'should copy to UniversalEntry (and overwrite if forced)' do
-      check_copy_for @fs.entry('to')
+      check_copy_for test_fs.entry('to')
     end
     
     it 'should be chainable' do
-      to = @fs['to']
+      to = test_fs['to']
       @from.copy_to(to).should == to
       @from.copy_to!(to).should == to
     end
     
     it "should autocreate parent's path if not exist (from error)" do
-      to = @fs['/parent_path/to']
+      to = test_fs['parent_path/to']
       @from.copy_to(to)
       to.read.should == 'something'
     end
@@ -198,7 +197,7 @@ describe 'File' do
   
   describe "extra stuff" do
     it 'render' do
-      template = @fs / 'letter.erb'
+      template = test_fs / 'letter.erb'
       template.write "Hello dear <%= name %>"
       template.render(name: 'Mary').should == "Hello dear Mary"
     end
@@ -207,7 +206,7 @@ describe 'File' do
       require 'haml'
       
       it 'render using other template engines' do      
-        template = @fs / 'letter.haml'
+        template = test_fs / 'letter.haml'
         template.write "Hello dear \#{name}"
         template.render(name: 'Mary').should =~ /Hello dear Mary/
       end

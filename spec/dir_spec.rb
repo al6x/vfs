@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe 'Dir' do
+  with_test_fs
+  
   before do
-    @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
-    @path = @fs['/a/b/c']
+    @path = test_fs['a/b/c']
   end
   
   describe 'existence' do
@@ -195,28 +196,28 @@ describe 'Dir' do
         @to.file('other_file').read.should == 'other'
       end
     end
-    
+
     describe 'general copy' do   
       it_should_behave_like 'copy_to behavior'
       
       before do
-        # we using here another HashFs storage, to prevent :effective_dir_copy to be used
-        @to = '/'.to_entry_on(Vfs::Storages::HashFs.new)['to']
-        
-        @from.storage.should_not_receive(:for_spec_helper_effective_copy_used)
-      end            
+        # prevenging usage of :efficient_dir_copy
+        # Vfs::Dir.dont_use_efficient_dir_copy = true
+
+        @to = test_fs['to']
+      end
+      # after do
+      #   Vfs::Dir.dont_use_efficient_dir_copy = false
+      # end
     end    
     
-    describe 'effective copy' do
-      it_should_behave_like 'copy_to behavior'
-      
-      before do
-        # we using the same HashFs storage, so :effective_dir_copy will be used
-        @to = @fs['to']
-        
-        # @from.storage.should_receive(:for_spec_helper_effective_copy_used).at_least(1).times
-      end
-    end
+    # describe 'effective copy' do
+    #   it_should_behave_like 'copy_to behavior'
+    #   
+    #   before do
+    #     @to = test_fs['to']
+    #   end
+    # end
   end
     
   describe 'moving' do

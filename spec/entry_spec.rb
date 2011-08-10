@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe 'Entry' do
+  with_test_fs
+  
   before do
-    @fs = '/'.to_entry_on(Vfs::Storages::HashFs.new)
-    @path = @fs['/a/b/c']
+    @path = test_fs['a/b/c']
   end
   
   it "name" do
@@ -11,11 +12,11 @@ describe 'Entry' do
   end
   
   it 'tmp' do
-    tmp = @fs.tmp
+    tmp = test_fs.tmp
     tmp.should be_dir
     
     tmp = nil
-    @fs.tmp do |path|
+    test_fs.tmp do |path|
       tmp = path
       tmp.should be_dir
     end

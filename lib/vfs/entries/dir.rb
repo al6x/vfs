@@ -177,7 +177,8 @@ module Vfs
         raise "can't copy to unknown Entry!"
       end
       
-      efficient_dir_copy(target, options) || unefficient_dir_copy(target, options)      
+      # efficient_dir_copy(target, options) || unefficient_dir_copy(target, options)
+      unefficient_dir_copy(target, options)      
       
       target
     end
@@ -196,8 +197,12 @@ module Vfs
       move_to to, options
     end
     
+    # class << self
+    #   attr_accessor :dont_use_efficient_dir_copy
+    # end
+    
     protected
-      def unefficient_dir_copy to, options       
+      def unefficient_dir_copy to, options   
         to.create options
         entries options do |e|        
           if e.is_a? Dir
@@ -210,64 +215,67 @@ module Vfs
         end
       end
       
-      def efficient_dir_copy to, options
-        storage.open_fs do |fs|
-          try = 0
-          begin                                
-            try += 1                    
-            self.class.efficient_dir_copy(self, to, options[:override])
-          rescue StandardError => error          
-            unknown_errors = 0
-          
-            attrs = get
-            if attrs[:file]
-              raise Error, "can't copy File as a Dir ('#{self}')!"
-            elsif attrs[:dir]
-              # some unknown error (but it also maybe caused by to be fixed error in 'to')
-              unknown_errors += 1   
-            else
-              raise Error, "'#{self}' not exist!" if options[:bang]
-              return true
-            end
-            
-            attrs = to.get
-            if attrs[:file]
-              if options[:override]
-                to.destroy
-              else
-                raise Vfs::Error, "entry #{to} already exist!"
-              end
-            elsif attrs[:dir]
-              unknown_errors += 1
-              # if options[:override]
-              #   to.destroy
-              # else
-              #   dir_already_exist = true              
-              #   # raise Vfs::Error, "entry #{to} already exist!"
-              # end
-            else # parent not exist
-              parent = to.parent
-              if parent.exist?
-                # some unknown error (but it also maybe caused by already fixed error in 'from')
-                unknown_errors += 1
-              else
-                parent.create(options)        
-              end        
-            end
-
-            raise error if unknown_errors > 1
-            try < 2 ? retry : raise(error)
-          end
-        end
-      end
       
-      def self.efficient_dir_copy from, to, override
-        from.storage.open_fs{|fs|
-          fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)
-        } or
-        to.storage.open_fs{|fs|
-          fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)
-        }
-      end
+      # def efficient_dir_copy to, options
+      #   return false if self.class.dont_use_efficient_dir_copy
+      #   
+      #   storage.open_fs do |fs|
+      #     try = 0
+      #     begin                                
+      #       try += 1                    
+      #       self.class.efficient_dir_copy(self, to, options[:override])
+      #     rescue StandardError => error          
+      #       unknown_errors = 0
+      #     
+      #       attrs = get
+      #       if attrs[:file]
+      #         raise Error, "can't copy File as a Dir ('#{self}')!"
+      #       elsif attrs[:dir]
+      #         # some unknown error (but it also maybe caused by to be fixed error in 'to')
+      #         unknown_errors += 1   
+      #       else
+      #         raise Error, "'#{self}' not exist!" if options[:bang]
+      #         return true
+      #       end
+      #       
+      #       attrs = to.get
+      #       if attrs[:file]
+      #         if options[:override]
+      #           to.destroy
+      #         else
+      #           raise Vfs::Error, "entry #{to} already exist!"
+      #         end
+      #       elsif attrs[:dir]
+      #         unknown_errors += 1
+      #         # if options[:override]
+      #         #   to.destroy
+      #         # else
+      #         #   dir_already_exist = true              
+      #         #   # raise Vfs::Error, "entry #{to} already exist!"
+      #         # end
+      #       else # parent not exist
+      #         parent = to.parent
+      #         if parent.exist?
+      #           # some unknown error (but it also maybe caused by already fixed error in 'from')
+      #           unknown_errors += 1
+      #         else
+      #           parent.create(options)        
+      #         end        
+      #       end
+      # 
+      #       raise error if unknown_errors > 1
+      #       try < 2 ? retry : raise(error)
+      #     end
+      #   end
+      # end
+      # 
+      # def self.efficient_dir_copy from, to, override
+      #   from.storage.open_fs{|fs|
+      #     fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)
+      #   } or
+      #   to.storage.open_fs{|fs|
+      #     fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)
+      #   }
+      # end
   end
 end
