@@ -36,7 +36,7 @@ shared_examples_for 'vfs storage' do
     it "file attributes" do
       @storage.open_fs do |fs|
         fs.attributes(@remote_file).should == {}
-        fs.write_file(@remote_file, false){|w| w.call 'something'}
+        fs.write_file(@remote_file, false){|w| w.write 'something'}
         attrs = fs.attributes(@remote_file)      
         fs.attributes(@remote_file).subset(:file, :dir).should == {file: true, dir: false}
       end
@@ -44,7 +44,7 @@ shared_examples_for 'vfs storage' do
 
     it "read, write & append" do
       @storage.open_fs do |fs|
-        fs.write_file(@remote_file, false){|w| w.call 'something'}
+        fs.write_file(@remote_file, false){|w| w.write 'something'}
         fs.attributes(@remote_file)[:file].should be_true
       
         data = ""  
@@ -52,7 +52,7 @@ shared_examples_for 'vfs storage' do
         data.should == 'something'
       
         # append
-        fs.write_file(@remote_file, true){|w| w.call ' another'}
+        fs.write_file(@remote_file, true){|w| w.write ' another'}
         data = ""  
         fs.read_file(@remote_file){|buff| data << buff}
         data.should == 'something another'
@@ -61,7 +61,7 @@ shared_examples_for 'vfs storage' do
   
     it "delete_file" do
       @storage.open_fs do |fs|
-        fs.write_file(@remote_file, false){|w| w.call 'something'}        
+        fs.write_file(@remote_file, false){|w| w.write 'something'}        
         fs.attributes(@remote_file)[:file].should be_true
         fs.delete_file(@remote_file)
         fs.attributes(@remote_file).should == {}
@@ -92,7 +92,7 @@ shared_examples_for 'vfs storage' do
       @storage.open_fs do |fs|
         fs.create_dir(@remote_dir)
         fs.create_dir("#{@remote_dir}/dir")
-        fs.write_file("#{@remote_dir}/dir/file", false){|w| w.call 'something'}         
+        fs.write_file("#{@remote_dir}/dir/file", false){|w| w.write 'something'}         
         fs.delete_dir(@remote_dir)
         fs.attributes(@remote_dir).should == {}
       end
@@ -106,7 +106,7 @@ shared_examples_for 'vfs storage' do
       
         dir, file = "#{@tmp_dir}/dir", "#{@tmp_dir}/file"
         fs.create_dir(dir)
-        fs.write_file(file, false){|w| w.call 'something'}
+        fs.write_file(file, false){|w| w.write 'something'}
       
         list = {}
         fs.each_entry(@tmp_dir, nil){|path, type| list[path] = type}

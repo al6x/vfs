@@ -4,6 +4,16 @@ require 'tempfile'
 module Vfs
   module Storages
     class Local
+      class Writer
+        def initialize out
+          @out = out
+        end
+        
+        def write data
+          @out.write data
+        end
+      end
+      
       module LocalVfsHelper
         DEFAULT_BUFFER = 1000 * 1024
         
@@ -51,9 +61,8 @@ module Vfs
           raise "can't write, entry #{path} already exist!" if !append and ::File.exist?(path)
           
           option = append ? 'a' : 'w'          
-          ::File.open path, option do |os|
-            writer = -> buff {os.write buff}
-            block.call writer
+          ::File.open path, option do |out|
+            block.call Writer.new(out)
           end
         end
 

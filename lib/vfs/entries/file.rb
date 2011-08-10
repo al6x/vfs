@@ -67,7 +67,7 @@ module Vfs
           if block        
             fs.write_file(path, options[:append], &block)
           else
-            fs.write_file(path, options[:append]){|writer| writer.call data}
+            fs.write_file(path, options[:append]){|writer| writer.write data}
           end
         rescue StandardError => error
           entry = self.entry
@@ -162,7 +162,7 @@ module Vfs
       end
       
       target.write options do |writer|
-        read(options){|buff| writer.call buff}
+        read(options){|buff| writer.write buff}
       end
       
       target

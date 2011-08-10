@@ -90,7 +90,7 @@ describe 'File' do
       @path.read.should == 'something'
 
       @path.write! do |writer|
-        writer.call 'another'
+        writer.write 'another'
       end
       @path.read.should == 'another'
     end

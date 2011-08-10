@@ -1,7 +1,7 @@
 # Vfs - Virtual File System
 
 Handy and simple abstraction over any storage that can represent concept of File and Directory (or at least part of it). 
-The Vfs for File System is the same as ActiveRecord is for Relational Databases.
+The Vfs for File System is kinda the same as ActiveRecord is for Relational Databases.
 
 Currently, there are following implementations available:
 
@@ -11,45 +11,53 @@ Currently, there are following implementations available:
 ## Goals
 
 - **handy, simple and clean** API.
-- **high performance** - the same as by using low-level storage API, there should be no extra calls **.
 - same API for different storages (Local FS, SSH, Hadoop, or any other , ...).
 - should work **simultaneously with different storages**.
 - small codebase, easy to extend by others.
 - simple storage-driver implementation, easy add new storage types (Hadoop DFS, LDAP, Document Oriented DB, In-Memory, ...).
 
-** all methods should have the same performance as native system calls, except for :move and :rename. Right now they are implemented 
-ASAP by using copy+destroy approach, will be fixed as soon as I'll have free time to do it.
+**Performance**:
+
+- sometimes there's extra call to check if file or dir exist before overriding it
+- copy: it doesn't use FileUtils.cp_r, it walks on the directory tree and copy each entry individually, so it's probably a little slover.
+- right now :move and :rename implemented ASAP by copy & destroy, will be fixed as soon as I'll have time to do it.
 
 ## Installation
 
-```bash
+``` bash
 $ gem install vfs
 $ gem install vos
 ```
 
 ## Code samples:
 
-```ruby
+``` ruby
 gem 'vfs'                                    # Virtual File System
 require 'vfs'                              
 
 gem 'vos'                                    # Virtual Operating System
 require 'vos'
-
+```
 
 # Connections, let's deploy our 'cool_app' project from our local box to remote server
+
+``` ruby
 server = Box.new('cool_app.com')             # it will use id_rsa, or You can add {user: 'me', password: 'secret'}                                                  
 me = '~'.to_dir                              # handy shortcut for local FS
 
 deploy_dir = server['apps/cool_app']
 projects = me['projects']
-
+```
 
 # Working with dirs, copying dir from any source to any destination (local/remote/custom_storage_type)
-projects['cool_app'].copy_to deploy_dir        
 
+``` ruby
+projects['cool_app'].copy_to deploy_dir        
+```
 
 # Working with files
+
+``` ruby
 dbc = deploy_dir.file('config/database.yml') # <= the 'config' dir not exist yet
 dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' has been created
 dbc.content =~ /database/                    # => false, we forgot to add the database
@@ -61,9 +69,9 @@ end
 
 projects['cool_app/config/database.yml'].    # or just overwrite it with our local dev version
   copy_to! dbc
+```
   
-# there are also streaming support (read/write/append) with &block, please go to specs for details
-
+There are also streaming support (read/write/append) with &block, please go to specs for details
 
 # Checks
 deploy_dir['config'].exist?                  # => true
