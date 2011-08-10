@@ -74,15 +74,19 @@ projects['cool_app/config/database.yml'].    # or just overwrite it with our loc
 There are also streaming support (read/write/append) with &block, please go to specs for details
 
 # Checks
+
+``` ruby
 deploy_dir['config'].exist?                  # => true
 deploy_dir.dir('config').exist?              # => true
 deploy_dir.file('config').exist?             # => false
 
 deploy_dir['config'].dir?                    # => true
 deploy_dir['config'].file?                   # => false
-
+```
 
 # Navigation
+
+``` ruby
 config = deploy_dir['config']
 config.parent                                # => </apps/cool_app>
 config['../..']                              # => </>
