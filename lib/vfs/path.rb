@@ -10,13 +10,13 @@ module Vfs
         raise "invalid path '#{path}' (you are outside of the root)!" unless path
         super path
         @probably_dir = probably_dir
-      end      
+      end
     end
-    
+
     def + path = ''
       path = path.to_s
       Path.validate! path, false
-      
+
       if Path.absolute?(path)
         Path.normalize path
       elsif path.empty?
@@ -25,15 +25,15 @@ module Vfs
         Path.normalize "#{self}#{'/' unless self == '/'}#{path}"
       end
     end
-    
+
     def parent
       self + '..'
     end
-    
+
     def probably_dir?
       !!@probably_dir
     end
-    
+
     def name
       unless @name
         root = self[0..0]
@@ -41,12 +41,12 @@ module Vfs
       end
       @name
     end
-    
+
     class << self
       def absolute? path
         path =~ /^[\/~\/]|^\.$|^\.\//
       end
-            
+
       def valid? path, forbid_relative = true, &block
         result, err = if forbid_relative and !absolute?(path)
           [false, "path must be started with '/', or '.'"]
@@ -59,28 +59,28 @@ module Vfs
         else
           [true, nil]
         end
-          
+
         block.call err if block and !result and err
         result
       end
-    
+
       def normalize path
         path, probably_dir = normalize_to_string path
-        unless path        
+        unless path
           nil
         else
           Path.new(path, skip_normalization: true, probably_dir: probably_dir)
         end
       end
-    
+
       def validate! path, forbid_relative = true
         valid?(path, forbid_relative){|error| raise "invalid path '#{path}' (#{error})!"}
       end
-      
+
       def normalize_to_string path
-        root = path[0..0]        
+        root = path[0..0]
         result, probably_dir = [], false
-        
+
         parts = path.split('/')[1..-1]
         if parts
           parts.each do |part|
@@ -95,29 +95,29 @@ module Vfs
               probably_dir &&= false
             end
           end
-        end      
-        normalized_path = result.join('/')        
-          
+        end
+        normalized_path = result.join('/')
+
         probably_dir ||= true if normalized_path.empty?
 
         return "#{root}#{'/' unless root == '/' or normalized_path.empty?}#{normalized_path}", probably_dir
       end
-    end    
-    
-    # protected    
+    end
+
+    # protected
     #   def delete_dir_mark
     #     path = path.to_s.sub(%r{/$}, '')
     #   end
-    # 
-    # 
+    #
+    #
     #   def root_path? path
     #     path =~ /^[#{ROOT_SYMBOLS}]$/
     #   end
-    # 
+    #
     #   def split_path path
     #     path.split(/#{ROOT_SYMBOLS}/)
     #   end
-    # 
+    #
     #   def dir_mark? path
     #     path =~ %r{/$}
     #   end

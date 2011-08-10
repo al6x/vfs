@@ -4,11 +4,11 @@ module Vfs
       def created_at
         safe_get :created_at
       end
-      
+
       def updated_at
         safe_get :updated_at
       end
-      
+
       protected
         def safe_get name
           if value = get[name]

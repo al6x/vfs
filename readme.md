@@ -1,6 +1,6 @@
 # Vfs - Virtual File System
 
-Handy and simple abstraction over any storage that can represent concept of File and Directory (or at least part of it). 
+Handy and simple abstraction over any storage that can represent concept of File and Directory (or at least part of it).
 The Vfs for File System is kinda the same as ActiveRecord is for Relational Databases.
 
 Currently, there are following implementations available:
@@ -33,7 +33,7 @@ $ gem install vos
 
 ``` ruby
 gem 'vfs'                                    # Virtual File System
-require 'vfs'                              
+require 'vfs'
 
 gem 'vos'                                    # Virtual Operating System
 require 'vos'
@@ -42,7 +42,7 @@ require 'vos'
 # Connections, let's deploy our 'cool_app' project from our local box to remote server
 
 ``` ruby
-server = Box.new('cool_app.com')             # it will use id_rsa, or You can add {user: 'me', password: 'secret'}                                                  
+server = Box.new('cool_app.com')             # it will use id_rsa, or You can add {user: 'me', password: 'secret'}
 me = '~'.to_dir                              # handy shortcut for local FS
 
 deploy_dir = server['apps/cool_app']
@@ -52,7 +52,7 @@ projects = me['projects']
 # Working with dirs, copying dir from any source to any destination (local/remote/custom_storage_type)
 
 ``` ruby
-projects['cool_app'].copy_to deploy_dir        
+projects['cool_app'].copy_to deploy_dir
 ```
 
 # Working with files
@@ -65,12 +65,12 @@ dbc.append("\ndatabase: mysql")              # let's do it
 
 dbc.update do |content|                      # and add host info
   content + "\nhost: cool_app.com "
-end                                       
+end
 
 projects['cool_app/config/database.yml'].    # or just overwrite it with our local dev version
   copy_to! dbc
 ```
-  
+
 There are also streaming support (read/write/append) with &block, please go to specs for details
 
 # Checks
@@ -94,15 +94,15 @@ deploy_dir.dirs                              # => list of dirs, also support &bl
 ```
 
 For more please go to specs (create/update/move/copy/destroy/...)
-      
+
 ## Integration with [Vos][vos] (Virtual Operating System)
-    
-```ruby  
+
+```ruby
 server['apps/cool_app'].bash 'rails production'
 ```
 
-For more details please go to [Vos][vos] project page. 
-Or checkout configuration I use to control my production servers [My Cluster][my_cluster] in conjunction with small 
+For more details please go to [Vos][vos] project page.
+Or checkout configuration I use to control my production servers [My Cluster][my_cluster] in conjunction with small
 configuration tool [Cluster Management][cluster_management].
 
 # Why?
@@ -114,7 +114,7 @@ is to provide 1-to-1 clone of underlying OS API, instead of provididing handy to
 
 And if you want to use remote FS - things are getting even worse and more complicated (Net::SSH & Net::SFTP use a little
 different API than local FS, and you has to remember all thouse little quirks).
-  
+
 ## Roadmap
 
 ### some future

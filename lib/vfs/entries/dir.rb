@@ -1,26 +1,26 @@
 module Vfs
   class Dir < Entry
-    # 
+    #
     # Container
-    #         
+    #
     def [] path
       path = path.to_s
       if path =~ /.+[\/]$/
         path = path.sub /\/$/, ''
         dir path
       else
-        entry path        
-      end      
+        entry path
+      end
     end
     alias_method :/, :[]
-    
-    
-    # 
+
+
+    #
     # Attributes
-    # 
+    #
     alias_method :exist?, :dir?
-    
-    
+
+
     #
     # CRUD
     #
@@ -30,9 +30,9 @@ module Vfs
         begin
           try += 1
           fs.create_dir path
-        rescue StandardError => error          
+        rescue StandardError => error
           entry = self.entry
-          attrs = entry.get          
+          attrs = entry.get
           if attrs[:file] #entry.exist?
             if options[:override]
               entry.destroy
@@ -45,31 +45,31 @@ module Vfs
             parent = self.parent
             if parent.exist?
               # some unknown error
-              raise error          
+              raise error
             else
-              parent.create(options)        
-            end        
+              parent.create(options)
+            end
           end
-      
+
           retry if try < 2
         end
       end
       self
-    end    
+    end
     def create! options = {}
       options[:override] = true
       create options
     end
-            
+
     def destroy options = {}
       storage.open_fs do |fs|
         begin
-          fs.delete_dir path    
+          fs.delete_dir path
         rescue StandardError => e
           attrs = get
           if attrs[:file]
             if options[:force]
-              file.destroy          
+              file.destroy
             else
               raise Error, "can't destroy File #{dir} (You are trying to destroy it as if it's a Dir)"
             end
@@ -80,28 +80,28 @@ module Vfs
             # do nothing, file already not exist
           end
         end
-      end      
+      end
       self
     end
     def destroy! options = {}
       options[:force] = true
       destroy options
     end
-    
-    
-    # 
+
+
+    #
     # Content
-    # 
+    #
     def entries *args, &block
       raise "invalid arguments #{args.inspect}!" if args.size > 2
       options = args.last.is_a?(Hash) ? args.pop : {}
       query = args.first
-      options[:bang] = true unless options.include? :bang      
-      
-      storage.open_fs do |fs| 
+      options[:bang] = true unless options.include? :bang
+
+      storage.open_fs do |fs|
         begin
           list = []
-          # query option is optional and supported only for some storages (local fs for example) 
+          # query option is optional and supported only for some storages (local fs for example)
           fs.each_entry path, query do |name, type|
             next if options[:filter] and options[:filter] != type
             entry = if type == :dir
@@ -123,45 +123,45 @@ module Vfs
             raise error
           else
             raise Error, "'#{self}' not exist!" if options[:bang]
-            []            
+            []
           end
         end
       end
     end
     alias_method :each, :entries
-    
+
     def files *args, &block
-      options = args.last.is_a?(Hash) ? args.pop : {}      
-      
+      options = args.last.is_a?(Hash) ? args.pop : {}
+
       options[:filter] = :file
       args << options
       entries *args, &block
     end
-    
+
     def dirs *args, &block
       options = args.last.is_a?(Hash) ? args.pop : {}
-      
+
       options[:filter] = :dir
       args << options
       entries *args, &block
-    end    
-    
+    end
+
     def include? name
       entry[name].exist?
     end
     alias_method :has?, :include?
-    
+
     def empty?
       entries.empty?
     end
-    
-    
-    # 
+
+
+    #
     # Transfers
-    # 
+    #
     def copy_to to, options = {}
       options[:bang] = true unless options.include? :bang
-      
+
       raise Error, "invalid argument, destination should be a Entry (#{to})!" unless to.is_a? Entry
       raise Error, "you can't copy to itself" if self == to
 
@@ -176,10 +176,10 @@ module Vfs
       else
         raise "can't copy to unknown Entry!"
       end
-      
+
       # efficient_dir_copy(target, options) || unefficient_dir_copy(target, options)
-      unefficient_dir_copy(target, options)      
-      
+      unefficient_dir_copy(target, options)
+
       target
     end
     def copy_to! to, options = {}
@@ -196,48 +196,48 @@ module Vfs
       options[:override] = true
       move_to to, options
     end
-    
+
     # class << self
     #   attr_accessor :dont_use_efficient_dir_copy
     # end
-    
+
     protected
-      def unefficient_dir_copy to, options   
+      def unefficient_dir_copy to, options
         to.create options
-        entries options do |e|        
+        entries options do |e|
           if e.is_a? Dir
             e.copy_to to.dir(e.name), options
           elsif e.is_a? File
             e.copy_to to.file(e.name), options
           else
             raise 'internal error'
-          end        
+          end
         end
       end
-      
-      
+
+
       # def efficient_dir_copy to, options
       #   return false if self.class.dont_use_efficient_dir_copy
-      #   
+      #
       #   storage.open_fs do |fs|
       #     try = 0
-      #     begin                                
-      #       try += 1                    
+      #     begin
+      #       try += 1
       #       self.class.efficient_dir_copy(self, to, options[:override])
-      #     rescue StandardError => error          
+      #     rescue StandardError => error
       #       unknown_errors = 0
-      #     
+      #
       #       attrs = get
       #       if attrs[:file]
       #         raise Error, "can't copy File as a Dir ('#{self}')!"
       #       elsif attrs[:dir]
       #         # some unknown error (but it also maybe caused by to be fixed error in 'to')
-      #         unknown_errors += 1   
+      #         unknown_errors += 1
       #       else
       #         raise Error, "'#{self}' not exist!" if options[:bang]
       #         return true
       #       end
-      #       
+      #
       #       attrs = to.get
       #       if attrs[:file]
       #         if options[:override]
@@ -250,7 +250,7 @@ module Vfs
       #         # if options[:override]
       #         #   to.destroy
       #         # else
-      #         #   dir_already_exist = true              
+      #         #   dir_already_exist = true
       #         #   # raise Vfs::Error, "entry #{to} already exist!"
       #         # end
       #       else # parent not exist
@@ -259,16 +259,16 @@ module Vfs
       #           # some unknown error (but it also maybe caused by already fixed error in 'from')
       #           unknown_errors += 1
       #         else
-      #           parent.create(options)        
-      #         end        
+      #           parent.create(options)
+      #         end
       #       end
-      # 
+      #
       #       raise error if unknown_errors > 1
       #       try < 2 ? retry : raise(error)
       #     end
       #   end
       # end
-      # 
+      #
       # def self.efficient_dir_copy from, to, override
       #   from.storage.open_fs{|fs|
       #     fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)

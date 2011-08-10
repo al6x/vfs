@@ -8,29 +8,29 @@ module Vfs
         def initialize out
           @out = out
         end
-        
+
         def write data
           @out.write data
         end
       end
-      
+
       module LocalVfsHelper
         DEFAULT_BUFFER = 1000 * 1024
-        
+
         attr_writer :buffer
         def buffer
           @buffer || DEFAULT_BUFFER
-        end        
-        
-        # 
+        end
+
+        #
         # Attributes
-        # 
+        #
         def attributes path
           stat = ::File.stat path
           attrs = {}
           attrs[:file] = stat.file?
           attrs[:dir] = stat.directory?
-          
+
           # attributes special for file system
           attrs[:created_at] = stat.ctime
           attrs[:updated_at] = stat.mtime
@@ -40,17 +40,17 @@ module Vfs
           {}
         end
 
-        def set_attributes path, attrs      
+        def set_attributes path, attrs
           raise 'not supported'
         end
 
 
-        # 
+        #
         # File
-        #       
+        #
         def read_file path, &block
           ::File.open path, 'r' do |is|
-            while buff = is.gets(self.buffer || DEFAULT_BUFFER)            
+            while buff = is.gets(self.buffer || DEFAULT_BUFFER)
               block.call buff
             end
           end
@@ -59,14 +59,14 @@ module Vfs
         def write_file path, append, &block
           # TODO2 Performance lost, extra call to check file existence
           raise "can't write, entry #{path} already exist!" if !append and ::File.exist?(path)
-          
-          option = append ? 'a' : 'w'          
+
+          option = append ? 'a' : 'w'
           ::File.open path, option do |out|
             block.call Writer.new(out)
           end
         end
 
-        def delete_file path          
+        def delete_file path
           ::File.delete path
         end
 
@@ -75,7 +75,7 @@ module Vfs
         # end
 
 
-        # 
+        #
         # Dir
         #
         def create_dir path
@@ -85,9 +85,9 @@ module Vfs
         def delete_dir path
           # TODO2 Performance lost, extra call to check file existence
           raise "can't delete file (#{path})!" if ::File.file?(path)
-          
+
           FileUtils.rm_r path
-        end      
+        end
 
         def each_entry path, query, &block
           if query
@@ -111,11 +111,11 @@ module Vfs
             end
           end
         end
-        
-        # def efficient_dir_copy from, to, override          
+
+        # def efficient_dir_copy from, to, override
         #   return false if override # FileUtils.cp_r doesn't support this behaviour
-        #     
-        #   from.storage.open_fs do |from_fs|          
+        #
+        #   from.storage.open_fs do |from_fs|
         #     to.storage.open_fs do |to_fs|
         #       if from_fs.local? and to_fs.local?
         #         FileUtils.cp_r from.path, to.path
@@ -127,13 +127,13 @@ module Vfs
         #   end
         # end
 
-        # 
+        #
         # Other
-        # 
+        #
         def local?; true end
-        
+
         def tmp &block
-          tmp_dir = "#{::Dir.tmpdir}/#{rand(10**3)}"        
+          tmp_dir = "#{::Dir.tmpdir}/#{rand(10**3)}"
           if block
             begin
               create_dir tmp_dir
@@ -146,12 +146,12 @@ module Vfs
             tmp_dir
           end
         end
-        
+
         def to_s; '' end
       end
-      
+
       include LocalVfsHelper
-      
+
       def open_fs &block
         block.call self
       end

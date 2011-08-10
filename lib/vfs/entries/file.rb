@@ -1,11 +1,11 @@
 module Vfs
   class File < Entry
-    # 
+    #
     # Attributes
-    # 
+    #
     alias_method :exist?, :file?
-    
-    
+
+
     #
     # CRUD
     #
@@ -33,38 +33,38 @@ module Vfs
               raise Error, "file #{self} not exist!"
             else
               block ? block.call('') : ''
-            end        
+            end
           end
         end
-      end      
+      end
     end
-    
+
     def content options = {}
       read options
     end
-    
+
     def create options = {}
       write '', options
       self
-    end    
+    end
     def create! options = {}
       options[:override] = true
       create options
     end
-        
-    def write *args, &block    
-      storage.open_fs do |fs|        
+
+    def write *args, &block
+      storage.open_fs do |fs|
         try = 0
         begin
           try += 1
           if block
-            options = args.first || {}        
+            options = args.first || {}
           else
             data, options = *args
-            options ||= {}        
+            options ||= {}
           end
-          raise "can't do :override and :append at the same time!" if options[:override] and options[:append]      
-          if block        
+          raise "can't do :override and :append at the same time!" if options[:override] and options[:append]
+          if block
             fs.write_file(path, options[:append], &block)
           else
             fs.write_file(path, options[:append]){|writer| writer.write data}
@@ -81,9 +81,9 @@ module Vfs
             parent = self.parent
             if parent.exist?
               # some unknown error
-              raise error          
+              raise error
             else
-              parent.create(options)        
+              parent.create(options)
             end
           end
 
@@ -91,23 +91,23 @@ module Vfs
         end
       end
       self
-    end    
+    end
     def write! *args, &block
       args << {} unless args.last.is_a? Hash
       args.last[:override] = true
       write *args, &block
     end
-    
+
     def destroy options = {}
-      storage.open_fs do |fs| 
+      storage.open_fs do |fs|
         begin
-          fs.delete_file path          
+          fs.delete_file path
           self
         rescue StandardError => e
           attrs = get
           if attrs[:dir]
             if options[:force]
-              dir.destroy          
+              dir.destroy
             else
               raise Error, "can't destroy Dir #{dir} (you are trying to destroy it as if it's a File)"
             end
@@ -125,53 +125,53 @@ module Vfs
       options[:force] = true
       destroy options
     end
-    
+
     def append *args, &block
       if block
-        options = args.first || {}        
+        options = args.first || {}
       else
         data, options = *args
-        options ||= {}        
+        options ||= {}
       end
-      
+
       options[:append] = true
       write data, options, &block
     end
-    
+
     def update options = {}, &block
       options[:override] = true
       data = read options
       write block.call(data), options
     end
-    
-    
+
+
     #
     # Transfers
-    #      
+    #
     def copy_to to, options = {}
       raise Error, "you can't copy to itself" if self == to
-     
+
       target = if to.is_a? File
         to
       elsif to.is_a? Dir
-        to.file #(name)  
+        to.file #(name)
       elsif to.is_a? UniversalEntry
-        to.file      
+        to.file
       else
         raise "can't copy to unknown Entry!"
       end
-      
+
       target.write options do |writer|
         read(options){|buff| writer.write buff}
       end
-      
+
       target
     end
     def copy_to! to, options = {}
       options[:override] = true
       copy_to to, options
     end
-    
+
     def move_to to, options = {}
       copy_to to, options
       destroy options
@@ -181,28 +181,28 @@ module Vfs
       options[:override] = true
       move_to to, options
     end
-    
-    
-    # 
+
+
+    #
     # Extra Stuff
-    # 
+    #
     def render *args
       require 'tilt'
-      
+
       args.unshift Object.new if args.size == 1 and args.first.is_a?(Hash)
-      
+
       template = Tilt.new(path){read}
       template.render *args
     end
-    
+
     def size
       get :size
     end
-    
+
     def basename
       ::File.basename(name, File.extname(name))
     end
-    
+
     def extension
       ::File.extname(name).sub(/^\./, '')
     end

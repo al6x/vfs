@@ -3,28 +3,28 @@ module Vfs
     def default_storage
       ::Vfs::Storages::Local.new
     end
-    
+
     def to_entry
       '/'.to_entry
     end
-    
+
     def to_file
       to_entry.file
     end
-    
+
     def to_dir
       to_entry.dir
     end
-    
+
     # def [] path
     #   to_entry[path]
     # end
     # alias_method :/, :[]
-          
+
     %w(
-      entry dir file 
+      entry dir file
       entries dirs files
-      [] / 
+      [] /
       tmp
     ).each do |m|
       script = <<-RUBY
