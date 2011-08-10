@@ -12,7 +12,6 @@
   
   entry_proxy
   
-  storages/hash_fs
   storages/local
   
   integration/string

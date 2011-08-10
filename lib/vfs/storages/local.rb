@@ -23,7 +23,7 @@ module Vfs
           # attributes special for file system
           attrs[:created_at] = stat.ctime
           attrs[:updated_at] = stat.mtime
-          attrs[:size] = stat.size
+          attrs[:size] = stat.size if stat.file?
           attrs
         rescue Errno::ENOENT
           {}
@@ -45,8 +45,8 @@ module Vfs
           end
         end
 
-        def write_file path, append, &block        
-          option = append ? 'a' : 'w'
+        def write_file path, append, &block
+          option = append ? 'a' : 'w'          
           ::File.open path, option do |os|
             writer = -> buff {os.write buff}
             block.call writer
