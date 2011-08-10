@@ -115,9 +115,9 @@ is to provide 1-to-1 clone of underlying OS API, instead of provididing handy to
 And if you want to use remote FS - things are getting even worse and more complicated (Net::SSH & Net::SFTP use a little
 different API than local FS, and you has to remember all thouse little quirks).
 
-Copyright (c) Alexey Petrushin http://petrush.in, released under the MIT license.
+## License
 
-## Please let me know about bugs and Your proposals, there's the 'Issues' tab at the top, feel free to submit.
+Copyright (c) Alexey Petrushin http://petrush.in, released under the MIT license.
 
 [vos]: http://github.com/alexeypetrushin/vos
 [cluster_management]: http://github.com/alexeypetrushin/cluster_management
