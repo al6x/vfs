@@ -32,32 +32,23 @@ $ gem install vos
 ## Code samples:
 
 ``` ruby
-gem 'vfs'                                    # Virtual File System
-require 'vfs'
-
-gem 'vos'                                    # Virtual Operating System
-require 'vos'
-```
+require 'vfs'                                    # Virtual File System
+require 'vos'                                    # Virtual Operating System
 
 # Connections, let's deploy our 'cool_app' project from our local box to remote server
 
-``` ruby
 server = Box.new('cool_app.com')             # it will use id_rsa, or You can add {user: 'me', password: 'secret'}
 me = '~'.to_dir                              # handy shortcut for local FS
 
 deploy_dir = server['apps/cool_app']
 projects = me['projects']
-```
 
 # Working with dirs, copying dir from any source to any destination (local/remote/custom_storage_type)
 
-``` ruby
 projects['cool_app'].copy_to deploy_dir
-```
 
 # Working with files
 
-``` ruby
 dbc = deploy_dir.file('config/database.yml') # <= the 'config' dir not exist yet
 dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' has been created
 dbc.content =~ /database/                    # => false, we forgot to add the database

@@ -1,17 +1,12 @@
-warn 'remove trailing spaces'
 require 'tempfile'
 
 module Vfs
   module Storages
     class Local
       class Writer
-        def initialize out
-          @out = out
-        end
+        def initialize out; @out = out end
 
-        def write data
-          @out.write data
-        end
+        def write data; @out.write data end
       end
 
       module LocalVfsHelper
