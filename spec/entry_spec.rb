@@ -11,6 +11,11 @@ describe 'Entry' do
     @path.name.should == 'c'
   end
 
+  it "string integration" do
+    '/'.to_entry.path.should == '/'
+    'a'.to_entry.path.should == "./a"
+  end
+
   it 'tmp' do
     tmp = test_fs.tmp
     tmp.should be_dir

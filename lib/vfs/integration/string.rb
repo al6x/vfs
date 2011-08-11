@@ -3,7 +3,8 @@ class String
     path = self
     storage ||= Vfs.default_storage
 
-    Vfs::Dir.new(storage, '/')[path]
+    path = "./#{path}" unless path =~ /^[\/\.\~]/
+    Vfs::Dir.new(storage, path)
   end
   alias_method :to_entry, :to_entry_on
 

@@ -133,7 +133,7 @@ module Vfs
         def local?; true end
 
         def tmp &block
-          tmp_dir = "#{::Dir.tmpdir}/#{rand(10**3)}"
+          tmp_dir = "#{::Dir.tmpdir}/#{rand(10**6)}"
           if block
             begin
               create_dir tmp_dir
