@@ -101,7 +101,7 @@ module Vfs
     def local?
       storage.local?
     end
-    
+
 
     #
     # Utils
@@ -123,37 +123,6 @@ module Vfs
     def eql? other
       return false unless other.class == self.class
       storage.eql?(other.storage) and path.eql?(other.path)
-    end
-    
-    
-    # 
-    # CRUD
-    # 
-    def destroy options = {}      
-      storage.open_fs do |fs|
-        begin
-          fs.send "delete_#{entry_type}", path
-        rescue StandardError => e
-          attrs = get
-          if attrs[entry_type] == false
-            if options[:force]
-              opposite_entry.destroy
-            else              
-              raise Error, "can't destroy :#{opposite_entry_type} #{opposite_entry} (You are trying to destroy it as if it's a :#{entry_type})"
-            end
-          elsif attrs[entry_type]
-            # unknown internal error
-            raise e
-          else
-            # do nothing, dir already not exist
-          end
-        end
-      end
-      self
-    end
-    def destroy! options = {}
-      options[:force] = true
-      destroy options
     end
   end
 end

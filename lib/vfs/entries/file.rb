@@ -99,21 +99,43 @@ module Vfs
     end
 
     def append *args, &block
-      if block
-        options = args.first || {}
-      else
-        data, options = *args
-        options ||= {}
-      end
-
+      options = (args.last.is_a?(Hash) && args.pop) || {}
       options[:append] = true
-      write data, options, &block
+      write(*(args << options), &block)
     end
 
     def update options = {}, &block
       options[:override] = true
       data = read options
       write block.call(data), options
+    end
+
+    def destroy options = {}
+      storage.open_fs do |fs|
+        begin
+          fs.delete_file path
+          self
+        rescue StandardError => e
+          attrs = get
+          if attrs[:dir]
+            if options[:force]
+              dir.destroy
+            else
+              raise Error, "can't destroy Dir #{dir} (you are trying to destroy it as if it's a File)"
+            end
+          elsif attrs[:file]
+            # unknown internal error
+            raise e
+          else
+            # do nothing, file already not exist
+          end
+        end
+      end
+      self
+    end
+    def destroy! options = {}
+      options[:force] = true
+      destroy options
     end
 
 
@@ -178,10 +200,5 @@ module Vfs
     def extension
       ::File.extname(name).sub(/^\./, '')
     end
-    
-    protected
-      def entry_type; :file end
-      def opposite_entry_type; :dir end
-      def opposite_entry; dir end
   end
 end

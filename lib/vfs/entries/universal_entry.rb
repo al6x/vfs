@@ -20,5 +20,6 @@ module Vfs
       end
       self
     end
+    alias_method :destroy!, :destroy
   end
 end
