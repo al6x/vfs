@@ -61,33 +61,6 @@ module Vfs
       create options
     end
 
-    def destroy options = {}
-      storage.open_fs do |fs|
-        begin
-          fs.delete_dir path
-        rescue StandardError => e
-          attrs = get
-          if attrs[:file]
-            if options[:force]
-              file.destroy
-            else
-              raise Error, "can't destroy File #{dir} (You are trying to destroy it as if it's a Dir)"
-            end
-          elsif attrs[:dir]
-            # unknown internal error
-            raise e
-          else
-            # do nothing, file already not exist
-          end
-        end
-      end
-      self
-    end
-    def destroy! options = {}
-      options[:force] = true
-      destroy options
-    end
-
 
     #
     # Content
@@ -200,7 +173,7 @@ module Vfs
     # class << self
     #   attr_accessor :dont_use_efficient_dir_copy
     # end
-
+    
     protected
       def unefficient_dir_copy to, options
         to.create options
@@ -214,6 +187,10 @@ module Vfs
           end
         end
       end
+      
+      def entry_type; :dir end
+      def opposite_entry_type; :file end
+      def opposite_entry; file end
 
 
       # def efficient_dir_copy to, options

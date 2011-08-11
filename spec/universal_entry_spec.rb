@@ -31,6 +31,10 @@ describe 'UniversalEntry' do
       @path.should be_file
       @path.destroy
       @path.should_not exist
+
+      @path.file.create
+      @path.destroy!
+      @path.file.should_not exist
     end
 
     it "shouldn't raise if file not exist" do

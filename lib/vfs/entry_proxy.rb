@@ -1,10 +1,9 @@
 #
-# It allows you dynamically (magically) switch between UniversalEntry/Dir/File
+# It allows dynamically (magically) switching between UniversalEntry/Dir/File
 #
 module Vfs
   class EntryProxy < BasicObject
     attr_reader :_target
-    # WRAP = [:[], :entry, :dir, :file].to_set
 
     def initialize entry
       raise 'something wrong happening here!' if entry.respond_to?(:proxy?) and entry.proxy?
@@ -31,8 +30,6 @@ module Vfs
         end
 
         _target.send m, *a, &b
-
-        # return WRAP.include?(m) ? EntryProxy.new(result) : result
       end
   end
 end

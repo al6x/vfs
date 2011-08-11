@@ -60,7 +60,7 @@ describe 'Dir' do
   describe 'destroying' do
     it "should raise error if it's trying to destroy a file (unless force specified)" do
       @path.file.create
-      -> {@path.dir.destroy}.should raise_error(Vfs::Error, /can't destroy File/)
+      -> {@path.dir.destroy}.should raise_error(Vfs::Error, /can't destroy :file/)
       @path.dir.destroy!
       @path.entry.should_not exist
     end
