@@ -100,6 +100,11 @@ describe 'File' do
       file.should_receive(:write).with('something', append: true)
       file.append 'something'
     end
+
+    it 'should correctly display errors (from error)' do
+      -> {test_fs['test'].write{|writer| raise 'some error'}}.should raise_error(/some error/)
+      -> {test_fs['test'].write!{|writer| raise 'some error'}}.should raise_error(/some error/)
+    end
   end
 
   it 'update' do

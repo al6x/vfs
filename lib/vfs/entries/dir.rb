@@ -40,7 +40,8 @@ module Vfs
               raise Error, "entry #{self} already exist!"
             end
           elsif attrs[:dir]
-            # do nothing
+            # dir already exist, no need to recreate it
+            return self
           else
             parent = self.parent
             if parent.exist?
@@ -51,7 +52,7 @@ module Vfs
             end
           end
 
-          retry if try < 2
+          try < 2 ? retry : raise(error)
         end
       end
       self

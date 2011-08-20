@@ -53,41 +53,46 @@ module Vfs
     end
 
     def write *args, &block
+      if block
+        options = args.first || {}
+      else
+        data, options = *args
+        options ||= {}
+      end
+      raise "can't do :override and :append at the same time!" if options[:override] and options[:append]
+
       storage.open_fs do |fs|
+        # TODO2 Performance lost, extra call to check file existence
+        # We need to check if the file exist before writing to it, otherwise it's
+        # impossible to distinguish if the StandardError caused by the 'already exist' error or
+        # some other error.
+        entry = self.entry
+        if entry.exist?
+          if options[:override]
+            entry.destroy
+          else
+            raise Error, "entry #{self} already exist!"
+          end
+        end
+
         try = 0
         begin
           try += 1
-          if block
-            options = args.first || {}
-          else
-            data, options = *args
-            options ||= {}
-          end
-          raise "can't do :override and :append at the same time!" if options[:override] and options[:append]
           if block
             fs.write_file(path, options[:append], &block)
           else
             fs.write_file(path, options[:append]){|writer| writer.write data}
           end
         rescue StandardError => error
-          entry = self.entry
-          if entry.exist?
-            if options[:override]
-              entry.destroy
-            else
-              raise Error, "entry #{self} already exist!"
-            end
+          parent = self.parent
+          if parent.exist?
+            # some unknown error
+            raise error
           else
-            parent = self.parent
-            if parent.exist?
-              # some unknown error
-              raise error
-            else
-              parent.create(options)
-            end
+            parent.create(options)
           end
 
-          retry if try < 2
+          try < 2 ? retry : raise(error)
         end
       end
       self
