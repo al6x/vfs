@@ -21,22 +21,25 @@ module Vfs
         # Attributes
         #
         def attributes path
+          path = with_root path
+
           stat = ::File.stat path
           attrs = {}
-          attrs[:file] = stat.file?
-          attrs[:dir] = stat.directory?
+          attrs[:file] = !!stat.file?
+          attrs[:dir]  = !!stat.directory?
 
           # attributes special for file system
           attrs[:created_at] = stat.ctime
           attrs[:updated_at] = stat.mtime
-          attrs[:size] = stat.size if stat.file?
+          attrs[:size]       = stat.size if attrs[:file]
           attrs
         rescue Errno::ENOENT
-          {file: false, dir: false}
+          nil
         end
 
         def set_attributes path, attrs
-          raise 'not supported'
+          # TODO2
+          not_implemented
         end
 
 
@@ -44,6 +47,7 @@ module Vfs
         # File
         #
         def read_file path, &block
+          path = with_root path
           ::File.open path, 'r' do |is|
             while buff = is.gets(self.buffer || DEFAULT_BUFFER)
               block.call buff
@@ -51,9 +55,11 @@ module Vfs
           end
         end
 
-        def write_file path, append, &block
+        def write_file original_path, append, &block
+          path = with_root original_path
+
           # TODO2 Performance lost, extra call to check file existence
-          raise "can't write, entry #{path} already exist!" if !append and ::File.exist?(path)
+          raise "can't write, entry #{original_path} already exist!" if !append and ::File.exist?(path)
 
           option = append ? 'a' : 'w'
           ::File.open path, option do |out|
@@ -62,6 +68,7 @@ module Vfs
         end
 
         def delete_file path
+          path = with_root path
           ::File.delete path
         end
 
@@ -74,17 +81,23 @@ module Vfs
         # Dir
         #
         def create_dir path
+          path = with_root path
           ::Dir.mkdir path
         end
 
-        def delete_dir path
-          # TODO2 Performance lost, extra call to check file existence
-          raise "can't delete file (#{path})!" if ::File.file?(path)
+        def delete_dir original_path
+          path = with_root original_path
 
-          FileUtils.rm_r path
+          # TODO2 Performance lost, extra call to check file existence
+          raise "can't delete file (#{original_path})!" if ::File.file?(path)
+
+          ::FileUtils.rm_r path
         end
 
+        warn 'improve this'
         def each_entry path, query, &block
+          path = with_root path
+
           if query
             path_with_trailing_slash = path == '/' ? path : "#{path}/"
             ::Dir["#{path_with_trailing_slash}#{query}"].each do |absolute_path|
@@ -128,28 +141,40 @@ module Vfs
         def local?; true end
 
         def tmp &block
-          tmp_dir = "#{::Dir.tmpdir}/#{rand(10**6)}"
+          tmp_dir = "/tmp/#{rand(10**6)}"
+          tmp_dir_with_root = with_root tmp_dir
+          # tmp_dir = "#{::Dir.tmpdir}/#{rand(10**6)}"
           if block
             begin
-              create_dir tmp_dir
+              ::FileUtils.mkdir_p tmp_dir_with_root
               block.call tmp_dir
             ensure
-              delete_dir tmp_dir
+              ::FileUtils.rm_r tmp_dir_with_root
             end
           else
-            create_dir tmp_dir
+            ::FileUtils.mkdir_p tmp_dir_with_root
             tmp_dir
           end
         end
 
         def to_s; '' end
+
+        protected
+          def with_root path
+            (@root || raise('root not defined!')) + path
+          end
       end
 
       include LocalVfsHelper
 
-      def open_fs &block
-        block.call self
+      def initialize root = ''
+        @root = root
       end
+
+      def open &block
+        block.call self if block
+      end
+      def close; end
     end
   end
 end

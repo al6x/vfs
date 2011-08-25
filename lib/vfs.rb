@@ -4,7 +4,6 @@
   path
   error
 
-  entries/entry/special_attributes
   entries/entry
   entries/file
   entries/dir

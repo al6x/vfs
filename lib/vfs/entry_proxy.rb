@@ -18,6 +18,13 @@ module Vfs
     protected
       attr_writer :_target
 
+      def respond_to? m
+        super or
+        ::Vfs::UniversalEntry.method_defined?(m) or
+        ::Vfs::Dir.method_defined?(m) or
+        ::Vfs::File.method_defined?(m)
+      end
+
       def method_missing m, *a, &b
         unless _target.respond_to? m
           if ::Vfs::UniversalEntry.method_defined? m

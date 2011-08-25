@@ -25,7 +25,7 @@ module Vfs
     # CRUD
     #
     def create options = {}
-      storage.open_fs do |fs|
+      storage.open do |fs|
         try = 0
         begin
           try += 1
@@ -33,13 +33,13 @@ module Vfs
         rescue StandardError => error
           entry = self.entry
           attrs = entry.get
-          if attrs[:file] #entry.exist?
+          if attrs and attrs[:file] #entry.exist?
             if options[:override]
               entry.destroy
             else
               raise Error, "entry #{self} already exist!"
             end
-          elsif attrs[:dir]
+          elsif attrs and attrs[:dir]
             # dir already exist, no need to recreate it
             return self
           else
@@ -63,18 +63,18 @@ module Vfs
     end
 
     def destroy options = {}
-      storage.open_fs do |fs|
+      storage.open do |fs|
         begin
           fs.delete_dir path
         rescue StandardError => e
           attrs = get
-          if attrs[:file]
+          if attrs and attrs[:file]
             if options[:force]
               file.destroy
             else
               raise Error, "can't destroy File #{dir} (You are trying to destroy it as if it's a Dir)"
             end
-          elsif attrs[:dir]
+          elsif attrs and attrs[:dir]
             # unknown internal error
             raise e
           else
@@ -99,7 +99,7 @@ module Vfs
       query = args.first
       options[:bang] = true unless options.include? :bang
 
-      storage.open_fs do |fs|
+      storage.open do |fs|
         begin
           list = []
           # query option is optional and supported only for some storages (local fs for example)
@@ -117,9 +117,9 @@ module Vfs
           block ? nil : list
         rescue StandardError => error
           attrs = get
-          if attrs[:file]
+          if attrs and attrs[:file]
             raise Error, "can't query entries on File ('#{self}')!"
-          elsif attrs[:dir]
+          elsif attrs and attrs[:dir]
             # unknown error
             raise error
           else
@@ -229,9 +229,9 @@ module Vfs
       #       unknown_errors = 0
       #
       #       attrs = get
-      #       if attrs[:file]
+      #       if attrs and attrs[:file]
       #         raise Error, "can't copy File as a Dir ('#{self}')!"
-      #       elsif attrs[:dir]
+      #       elsif attrs and attrs[:dir]
       #         # some unknown error (but it also maybe caused by to be fixed error in 'to')
       #         unknown_errors += 1
       #       else
@@ -240,13 +240,13 @@ module Vfs
       #       end
       #
       #       attrs = to.get
-      #       if attrs[:file]
+      #       if attrs and attrs[:file]
       #         if options[:override]
       #           to.destroy
       #         else
       #           raise Vfs::Error, "entry #{to} already exist!"
       #         end
-      #       elsif attrs[:dir]
+      #       elsif attrs and attrs[:dir]
       #         unknown_errors += 1
       #         # if options[:override]
       #         #   to.destroy

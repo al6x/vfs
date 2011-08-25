@@ -5,7 +5,7 @@ module Vfs
     #
     def exist?
       attrs = get
-      !!(attrs[:dir] or attrs[:file])
+      attrs and (attrs[:dir] or attrs[:file])
     end
 
 
@@ -13,10 +13,10 @@ module Vfs
     # CRUD
     #
     def destroy options = {}
-      storage.open_fs do |fs|
+      storage.open do |fs|
         attrs = get
-        fs.delete_dir path if attrs[:dir]
-        fs.delete_file path if attrs[:file]
+        fs.delete_dir path if attrs and attrs[:dir]
+        fs.delete_file path if attrs and attrs[:file]
       end
       self
     end

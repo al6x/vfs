@@ -219,6 +219,8 @@ describe 'File' do
       warn "no :haml template engine, skipping rendering with haml specs"
     end
 
-    it 'size'
+    it 'size' do
+      @path.file.write('data').size.should == 4
+    end
   end
 end

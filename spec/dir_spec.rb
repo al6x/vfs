@@ -103,7 +103,12 @@ describe 'Dir' do
       list.to_set.should be_eql([@path.dir('dir'), @path.file('file')].to_set)
     end
 
-    it "glob search support"
+    it "glob search support" do
+      @path.dir('dir_a').create
+      @path.file('file_a').create
+      @path.dir('dir_b').create
+      @path.entries('*_a').collect(&:name).sort.should == %w(dir_a file_a)
+    end
 
     it 'should raise error if trying :entries on file' do
       @path.file('some_file').create
@@ -125,7 +130,10 @@ describe 'Dir' do
       @path.include?('non_existing').should be_false
     end
 
-    it 'empty?'
+    it 'empty?' do
+      @path.empty?.should be_false
+      @path.dir('empty_dir').create.empty?.should be_true
+    end
   end
 
   describe 'copying' do

@@ -11,7 +11,7 @@ module Vfs
     #
     def read options = {}, &block
       options[:bang] = true unless options.include? :bang
-      storage.open_fs do |fs|
+      storage.open do |fs|
         begin
           if block
             fs.read_file path, &block
@@ -23,10 +23,10 @@ module Vfs
         rescue StandardError => e
           raise Vfs::Error, "can't read Dir #{self}!" if dir.exist?
           attrs = get
-          if attrs[:file]
+          if attrs and attrs[:file]
             # unknown internal error
             raise e
-          elsif attrs[:dir]
+          elsif attrs and attrs[:dir]
             raise Error, "You are trying to read Dir '#{self}' as if it's a File!"
           else
             if options[:bang]
@@ -61,7 +61,7 @@ module Vfs
       end
       raise "can't do :override and :append at the same time!" if options[:override] and options[:append]
 
-      storage.open_fs do |fs|
+      storage.open do |fs|
         # TODO2 Performance lost, extra call to check file existence
         # We need to check if the file exist before writing to it, otherwise it's
         # impossible to distinguish if the StandardError caused by the 'already exist' error or
@@ -116,19 +116,19 @@ module Vfs
     end
 
     def destroy options = {}
-      storage.open_fs do |fs|
+      storage.open do |fs|
         begin
           fs.delete_file path
           self
         rescue StandardError => e
           attrs = get
-          if attrs[:dir]
+          if attrs and attrs[:dir]
             if options[:force]
               dir.destroy
             else
               raise Error, "can't destroy Dir #{dir} (you are trying to destroy it as if it's a File)"
             end
-          elsif attrs[:file]
+          elsif attrs and attrs[:file]
             # unknown internal error
             raise e
           else
@@ -194,9 +194,7 @@ module Vfs
       template.render *args
     end
 
-    def size
-      get :size
-    end
+    def size; get :size end
 
     def basename
       ::File.basename(name, File.extname(name))

@@ -2,129 +2,155 @@ require 'rspec_ext'
 require 'ruby_ext'
 
 shared_examples_for 'vfs storage basic' do
-  before do
-    @tmp_dir = @storage.open_fs{|fs| fs.tmp}
-  end
-
-  after do
-    @storage.open_fs{|fs| fs.delete_dir @tmp_dir if fs.attributes(@tmp_dir)[:dir]}
-  end
-
   it 'should respond to :local?' do
-    @storage.open_fs{|fs| fs.should respond_to(:local?)}
+    @storage.should respond_to(:local?)
   end
 
+  it "should provide open method" do
+    @storage.open
+    @storage.open{'result'}.should == 'result'
+  end
+end
+
+shared_examples_for 'vfs storage attributes basic' do
   it 'should have root dir' do
-    @storage.open_fs do |fs|
-      fs.attributes('/').subset(:file, :dir).should == {file: false, dir: true}
-    end
+    attrs = @storage.attributes('/')
+    attrs[:dir].should  be_true
+    attrs[:file].should be_false
+  end
+
+  it "attributes should return nil if there's no entry" do
+    @storage.attributes('/non_existing_entry').should be_nil
   end
 end
 
 shared_examples_for 'vfs storage files' do
-  before do
-    @tmp_dir = @storage.open_fs{|fs| fs.tmp}
-  end
-
-  after do
-    @storage.open_fs{|fs| fs.delete_dir @tmp_dir if fs.attributes(@tmp_dir)[:dir]}
-  end
-
-  before do
-    @remote_file = "#{@tmp_dir}/remote_file"
-  end
-
   it "file attributes" do
-    @storage.open_fs do |fs|
-      fs.attributes(@remote_file).should == {file: false, dir: false}
-      fs.write_file(@remote_file, false){|w| w.write 'something'}
-      attrs = fs.attributes(@remote_file)
-      fs.attributes(@remote_file).subset(:file, :dir).should == {file: true, dir: false}
-    end
+    @storage.attributes('/file').should be_nil
+
+    @storage.write_file('/file', false){|w| w.write 'something'}
+    attrs = @storage.attributes('/file')
+    attrs[:file].should be_true
+    attrs[:dir].should  be_false
   end
 
-  it "read, write & append" do
-    @storage.open_fs do |fs|
-      fs.write_file(@remote_file, false){|w| w.write 'something'}
-      fs.attributes(@remote_file)[:file].should be_true
+  it "read, write, append" do
+    # write
+    @storage.write_file('/file', false){|w| w.write 'something'}
+    @storage.attributes('/file')[:file].should == true
 
-      data = ""
-      fs.read_file(@remote_file){|buff| data << buff}
-      data.should == 'something'
+    # read
+    data = ""
+    @storage.read_file('/file'){|buff| data << buff}
+    data.should == 'something'
 
-      # append
-      fs.write_file(@remote_file, true){|w| w.write ' another'}
-      data = ""
-      fs.read_file(@remote_file){|buff| data << buff}
-      data.should == 'something another'
-    end
+    # append
+    @storage.write_file('/file', true){|w| w.write ' another'}
+    data = ""
+    @storage.read_file('/file'){|buff| data << buff}
+    data.should == 'something another'
   end
 
   it "delete_file" do
-    @storage.open_fs do |fs|
-      fs.write_file(@remote_file, false){|w| w.write 'something'}
-      fs.attributes(@remote_file)[:file].should be_true
-      fs.delete_file(@remote_file)
-      fs.attributes(@remote_file).should == {file: false, dir: false}
-    end
+    @storage.write_file('/file', false){|w| w.write 'something'}
+    @storage.attributes('/file')[:file].should be_true
+    @storage.delete_file('/file')
+    @storage.attributes('/file').should be_nil
+  end
+end
+
+shared_examples_for 'vfs storage full attributes for files' do
+  it "attributes for files" do
+    @storage.write_file('/file', false){|w| w.write 'something'}
+    attrs = @storage.attributes('/file')
+    attrs[:file].should be_true
+    attrs[:dir].should  be_false
+    attrs[:created_at].class.should == Time
+    attrs[:updated_at].class.should == Time
+    attrs[:size].should == 9
   end
 end
 
 shared_examples_for 'vfs storage dirs' do
-  before do
-    @tmp_dir = @storage.open_fs{|fs| fs.tmp}
-    @remote_dir = "#{@tmp_dir}/some_dir"
-  end
+  it "directory crud" do
+    @storage.attributes('/dir').should be_nil
 
-  after do
-    @storage.open_fs{|fs| fs.delete_dir @tmp_dir if fs.attributes(@tmp_dir)[:dir]}
-  end
+    @storage.create_dir('/dir')
+    attrs = @storage.attributes('/dir')
+    attrs[:file].should be_false
+    attrs[:dir].should  be_true
 
-  it "directory_exist?, create_dir, delete_dir" do
-    @storage.open_fs do |fs|
-      fs.attributes(@remote_dir).should == {file: false, dir: false}
-      fs.create_dir(@remote_dir)
-      fs.attributes(@remote_dir).subset(:file, :dir).should == {file: false, dir: true}
-      fs.delete_dir(@remote_dir)
-      fs.attributes(@remote_dir).should == {file: false, dir: false}
-    end
+    @storage.delete_dir('/dir')
+    @storage.attributes('/dir').should be_nil
   end
 
   it 'should delete not-empty directories' do
-    @storage.open_fs do |fs|
-      fs.create_dir(@remote_dir)
-      fs.create_dir("#{@remote_dir}/dir")
-      fs.write_file("#{@remote_dir}/dir/file", false){|w| w.write 'something'}
-      fs.delete_dir(@remote_dir)
-      fs.attributes(@remote_dir).should == {file: false, dir: false}
-    end
+    @storage.create_dir('/dir')
+    @storage.create_dir('/dir/dir2')
+    @storage.write_file('/dir/dir2/file', false){|w| w.write 'something'}
+    @storage.attributes('/dir').should_not be_nil
+
+    @storage.delete_dir('/dir')
+    @storage.attributes('/dir').should be_nil
   end
 
   it 'each' do
-    @storage.open_fs do |fs|
-      list = {}
-      fs.each_entry(@tmp_dir, nil){|path, type| list[path] = type}
-      list.should be_empty
+    -> {@storage.each_entry('/not_existing_dir', nil){|path, type| list[path] = type}}.should raise_error
 
-      dir, file = "#{@tmp_dir}/dir", "#{@tmp_dir}/file"
-      fs.create_dir(dir)
-      fs.write_file(file, false){|w| w.write 'something'}
+    @storage.create_dir '/dir'
+    @storage.create_dir('/dir/dir2')
+    @storage.write_file('/dir/file', false){|w| w.write 'something'}
 
-      list = {}
-      fs.each_entry(@tmp_dir, nil){|path, type| list[path] = type}
-      list.should == {'dir' => :dir, 'file' => :file}
-    end
+    list = {}
+    @storage.each_entry('/dir', nil){|path, type| list[path] = type}
+    list.should == {'dir2' => :dir, 'file' => :file}
   end
 
   # it "upload_directory & download_directory" do
   #   upload_path_check = "#{@remote_path}/dir2/file"
   #   check_attributes upload_path_check, nil
-  #   fs.upload_directory(@from_local, @remote_path)
+  #   @storage.upload_directory(@from_local, @remote_path)
   #   check_attributes upload_path_check, file: true, dir: false
   #
   #   download_path_check = "#{@to_local}/dir2/file"
   #   File.exist?(download_path_check).should be_false
-  #   fs.download_directory(@remote_path, @to_local)
+  #   @storage.download_directory(@remote_path, @to_local)
   #   File.exist?(download_path_check).should be_true
   # end
+end
+
+shared_examples_for 'vfs storage query' do
+  it 'each with query' do
+    @storage.create_dir '/dir'
+    @storage.create_dir('/dir/dir_a')
+    @storage.create_dir('/dir/dir_b')
+    @storage.write_file('/dir/file_a', false){|w| w.write 'something'}
+
+    list = {}
+    @storage.each_entry('/dir', '*_a'){|path, type| list[path] = type}
+    list.should == {'dir_a' => :dir, 'file_a' => :file}
+  end
+end
+
+shared_examples_for 'vfs storage full attributes for dirs' do
+  it "attributes for dirs" do
+    @storage.create_dir('/dir')
+    attrs = @storage.attributes('/dir')
+    attrs[:file].should be_false
+    attrs[:dir].should  be_true
+    attrs[:created_at].class.should == Time
+    attrs[:updated_at].class.should == Time
+    attrs.should_not include(:size)
+  end
+end
+
+shared_examples_for 'vfs storage tmp dir' do
+  it "attributes for dirs" do
+    dir = nil
+    @storage.tmp do |tmp_dir|
+      dir = tmp_dir
+      @storage.attributes(dir).should_not be_nil
+    end
+    @storage.attributes(dir).should be_nil
+  end
 end

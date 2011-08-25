@@ -10,7 +10,7 @@ module Vfs
       end
 
 
-      def open_fs &block
+      def open &block
         block.call self
       end
 
@@ -114,8 +114,8 @@ module Vfs
       end
 
       def efficient_dir_copy from, to, override
-        from.storage.open_fs do |from_fs|
-          to.storage.open_fs do |to_fs|
+        from.storage.open do |from_fs|
+          to.storage.open do |to_fs|
             if from_fs == to_fs
               for_spec_helper_effective_copy_used
 

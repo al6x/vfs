@@ -28,15 +28,14 @@ describe 'Entry' do
     tmp.should_not exist
   end
 
-  it 'should respond to local?'
+  it 'should respond to local?' do
+    test_fs.should respond_to(:local?)
+  end
 
-  it 'should respond to host'
-
-  describe 'attributes' do
-    it 'created_at'
-
-    it 'updated_at'
-
-    it 'size'
+  it 'created_at, updated_at, size' do
+    file = test_fs.file('file').write 'data'
+    file.created_at.class.should == Time
+    file.updated_at.class.should == Time
+    file.size.should == 4
   end
 end

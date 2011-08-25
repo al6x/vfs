@@ -65,18 +65,19 @@ module Vfs
     # Attributes
     #
     def get attr_name = nil
-      attrs = storage.open_fs{|fs| fs.attributes(path)}
-      attr_name ? attrs[attr_name] : attrs
+      attrs = storage.open{|fs| fs.attributes(path)}
+      (attr_name and attrs) ? attrs[attr_name] : attrs
     end
 
     def set options
+      # TODO2
       not_implemented
     end
 
-    def dir?; !!get(:dir) end
-    def file?; !!get(:file) end
-
-    include SpecialAttributes
+    def dir?; get :dir end
+    def file?; get :file end
+    def created_at; get :created_at end
+    def updated_at; get :updated_at end
 
 
     #
@@ -87,7 +88,7 @@ module Vfs
     end
 
     def tmp &block
-      storage.open_fs do |fs|
+      storage.open do |fs|
         if block
           fs.tmp do |path|
             block.call Dir.new(storage, path)
