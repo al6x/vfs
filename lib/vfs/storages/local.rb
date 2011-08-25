@@ -141,19 +141,18 @@ module Vfs
         def local?; true end
 
         def tmp &block
-          tmp_dir = "/tmp/#{rand(10**6)}"
-          tmp_dir_with_root = with_root tmp_dir
+          path = "/tmp/#{rand(10**6)}"
           # tmp_dir = "#{::Dir.tmpdir}/#{rand(10**6)}"
           if block
             begin
-              ::FileUtils.mkdir_p tmp_dir_with_root
-              block.call tmp_dir
+              ::FileUtils.mkdir_p with_root(path)
+              block.call path
             ensure
-              ::FileUtils.rm_r tmp_dir_with_root
+              ::FileUtils.rm_r with_root(path) if ::File.exist? with_root(path)
             end
           else
-            ::FileUtils.mkdir_p tmp_dir_with_root
-            tmp_dir
+            ::FileUtils.mkdir_p with_root(path)
+            path
           end
         end
 

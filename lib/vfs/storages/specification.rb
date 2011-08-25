@@ -145,7 +145,12 @@ shared_examples_for 'vfs storage full attributes for dirs' do
 end
 
 shared_examples_for 'vfs storage tmp dir' do
-  it "attributes for dirs" do
+  it "tmp dir" do
+    dir = @storage.tmp
+    @storage.attributes(dir).should_not be_nil
+    @storage.delete_dir dir
+    @storage.attributes(dir).should be_nil
+
     dir = nil
     @storage.tmp do |tmp_dir|
       dir = tmp_dir

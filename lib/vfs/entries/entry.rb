@@ -74,8 +74,8 @@ module Vfs
       not_implemented
     end
 
-    def dir?; get :dir end
-    def file?; get :file end
+    def dir?; !!get(:dir) end
+    def file?; !!get(:file) end
     def created_at; get :created_at end
     def updated_at; get :updated_at end
 
