@@ -94,7 +94,6 @@ module Vfs
           ::FileUtils.rm_r path
         end
 
-        warn 'improve this'
         def each_entry path, query, &block
           path = with_root path
 
@@ -102,6 +101,7 @@ module Vfs
             path_with_trailing_slash = path == '/' ? path : "#{path}/"
             ::Dir["#{path_with_trailing_slash}#{query}"].each do |absolute_path|
               relative_path = absolute_path.sub path_with_trailing_slash, ''
+              # TODO2 Performance loss
               if ::File.directory? absolute_path
                 block.call relative_path, :dir
               else
@@ -159,8 +159,12 @@ module Vfs
         def to_s; '' end
 
         protected
+          def root
+            @root || raise('root not defined!')
+          end
+
           def with_root path
-            (@root || raise('root not defined!')) + path
+            path == '/' ? root : root + path
           end
       end
 

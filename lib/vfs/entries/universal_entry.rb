@@ -4,8 +4,7 @@ module Vfs
     # Attributes
     #
     def exist?
-      attrs = get
-      !!(attrs and (attrs[:dir] or attrs[:file]))
+      !!get
     end
 
 
