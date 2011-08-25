@@ -2,7 +2,9 @@ require 'vfs/storages/local'
 require 'vfs/storages/specification'
 
 describe Vfs::Storages::Local do
-  it_should_behave_like "vfs storage"
+  it_should_behave_like 'vfs storage basic'
+  it_should_behave_like 'vfs storage files'
+  it_should_behave_like 'vfs storage dirs'
 
   before do
     @storage = Vfs::Storages::Local.new

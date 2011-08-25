@@ -28,7 +28,7 @@ describe "Path" do
     ) + special).each{|path| Path.should_not be_valid(path)}
   end
 
-  # it 'tmp', focus: true do
+  # it 'tmp' do
   #   (Path.new('.') + '..').should == './..'
   # end
 

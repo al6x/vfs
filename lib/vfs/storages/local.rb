@@ -32,7 +32,7 @@ module Vfs
           attrs[:size] = stat.size if stat.file?
           attrs
         rescue Errno::ENOENT
-          {}
+          {file: false, dir: false}
         end
 
         def set_attributes path, attrs
