@@ -70,7 +70,7 @@ module Vfs
     end
 
     def set options
-      # TODO2
+      # TODO2 set attributes
       not_implemented
     end
 

@@ -38,7 +38,7 @@ module Vfs
         end
 
         def set_attributes path, attrs
-          # TODO2
+          # TODO2 set attributes
           not_implemented
         end
 
