@@ -1,7 +1,7 @@
 module Vfs
   class << self
-    def default_storage
-      ::Vfs::Storages::Local.new
+    def default_driver
+      ::Vfs::Drivers::Local.new
     end
 
     def to_entry

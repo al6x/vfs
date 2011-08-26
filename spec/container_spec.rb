@@ -23,6 +23,7 @@ describe 'Container' do
   end
 
   it "sometimes it also should inexplicitly guess that path is a Dir instead of UniversalEntry (but still wrap it inside of Proxy)" do
+
     dir = test_dir['tmp/a/..']
     dir.proxy?.should be_true
     dir.should be_a(Vfs::Dir)

@@ -1,6 +1,7 @@
-%w(
-  support
+require 'fileutils'
+require 'set'
 
+%w(
   path
   error
 
@@ -11,7 +12,7 @@
 
   entry_proxy
 
-  storages/local
+  drivers/local
 
   integration/string
 

@@ -1,26 +1,25 @@
 module Vfs
   class Entry
-    attr_reader :storage, :path, :path_cache
+    attr_reader :driver, :path, :path_cache
 
     def initialize *args
       if args.size == 1 and args.first.is_a? Entry
         entry = args.first
         @path_cache = entry.path_cache
-        @storage, @path = entry.storage, entry.path
+        @driver, @path = entry.driver, entry.path
       else
-        storage, path = *args
+        driver, path = *args
         @path_cache = Path.new path
-        @storage, @path = storage, path_cache.to_s
+        @driver, @path = driver, path_cache.to_s
       end
-      raise "storage not defined!" unless self.storage
+      raise "driver not defined!" unless self.driver
     end
-
 
     #
     # Navigation
     #
     def parent
-      Dir.new(storage, path_cache + '..')
+      Dir.new(driver, path_cache + '..')
     end
 
 
@@ -30,7 +29,7 @@ module Vfs
     def dir path = nil
       if path
         new_path = path_cache + path
-        Dir.new storage, new_path
+        Dir.new driver, new_path
       else
         Dir.new self
       end
@@ -40,7 +39,7 @@ module Vfs
     def file path = nil
       if path
         new_path = path_cache + path
-        File.new storage, new_path
+        File.new driver, new_path
       else
         File.new self
       end
@@ -49,10 +48,9 @@ module Vfs
 
     def entry path = nil
       entry = if path
-
         new_path = path_cache + path
         klass = new_path.probably_dir? ? Dir : UniversalEntry
-        entry = klass.new storage, new_path
+        klass.new driver, new_path
       else
         UniversalEntry.new self
       end
@@ -65,7 +63,7 @@ module Vfs
     # Attributes
     #
     def get attr_name = nil
-      attrs = storage.open{storage.attributes(path)}
+      attrs = driver.open{driver.attributes(path)}
       (attr_name and attrs) ? attrs[attr_name] : attrs
     end
 
@@ -88,19 +86,19 @@ module Vfs
     end
 
     def tmp &block
-      storage.open do
+      driver.open do
         if block
-          storage.tmp do |path|
-            block.call Dir.new(storage, path)
+          driver.tmp do |path|
+            block.call Dir.new(driver, path)
           end
         else
-          Dir.new storage, storage.tmp
+          Dir.new driver, driver.tmp
         end
       end
     end
 
     def local?
-      storage.local?
+      driver.local?
     end
 
 
@@ -108,36 +106,36 @@ module Vfs
     # Utils
     #
     def inspect
-      "#{storage}#{':' unless storage.to_s.empty?}#{path}"
+      "#{driver}#{':' unless driver.to_s.empty?}#{path}"
     end
     alias_method :to_s, :inspect
 
     def == other
       return false unless other.is_a? Entry
-      storage == other.storage and path == other.path
+      driver == other.driver and path == other.path
     end
 
     def hash
-      storage.hash + path.hash
+      driver.hash + path.hash
     end
 
     def eql? other
       return false unless other.class == self.class
-      storage.eql?(other.storage) and path.eql?(other.path)
+      driver.eql?(other.driver) and path.eql?(other.path)
     end
 
     protected
       def destroy_entry first = :file, second = :dir
-        storage.open do
+        driver.open do
           begin
-            storage.send :"delete_#{first}", path
+            driver.send :"delete_#{first}", path
           rescue StandardError => e
             attrs = get
             if attrs and attrs[first]
               # some unknown error
               raise e
             elsif attrs and attrs[second]
-              storage.send :"delete_#{second}", path
+              driver.send :"delete_#{second}", path
             else
               # do nothing, entry already not exist
             end

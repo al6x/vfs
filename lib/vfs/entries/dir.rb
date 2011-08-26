@@ -25,11 +25,11 @@ module Vfs
     # CRUD
     #
     def create options = {}
-      storage.open do
+      driver.open do
         try = 0
         begin
           try += 1
-          storage.create_dir path
+          driver.create_dir path
         rescue StandardError => error
           entry = self.entry
           attrs = entry.get
@@ -70,11 +70,11 @@ module Vfs
       filter = options[:filter]
       type_required = options[:type]
 
-      storage.open do
+      driver.open do
         begin
           list = []
-          # query option is optional and supported only for some storages (local storage for example)
-          storage.each_entry path, query do |name, type|
+          # query option is optional and supported only for some drivers (local driver for example)
+          driver.each_entry path, query do |name, type|
             # for performance reasons some drivers may return the type of entry as
             # optionally evaluated callback.
             type = type.call if (filter or type_required) and type.is_a?(Proc)
@@ -191,7 +191,7 @@ module Vfs
       # def efficient_dir_copy to, options
       #   return false if self.class.dont_use_efficient_dir_copy
       #
-      #   storage.open do
+      #   driver.open do
       #     try = 0
       #     begin
       #       try += 1
@@ -242,11 +242,11 @@ module Vfs
       # end
       #
       # def self.efficient_dir_copy from, to, override
-      #   from.storage.open{
-      #     storage.respond_to?(:efficient_dir_copy) and storage.efficient_dir_copy(from, to, override)
+      #   from.driver.open{
+      #     driver.respond_to?(:efficient_dir_copy) and driver.efficient_dir_copy(from, to, override)
       #   } or
-      #   to.storage.open{
-      #     storage.respond_to?(:efficient_dir_copy) and storage.efficient_dir_copy(from, to, override)
+      #   to.driver.open{
+      #     driver.respond_to?(:efficient_dir_copy) and driver.efficient_dir_copy(from, to, override)
       #   }
       # end
   end

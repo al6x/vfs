@@ -1,24 +1,24 @@
-require 'vfs/storages/local'
-require 'vfs/storages/specification'
+require 'vfs/drivers/local'
+require 'vfs/drivers/specification'
 
-describe Vfs::Storages::Local do
+describe Vfs::Drivers::Local do
   with_tmp_spec_dir
 
   before do
-    @storage = Vfs::Storages::Local.new spec_dir
-    @storage.open
+    @driver = Vfs::Drivers::Local.new spec_dir
+    @driver.open
   end
 
   after do
-    @storage.close
+    @driver.close
   end
 
-  it_should_behave_like 'vfs storage basic'
-  it_should_behave_like 'vfs storage attributes basic'
-  it_should_behave_like 'vfs storage files'
-  it_should_behave_like 'vfs storage full attributes for files'
-  it_should_behave_like 'vfs storage dirs'
-  it_should_behave_like 'vfs storage full attributes for dirs'
-  it_should_behave_like 'vfs storage query'
-  it_should_behave_like 'vfs storage tmp dir'
+  it_should_behave_like 'vfs driver basic'
+  it_should_behave_like 'vfs driver attributes basic'
+  it_should_behave_like 'vfs driver files'
+  it_should_behave_like 'vfs driver full attributes for files'
+  it_should_behave_like 'vfs driver dirs'
+  it_should_behave_like 'vfs driver full attributes for dirs'
+  it_should_behave_like 'vfs driver query'
+  it_should_behave_like 'vfs driver tmp dir'
 end

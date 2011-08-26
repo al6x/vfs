@@ -1,10 +1,10 @@
-require 'vfs/storages/hash_fs'
-require 'vfs/storages/specification'
+require 'vfs/drivers/hash_fs'
+require 'vfs/drivers/specification'
 
-describe Vfs::Storages::HashFs do
-  it_should_behave_like "vfs storage"
+describe Vfs::Drivers::HashFs do
+  it_should_behave_like "vfs driver"
 
   before do
-    @storage = Vfs::Storages::HashFs.new
+    @driver = Vfs::Drivers::HashFs.new
   end
 end

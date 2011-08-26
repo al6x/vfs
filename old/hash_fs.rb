@@ -2,7 +2,7 @@
 # Very dirty and inefficient In Memory File System, mainly for tests.
 #
 module Vfs
-  module Storages
+  module Drivers
     class HashFs < Hash
       def initialize
         super
@@ -114,8 +114,8 @@ module Vfs
       end
 
       def efficient_dir_copy from, to, override
-        from.storage.open do |from_fs|
-          to.storage.open do |to_fs|
+        from.driver.open do |from_fs|
+          to.driver.open do |to_fs|
             if from_fs == to_fs
               for_spec_helper_effective_copy_used
 

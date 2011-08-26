@@ -11,13 +11,13 @@ module Vfs
     #
     def read options = {}, &block
       options[:bang] = true unless options.include? :bang
-      storage.open do
+      driver.open do
         begin
           if block
-            storage.read_file path, &block
+            driver.read_file path, &block
           else
             data = ""
-            storage.read_file(path){|buff| data << buff}
+            driver.read_file(path){|buff| data << buff}
             data
           end
         rescue StandardError => e
@@ -57,14 +57,14 @@ module Vfs
       end
       raise "can't do :override and :append at the same time!" if options[:override] and options[:append]
 
-      storage.open do
+      driver.open do
         try = 0
         begin
           try += 1
           if block
-            storage.write_file(path, options[:append], &block)
+            driver.write_file(path, options[:append], &block)
           else
-            storage.write_file(path, options[:append]){|writer| writer.write data}
+            driver.write_file(path, options[:append]){|writer| writer.write data}
           end
         rescue StandardError => error
           parent = self.parent
