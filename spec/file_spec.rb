@@ -13,7 +13,7 @@ describe 'File' do
       @path.dir.create
       @path.should be_dir
       @path.file.should_not exist
-      @path.file.create!
+      @path.file.create
       @path.should be_file
       @path.file.should exist
     end
@@ -38,10 +38,10 @@ describe 'File' do
       data = ""; @path.read{|buff| data << buff}; data.should == 'something'
     end
 
-    it 'content' do
-      @path.write('something')
-      @path.content.should == 'something'
-    end
+    # it 'content' do
+    #   @path.write('something')
+    #   @path.content.should == 'something'
+    # end
   end
 
   describe 'creation' do
@@ -50,14 +50,10 @@ describe 'File' do
 
       file.should_receive(:write).with('', {})
       file.create
-
-      file.should_receive(:write).with('', override: true)
-      file.create!
     end
 
     it 'should be chainable' do
       @path.file.create.should == @path
-      @path.file.create!.should == @path
     end
   end
 
@@ -68,20 +64,17 @@ describe 'File' do
       @path.read.should == 'something'
     end
 
-    it 'should not override existing file, only if :override specified' do
+    it 'should override existing file' do
       @path.write 'something'
       @path.should be_file
-      -> {@path.write 'another'}.should raise_error(Vfs::Error, /exist/)
-
-      @path.write! 'other'
+      @path.write 'other'
       @path.read.should == 'other'
     end
 
-    it 'should override existing dir if :override specified' do
+    it 'should override existing dir' do
       @path.dir.create
       @path.should be_dir
-      -> {@path.write 'another'}.should raise_error(Vfs::Error, /exist/)
-      @path.write! 'another'
+      @path.write 'another'
       @path.read.should == 'another'
     end
 
@@ -89,7 +82,7 @@ describe 'File' do
       @path.write 'something'
       @path.read.should == 'something'
 
-      @path.write! do |writer|
+      @path.write do |writer|
         writer.write 'another'
       end
       @path.read.should == 'another'
@@ -103,7 +96,6 @@ describe 'File' do
 
     it 'should correctly display errors (from error)' do
       -> {test_fs['test'].write{|writer| raise 'some error'}}.should raise_error(/some error/)
-      -> {test_fs['test'].write!{|writer| raise 'some error'}}.should raise_error(/some error/)
     end
   end
 
@@ -131,29 +123,28 @@ describe 'File' do
       target.read.should == 'something'
       target.should == to
 
-      @from.write! 'another'
-      -> {@from.copy_to to}.should raise_error(Vfs::Error, /exist/)
-      target = @from.copy_to! to
+      # overriding
+      @from.write 'another'
+      target = @from.copy_to to
       target.read.should == 'another'
       target.should == to
     end
 
-    it 'should copy to file (and overwrite if forced)' do
+    it 'should copy to file (and overwrite)' do
       check_copy_for test_fs.file('to')
     end
 
-    it 'should copy to dir (and overwrite if forced)' do
+    it 'should copy to dir (and overwrite)' do
       check_copy_for test_fs.dir("to")
     end
 
-    it 'should copy to UniversalEntry (and overwrite if forced)' do
+    it 'should copy to UniversalEntry (and overwrite)' do
       check_copy_for test_fs.entry('to')
     end
 
     it 'should be chainable' do
       to = test_fs['to']
       @from.copy_to(to).should == to
-      @from.copy_to!(to).should == to
     end
 
     it "should autocreate parent's path if not exist (from error)" do
@@ -166,27 +157,21 @@ describe 'File' do
   describe 'moving' do
     it 'move_to' do
       from, to = @path.file('from'), @path.file('to')
-      from.should_receive(:copy_to).with(to, {})
-      from.should_receive(:destroy).with({})
+      from.should_receive(:copy_to).with(to)
+      from.should_receive(:destroy).with()
       from.move_to to
-
-      from.should_receive(:move_to).with(to, override: true)
-      from.move_to! to
     end
 
     it 'should be chainable' do
       from, to = @path.file('from').create, @path.file('to')
       from.move_to(to).should == to
-      from.create
-      from.move_to!(to).should == to
     end
   end
 
   describe 'destroying' do
-    it "should raise error if it's trying to destroy a dir (unless force specified)" do
+    it "should not raise error if it's trying to destroy a dir" do
       @path.dir.create
-      -> {@path.file.destroy}.should raise_error(Vfs::Error, /can't destroy Dir/)
-      @path.file.destroy!
+      @path.file.destroy
       @path.entry.should_not exist
     end
 
@@ -196,7 +181,6 @@ describe 'File' do
 
     it 'should be chainable' do
       @path.file.destroy.should == @path
-      @path.file.destroy!.should == @path
     end
   end
 

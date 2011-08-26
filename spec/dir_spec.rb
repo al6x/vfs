@@ -13,7 +13,7 @@ describe 'Dir' do
       @path.file.create
       @path.should be_file
       @path.dir.should_not exist
-      @path.dir.create!
+      @path.dir.create
       @path.should be_dir
       @path.dir.should exist
     end
@@ -27,7 +27,6 @@ describe 'Dir' do
   describe 'create' do
     it 'should be chainable' do
       @path.dir.create.should == @path
-      @path.dir.create!.should == @path
     end
 
     it 'should create parent dirs if not exists' do
@@ -41,27 +40,29 @@ describe 'Dir' do
       @path.dir.create
     end
 
-    it 'should override existing file if override specified' do
+    it 'should override existing file' do
       @path.file.create
       @path.should be_file
-      -> {@path.dir.create}.should raise_error(Vfs::Error, /exist/)
-      @path.dir.create!
+      @path.dir.create
       @path.should be_dir
     end
 
-    it 'should override existing dir if override specified' do
-      @path.dir.create
-      @path.should be_dir
-      @path.dir.create!
-      @path.should be_dir
+    it 'should not override existing dir with content' do
+      dir = @path.dir
+      dir.create
+      file = dir.file :file
+      file.create
+      file.should exist
+
+      dir.create
+      file.should exist
     end
   end
 
   describe 'destroying' do
-    it "should raise error if it's trying to destroy a file (unless force specified)" do
+    it "should destroy a file" do
       @path.file.create
-      -> {@path.dir.destroy}.should raise_error(Vfs::Error, /can't destroy File/)
-      @path.dir.destroy!
+      @path.dir.destroy
       @path.entry.should_not exist
     end
 
@@ -72,9 +73,9 @@ describe 'Dir' do
     it 'should destroy recursivelly' do
       dir = @path.dir
       dir.create
-      dir.file('file').write 'something'
-      dir.dir('dir').create.tap do |dir|
-        dir.file('file2').write 'something2'
+      dir.file(:file).write 'something'
+      dir.dir(:dir).create.tap do |dir|
+        dir.file(:file2).write 'something2'
       end
 
       dir.destroy
@@ -83,7 +84,6 @@ describe 'Dir' do
 
     it 'should be chainable' do
       @path.dir.destroy.should == @path
-      @path.dir.destroy!.should == @path
     end
   end
 
@@ -151,32 +151,28 @@ describe 'Dir' do
     end
 
     shared_examples_for 'copy_to behavior' do
-      it 'should not copy to file (and overwrite if forced)' do
-        -> {@from.copy_to @to.file}.should raise_error(/can't copy Dir to File/)
-
-        @from.copy_to! @to.file
+      it 'should copy to file and overwrite it' do
+        @from.copy_to @to.file
         @to['file'].read.should == 'something'
       end
 
-      it 'should not override files (and override if forced)' do
+      it 'should override files' do
         @from.copy_to @to
-        -> {@from.copy_to @to}.should raise_error(/already exist/)
 
-        @from['dir/file2'].write! 'another'
-        @from.copy_to! @to
+        @from['dir/file2'].write 'another'
+        @from.copy_to @to
         @to['dir/file2'].read.should == 'another'
       end
 
-      it 'should copy to UniversalEntry (and overwrite if forced)' do
+      it 'should copy to UniversalEntry (and overwrite)' do
         @from.copy_to @to.entry
-        -> {@from.copy_to @to.entry}.should raise_error(/already exist/)
 
-        @from.copy_to! @to.entry
+        @from.copy_to @to.entry
         @to['file'].read.should == 'something'
       end
 
       it "shouldn't delete existing content of directory" do
-        @to.dir.create!
+        @to.dir.create
         @to.file('existing_file').write 'existing_content'
         @to.dir('existing_dir').create
         @to.file('dir/existing_file2').write 'existing_content2'
@@ -193,14 +189,13 @@ describe 'Dir' do
 
       it 'should be chainable' do
         @from.copy_to(@to).should == @to
-        @from.copy_to!(@to).should == @to
       end
 
       it "should override without deleting other files" do
         @from.copy_to(@to).should == @to
         @to.file('other_file').write 'other'
 
-        @from.copy_to!(@to).should == @to
+        @from.copy_to(@to).should == @to
         @to.file('other_file').read.should == 'other'
       end
     end
@@ -231,19 +226,14 @@ describe 'Dir' do
   describe 'moving' do
     it 'move_to' do
       from, to = @path.file('from'), @path.file('to')
-      from.should_receive(:copy_to).with(to, {})
-      from.should_receive(:destroy).with({})
+      from.should_receive(:copy_to).with(to)
+      from.should_receive(:destroy).with()
       from.move_to to
-
-      from.should_receive(:move_to).with(to, override: true)
-      from.move_to! to
     end
 
     it 'should be chainable' do
       from, to = @path.dir('from').create, @path.dir('to')
       from.move_to(to).should == to
-      from.create
-      from.move_to!(to).should == to
     end
   end
 end

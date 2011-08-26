@@ -14,7 +14,7 @@ describe 'UniversalEntry' do
       @path.should be_dir
       @path.should exist
 
-      @path.file.create!
+      @path.file.create
       @path.should be_file
       @path.should exist
     end
@@ -33,7 +33,7 @@ describe 'UniversalEntry' do
       @path.should_not exist
 
       @path.file.create
-      @path.destroy!
+      @path.destroy
       @path.file.should_not exist
     end
 

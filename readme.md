@@ -51,7 +51,7 @@ projects['cool_app'].copy_to deploy_dir
 
 dbc = deploy_dir.file('config/database.yml') # <= the 'config' dir not exist yet
 dbc.write("user: root\npassword: secret")    # <= now the 'database.yml' and parent 'config' has been created
-dbc.content =~ /database/                    # => false, we forgot to add the database
+dbc.read =~ /database/                       # => false, we forgot to add the database
 dbc.append("\ndatabase: mysql")              # let's do it
 
 dbc.update do |content|                      # and add host info

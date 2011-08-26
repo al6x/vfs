@@ -125,5 +125,25 @@ module Vfs
       return false unless other.class == self.class
       storage.eql?(other.storage) and path.eql?(other.path)
     end
+    
+    protected
+      def destroy_entry first = :file, second = :dir
+        storage.open do |fs|
+          begin
+            fs.send :"delete_#{first}", path
+          rescue StandardError => e
+            attrs = get
+            if attrs and attrs[first]
+              # some unknown error
+              raise e              
+            elsif attrs and attrs[second]
+              fs.send :"delete_#{second}", path
+            else
+              # do nothing, entry already not exist
+            end
+          end
+        end
+        self
+      end
   end
 end

@@ -39,17 +39,13 @@ module Vfs
       end
     end
 
-    def content options = {}
-      read options
-    end
+    # def content options = {}
+    #   read options
+    # end
 
     def create options = {}
       write '', options
       self
-    end
-    def create! options = {}
-      options[:override] = true
-      create options
     end
 
     def write *args, &block
@@ -62,18 +58,18 @@ module Vfs
       raise "can't do :override and :append at the same time!" if options[:override] and options[:append]
 
       storage.open do |fs|
-        # TODO2 Performance lost, extra call to check file existence
-        # We need to check if the file exist before writing to it, otherwise it's
-        # impossible to distinguish if the StandardError caused by the 'already exist' error or
-        # some other error.
-        entry = self.entry
-        if entry.exist?
-          if options[:override]
-            entry.destroy
-          else
-            raise Error, "entry #{self} already exist!"
-          end
-        end
+        # # TODO2 Performance lost, extra call to check file existence
+        # # We need to check if the file exist before writing to it, otherwise it's
+        # # impossible to distinguish if the StandardError caused by the 'already exist' error or
+        # # some other error.
+        # entry = self.entry
+        # if entry.exist?
+        #   if options[:override]
+        #     entry.destroy
+        #   else
+        #     raise Error, "entry #{self} already exist!"
+        #   end
+        # end
 
         try = 0
         begin
@@ -85,22 +81,19 @@ module Vfs
           end
         rescue StandardError => error
           parent = self.parent
-          if parent.exist?
-            # some unknown error
-            raise error
-          else
+          if entry.exist?
+            entry.destroy
+          elsif !parent.exist?
             parent.create(options)
+          else
+            # unknown error
+            raise error
           end
 
           try < 2 ? retry : raise(error)
         end
       end
       self
-    end
-    def write! *args, &block
-      args << {} unless args.last.is_a? Hash
-      args.last[:override] = true
-      write *args, &block
     end
 
     def append *args, &block
@@ -110,37 +103,12 @@ module Vfs
     end
 
     def update options = {}, &block
-      options[:override] = true
       data = read options
       write block.call(data), options
     end
 
-    def destroy options = {}
-      storage.open do |fs|
-        begin
-          fs.delete_file path
-          self
-        rescue StandardError => e
-          attrs = get
-          if attrs and attrs[:dir]
-            if options[:force]
-              dir.destroy
-            else
-              raise Error, "can't destroy Dir #{dir} (you are trying to destroy it as if it's a File)"
-            end
-          elsif attrs and attrs[:file]
-            # unknown internal error
-            raise e
-          else
-            # do nothing, file already not exist
-          end
-        end
-      end
-      self
-    end
-    def destroy! options = {}
-      options[:force] = true
-      destroy options
+    def destroy
+      destroy_entry
     end
 
 
@@ -166,19 +134,11 @@ module Vfs
 
       target
     end
-    def copy_to! to, options = {}
-      options[:override] = true
-      copy_to to, options
-    end
 
-    def move_to to, options = {}
-      copy_to to, options
-      destroy options
+    def move_to to
+      copy_to to
+      destroy
       to
-    end
-    def move_to! to, options = {}
-      options[:override] = true
-      move_to to, options
     end
 
 

@@ -59,7 +59,7 @@ module Vfs
           path = with_root original_path
 
           # TODO2 Performance lost, extra call to check file existence
-          raise "can't write, entry #{original_path} already exist!" if !append and ::File.exist?(path)
+          # raise "can't write, entry #{original_path} already exist!" if !append and ::File.exist?(path)
 
           option = append ? 'a' : 'w'
           ::File.open path, option do |out|
@@ -89,7 +89,7 @@ module Vfs
           path = with_root original_path
 
           # TODO2 Performance lost, extra call to check file existence
-          raise "can't delete file (#{original_path})!" if ::File.file?(path)
+          # raise "can't delete file (#{original_path})!" if ::File.file?(path)
 
           ::FileUtils.rm_r path
         end

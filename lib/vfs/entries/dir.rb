@@ -34,11 +34,7 @@ module Vfs
           entry = self.entry
           attrs = entry.get
           if attrs and attrs[:file] #entry.exist?
-            if options[:override]
-              entry.destroy
-            else
-              raise Error, "entry #{self} already exist!"
-            end
+            entry.destroy
           elsif attrs and attrs[:dir]
             # dir already exist, no need to recreate it
             return self
@@ -57,36 +53,9 @@ module Vfs
       end
       self
     end
-    def create! options = {}
-      options[:override] = true
-      create options
-    end
 
     def destroy options = {}
-      storage.open do |fs|
-        begin
-          fs.delete_dir path
-        rescue StandardError => e
-          attrs = get
-          if attrs and attrs[:file]
-            if options[:force]
-              file.destroy
-            else
-              raise Error, "can't destroy File #{dir} (You are trying to destroy it as if it's a Dir)"
-            end
-          elsif attrs and attrs[:dir]
-            # unknown internal error
-            raise e
-          else
-            # do nothing, file already not exist
-          end
-        end
-      end
-      self
-    end
-    def destroy! options = {}
-      options[:force] = true
-      destroy options
+      destroy_entry :dir, :file
     end
 
 
@@ -153,7 +122,10 @@ module Vfs
     alias_method :has?, :include?
 
     def empty?
-      entries.empty?
+      catch :break do
+        entries{|e| throw :break, false}
+        true
+      end
     end
 
 
@@ -167,7 +139,6 @@ module Vfs
       raise Error, "you can't copy to itself" if self == to
 
       target = if to.is_a? File
-        raise Error, "can't copy Dir to File ('#{self}')!" unless options[:override]
         to.dir
       elsif to.is_a? Dir
         to.dir #(name)
@@ -183,19 +154,11 @@ module Vfs
 
       target
     end
-    def copy_to! to, options = {}
-      options[:override] = true
-      copy_to to, options
-    end
 
     def move_to to, options = {}
       copy_to to, options
       destroy options
       to
-    end
-    def move_to! to, options = {}
-      options[:override] = true
-      move_to to, options
     end
 
     # class << self
