@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe 'UniversalEntry' do
-  with_test_fs
+  with_test_dir
 
   before do
-    @path = test_fs['a/b/c']
+    @path = test_dir['a/b/c']
   end
 
   describe 'existence' do

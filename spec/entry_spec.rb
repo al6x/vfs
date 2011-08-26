@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe 'Entry' do
-  with_test_fs
+  with_test_dir
 
   before do
-    @path = test_fs['a/b/c']
+    @path = test_dir['a/b/c']
   end
 
   it "name" do
@@ -17,12 +17,12 @@ describe 'Entry' do
   end
 
   it 'tmp' do
-    tmp = test_fs.tmp
+    tmp = test_dir.tmp
     tmp.should be_dir
     tmp.destroy
 
     tmp = nil
-    test_fs.tmp do |path|
+    test_dir.tmp do |path|
       tmp = path
       tmp.should be_dir
     end
@@ -30,11 +30,11 @@ describe 'Entry' do
   end
 
   it 'should respond to local?' do
-    test_fs.should respond_to(:local?)
+    test_dir.should respond_to(:local?)
   end
 
   it 'created_at, updated_at, size' do
-    file = test_fs.file('file').write 'data'
+    file = test_dir.file('file').write 'data'
     file.created_at.class.should == Time
     file.updated_at.class.should == Time
     file.size.should == 4

@@ -102,7 +102,11 @@ shared_examples_for 'vfs storage dirs' do
     @storage.write_file('/dir/file', false){|w| w.write 'something'}
 
     list = {}
-    @storage.each_entry('/dir', nil){|path, type| list[path] = type}
+    @storage.each_entry '/dir', nil do |path, type|test_dir
+      type = type.call if type.is_a? Proc
+      list[path] = type
+    end
+test_dir
     list.should == {'dir2' => :dir, 'file' => :file}
   end
 
@@ -127,7 +131,11 @@ shared_examples_for 'vfs storage query' do
     @storage.write_file('/dir/file_a', false){|w| w.write 'something'}
 
     list = {}
-    @storage.each_entry('/dir', '*_a'){|path, type| list[path] = type}
+    @storage.each_entry '/dir', '*_a' do |path, type|test_dir
+      type = type.call if type.is_a? Proc
+      list[path] = type
+    end
+test_dir
     list.should == {'dir_a' => :dir, 'file_a' => :file}
   end
 end

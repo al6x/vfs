@@ -5,22 +5,22 @@ require 'tilt'
 require 'vfs'
 
 rspec do
-  def self.with_test_fs
+  def self.with_test_dir
     before do
-      @test_fs = "/tmp/test_fs".to_dir
+      @test_dir = "/tmp/test_dir".to_dir
 
-      FileUtils.rm_r test_fs.path if File.exist? test_fs.path
-      FileUtils.mkdir_p test_fs.path
+      FileUtils.rm_r test_dir.path if File.exist? test_dir.path
+      FileUtils.mkdir_p test_dir.path
     end
 
     after do
-      FileUtils.rm_r test_fs.path if File.exist? test_fs.path
-      @test_fs = nil
+      FileUtils.rm_r test_dir.path if File.exist? test_dir.path
+      @test_dir = nil
     end
   end
 
-  def test_fs
-    @test_fs
+  def test_dir
+    @test_dir
   end
 end
 

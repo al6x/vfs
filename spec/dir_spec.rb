@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe 'Dir' do
-  with_test_fs
+  with_test_dir
 
   before do
-    @path = test_fs['a/b/c']
+    @path = test_dir['a/b/c']
   end
 
   describe 'existence' do
@@ -97,10 +97,14 @@ describe 'Dir' do
     it 'entries' do
       -> {@path['non_existing'].entries}.should raise_error(Vfs::Error, /not exist/)
       @path['non_existing'].entries(bang: false).should == []
-      @path.entries.to_set.should be_eql([@path.dir('dir'), @path.file('file')].to_set)
+      @path.entries.to_set.should be_eql([@path.entry('dir'), @path.entry('file')].to_set)
       list = []
       @path.entries{|e| list << e}
-      list.to_set.should be_eql([@path.dir('dir'), @path.file('file')].to_set)
+      list.to_set.should be_eql([@path.entry('dir'), @path.entry('file')].to_set)
+    end
+test_dir
+    it 'entries with type' do
+      @path.entries(type: true).to_set.should be_eql([@path.dir('dir'), @path.file('file')].to_set)
     end
 
     it "glob search support" do
@@ -207,7 +211,7 @@ describe 'Dir' do
         # prevenging usage of :efficient_dir_copy
         # Vfs::Dir.dont_use_efficient_dir_copy = true
 
-        @to = test_fs['to']
+        @to = test_dir['to']
       end
       # after do
       #   Vfs::Dir.dont_use_efficient_dir_copy = false
@@ -218,7 +222,7 @@ describe 'Dir' do
     #   it_should_behave_like 'copy_to behavior'
     #
     #   before do
-    #     @to = test_fs['to']
+    #     @to = test_dir['to']
     #   end
     # end
   end

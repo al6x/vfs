@@ -65,7 +65,7 @@ module Vfs
     # Attributes
     #
     def get attr_name = nil
-      attrs = storage.open{|fs| fs.attributes(path)}
+      attrs = storage.open{storage.attributes(path)}
       (attr_name and attrs) ? attrs[attr_name] : attrs
     end
 
@@ -88,13 +88,13 @@ module Vfs
     end
 
     def tmp &block
-      storage.open do |fs|
+      storage.open do
         if block
-          fs.tmp do |path|
+          storage.tmp do |path|
             block.call Dir.new(storage, path)
           end
         else
-          Dir.new storage, fs.tmp
+          Dir.new storage, storage.tmp
         end
       end
     end
@@ -125,19 +125,19 @@ module Vfs
       return false unless other.class == self.class
       storage.eql?(other.storage) and path.eql?(other.path)
     end
-    
+test_dir
     protected
       def destroy_entry first = :file, second = :dir
-        storage.open do |fs|
+        storage.open do
           begin
-            fs.send :"delete_#{first}", path
+            storage.send :"delete_#{first}", path
           rescue StandardError => e
             attrs = get
             if attrs and attrs[first]
               # some unknown error
-              raise e              
+              raise etest_dir
             elsif attrs and attrs[second]
-              fs.send :"delete_#{second}", path
+              storage.send :"delete_#{second}", path
             else
               # do nothing, entry already not exist
             end

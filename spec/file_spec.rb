@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe 'File' do
-  with_test_fs
+  with_test_dir
 
   before do
-    @path = test_fs['a/b/c']
+    @path = test_dir['a/b/c']
   end
 
   describe 'existence' do
@@ -95,7 +95,7 @@ describe 'File' do
     end
 
     it 'should correctly display errors (from error)' do
-      -> {test_fs['test'].write{|writer| raise 'some error'}}.should raise_error(/some error/)
+      -> {test_dir['test'].write{|writer| raise 'some error'}}.should raise_error(/some error/)
     end
   end
 
@@ -131,24 +131,24 @@ describe 'File' do
     end
 
     it 'should copy to file (and overwrite)' do
-      check_copy_for test_fs.file('to')
+      check_copy_for test_dir.file('to')
     end
 
     it 'should copy to dir (and overwrite)' do
-      check_copy_for test_fs.dir("to")
+      check_copy_for test_dir.dir("to")
     end
 
     it 'should copy to UniversalEntry (and overwrite)' do
-      check_copy_for test_fs.entry('to')
+      check_copy_for test_dir.entry('to')
     end
 
     it 'should be chainable' do
-      to = test_fs['to']
+      to = test_dir['to']
       @from.copy_to(to).should == to
     end
 
     it "should autocreate parent's path if not exist (from error)" do
-      to = test_fs['parent_path/to']
+      to = test_dir['parent_path/to']
       @from.copy_to(to)
       to.read.should == 'something'
     end
@@ -186,7 +186,7 @@ describe 'File' do
 
   describe "extra stuff" do
     it 'render' do
-      template = test_fs / 'letter.erb'
+      template = test_dir / 'letter.erb'
       template.write "Hello dear <%= name %>"
       template.render(name: 'Mary').should == "Hello dear Mary"
     end
@@ -195,7 +195,7 @@ describe 'File' do
       require 'haml'
 
       it 'render using other template engines' do
-        template = test_fs / 'letter.haml'
+        template = test_dir / 'letter.haml'
         template.write "Hello dear \#{name}"
         template.render(name: 'Mary').should =~ /Hello dear Mary/
       end

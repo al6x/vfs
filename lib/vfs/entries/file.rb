@@ -11,13 +11,13 @@ module Vfs
     #
     def read options = {}, &block
       options[:bang] = true unless options.include? :bang
-      storage.open do |fs|
+      storage.open do
         begin
           if block
-            fs.read_file path, &block
+            storage.read_file path, &block
           else
             data = ""
-            fs.read_file(path){|buff| data << buff}
+            storage.read_file(path){|buff| data << buff}
             data
           end
         rescue StandardError => e
@@ -57,27 +57,14 @@ module Vfs
       end
       raise "can't do :override and :append at the same time!" if options[:override] and options[:append]
 
-      storage.open do |fs|
-        # # TODO2 Performance lost, extra call to check file existence
-        # # We need to check if the file exist before writing to it, otherwise it's
-        # # impossible to distinguish if the StandardError caused by the 'already exist' error or
-        # # some other error.
-        # entry = self.entry
-        # if entry.exist?
-        #   if options[:override]
-        #     entry.destroy
-        #   else
-        #     raise Error, "entry #{self} already exist!"
-        #   end
-        # end
-
+      storage.open do
         try = 0
         begin
           try += 1
           if block
-            fs.write_file(path, options[:append], &block)
+            storage.write_file(path, options[:append], &block)
           else
-            fs.write_file(path, options[:append]){|writer| writer.write data}
+            storage.write_file(path, options[:append]){|writer| writer.write data}
           end
         rescue StandardError => error
           parent = self.parent

@@ -25,11 +25,11 @@ module Vfs
     # CRUD
     #
     def create options = {}
-      storage.open do |fs|
+      storage.open do
         try = 0
         begin
           try += 1
-          fs.create_dir path
+          storage.create_dir path
         rescue StandardError => error
           entry = self.entry
           attrs = entry.get
@@ -67,19 +67,26 @@ module Vfs
       options = args.last.is_a?(Hash) ? args.pop : {}
       query = args.first
       options[:bang] = true unless options.include? :bang
-
-      storage.open do |fs|
+      filter = options[:filter]
+      type_required = options[:type]
+test_dir
+      storage.open do
         begin
           list = []
-          # query option is optional and supported only for some storages (local fs for example)
-          fs.each_entry path, query do |name, type|
-            next if options[:filter] and options[:filter] != type
+          # query option is optional and supported only for some storages (local storage for example)
+          storage.each_entry path, query do |name, type|
+            # for performance reasons some drivers may return the type of entry astest_dir
+            # optionally evaluated callback.
+            type = type.call if (filter or type_required) and type.is_a?(Proc)
+test_dir
+            next if filter and (filter != type)
+test_dir
             entry = if type == :dir
               dir(name)
             elsif type == :file
-              file(name)
+              file(name)test_dir
             else
-              raise 'invalid entry type!'
+              entry(name)
             end
             block ? block.call(entry) : (list << entry)
           end
@@ -89,9 +96,10 @@ module Vfs
           if attrs and attrs[:file]
             raise Error, "can't query entries on File ('#{self}')!"
           elsif attrs and attrs[:dir]
-            # unknown error
+            # some unknown error
             raise error
           else
+            # TODO2 remove :bang
             raise Error, "'#{self}' not exist!" if options[:bang]
             []
           end
@@ -168,7 +176,7 @@ module Vfs
     protected
       def unefficient_dir_copy to, options
         to.create options
-        entries options do |e|
+        entries options.merge(type: true) do |e|
           if e.is_a? Dir
             e.copy_to to.dir(e.name), options
           elsif e.is_a? File
@@ -183,7 +191,7 @@ module Vfs
       # def efficient_dir_copy to, options
       #   return false if self.class.dont_use_efficient_dir_copy
       #
-      #   storage.open_fs do |fs|
+      #   storage.open do
       #     try = 0
       #     begin
       #       try += 1
@@ -234,11 +242,11 @@ module Vfs
       # end
       #
       # def self.efficient_dir_copy from, to, override
-      #   from.storage.open_fs{|fs|
-      #     fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)
+      #   from.storage.open{
+      #     storage.respond_to?(:efficient_dir_copy) and storage.efficient_dir_copy(from, to, override)
       #   } or
-      #   to.storage.open_fs{|fs|
-      #     fs.respond_to?(:efficient_dir_copy) and fs.efficient_dir_copy(from, to, override)
+      #   to.storage.open{
+      #     storage.respond_to?(:efficient_dir_copy) and storage.efficient_dir_copy(from, to, override)
       #   }
       # end
   end

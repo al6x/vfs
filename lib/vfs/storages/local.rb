@@ -58,9 +58,6 @@ module Vfs
         def write_file original_path, append, &block
           path = with_root original_path
 
-          # TODO2 Performance lost, extra call to check file existence
-          # raise "can't write, entry #{original_path} already exist!" if !append and ::File.exist?(path)
-
           option = append ? 'a' : 'w'
           ::File.open path, option do |out|
             block.call Writer.new(out)
@@ -87,10 +84,6 @@ module Vfs
 
         def delete_dir original_path
           path = with_root original_path
-
-          # TODO2 Performance lost, extra call to check file existence
-          # raise "can't delete file (#{original_path})!" if ::File.file?(path)
-
           ::FileUtils.rm_r path
         end
 
@@ -100,22 +93,23 @@ module Vfs
           if query
             path_with_trailing_slash = path == '/' ? path : "#{path}/"
             ::Dir["#{path_with_trailing_slash}#{query}"].each do |absolute_path|
-              relative_path = absolute_path.sub path_with_trailing_slash, ''
-              # TODO2 Performance loss
-              if ::File.directory? absolute_path
-                block.call relative_path, :dir
-              else
-                block.call relative_path, :file
-              end
+              name = absolute_path.sub path_with_trailing_slash, ''
+              block.call name, ->{::File.directory?(absolute_path) ? :dir : :file}
+              # if ::File.directory? absolute_path
+              #   block.call relative_path, :dir
+              # else
+              #   block.call relative_path, :file
+              # end
             end
           else
-            ::Dir.foreach path do |relative_name|
-              next if relative_name == '.' or relative_name == '..'
-              if ::File.directory? "#{path}/#{relative_name}"
-                block.call relative_name, :dir
-              else
-                block.call relative_name, :file
-              end
+            ::Dir.foreach path do |name|
+              next if name == '.' or name == '..'
+              block.call name, ->{::File.directory?("#{path}/#{name}") ? :dir : :file}
+              # if ::File.directory? "#{path}/#{relative_name}"
+              #   block.call relative_name, :dir
+              # else
+              #   block.call relative_name, :file
+              # end
             end
           end
         end
