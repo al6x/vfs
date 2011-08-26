@@ -125,7 +125,7 @@ module Vfs
       return false unless other.class == self.class
       storage.eql?(other.storage) and path.eql?(other.path)
     end
-test_dir
+
     protected
       def destroy_entry first = :file, second = :dir
         storage.open do
@@ -135,7 +135,7 @@ test_dir
             attrs = get
             if attrs and attrs[first]
               # some unknown error
-              raise etest_dir
+              raise e
             elsif attrs and attrs[second]
               storage.send :"delete_#{second}", path
             else

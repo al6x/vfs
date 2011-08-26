@@ -102,7 +102,7 @@ describe 'Dir' do
       @path.entries{|e| list << e}
       list.to_set.should be_eql([@path.entry('dir'), @path.entry('file')].to_set)
     end
-test_dir
+
     it 'entries with type' do
       @path.entries(type: true).to_set.should be_eql([@path.dir('dir'), @path.file('file')].to_set)
     end

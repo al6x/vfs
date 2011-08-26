@@ -69,22 +69,22 @@ module Vfs
       options[:bang] = true unless options.include? :bang
       filter = options[:filter]
       type_required = options[:type]
-test_dir
+
       storage.open do
         begin
           list = []
           # query option is optional and supported only for some storages (local storage for example)
           storage.each_entry path, query do |name, type|
-            # for performance reasons some drivers may return the type of entry astest_dir
+            # for performance reasons some drivers may return the type of entry as
             # optionally evaluated callback.
             type = type.call if (filter or type_required) and type.is_a?(Proc)
-test_dir
+
             next if filter and (filter != type)
-test_dir
+
             entry = if type == :dir
               dir(name)
             elsif type == :file
-              file(name)test_dir
+              file(name)
             else
               entry(name)
             end
