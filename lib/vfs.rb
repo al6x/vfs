@@ -14,7 +14,7 @@ require 'set'
 
   drivers/local
 
-  integration/string
+  integration
 
   vfs
 ).each{|f| require "vfs/#{f}"}

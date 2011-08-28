@@ -8,6 +8,12 @@ module Vfs
     end
 
 
+    def copy_to to, options = {}
+      from = file? ? to_file : to_dir
+      from.copy_to to, options
+    end
+
+
     #
     # CRUD
     #

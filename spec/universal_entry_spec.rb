@@ -42,6 +42,32 @@ describe 'UniversalEntry' do
     end
   end
 
-  describe 'copy_to'
+  describe 'copy_to' do
+    before do
+      @from = @path.dir
+      @from.create
+      @from.file('file').write 'something'
+      @from.dir('dir').create.tap do |dir|
+        dir.file('file2').write 'something2'
+      end
+
+      @to = test_dir['to']
+    end
+
+    it "shoud copy dir" do
+      @from.entry.copy_to @to
+      @to['dir/file2'].file?.should be_true
+    end
+
+    it "should copy file" do
+      @from['file'].entry.copy_to @to
+      @to.file.should be_true
+    end
+
+    it "should raise if entry not exist" do
+      -> {@from['non existing'].entry.copy_to @to}.should raise_error(/not exist/)
+    end
+  end
+
   describe 'move_to'
 end

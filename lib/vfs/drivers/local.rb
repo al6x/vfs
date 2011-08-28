@@ -41,6 +41,8 @@ module Vfs
         attrs[:updated_at] = stat.mtime
         attrs[:size]       = stat.size if attrs[:file]
         attrs
+      rescue Errno::ENOTDIR
+        nil
       rescue Errno::ENOENT
         nil
       end

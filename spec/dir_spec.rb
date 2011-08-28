@@ -202,6 +202,12 @@ describe 'Dir' do
         @from.copy_to(@to).should == @to
         @to.file('other_file').read.should == 'other'
       end
+
+      it "should raise error if try to copy file as dir" do
+        dir = @from.dir 'file'
+        dir.file?.should be_true
+        -> {dir.copy_to @to}.should raise_error(Vfs::Error)
+      end
     end
 
     describe 'general copy' do

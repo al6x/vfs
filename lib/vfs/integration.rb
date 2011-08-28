@@ -18,3 +18,13 @@ class String
   end
   alias_method :to_dir, :to_dir_on
 end
+
+class File
+  def to_entry
+    path.to_entry
+  end
+
+  def to_file
+    path.to_file
+  end
+end
