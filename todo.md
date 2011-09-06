@@ -13,3 +13,7 @@
 - File.append
 - list of entries/files/dirs
 - support for efficient copy for Local and SSH drivers
+
+# Article
+
+  './result.html'.to_file.write response.body
