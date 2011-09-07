@@ -5,7 +5,7 @@ describe Vfs::Drivers::Local do
   with_tmp_spec_dir
 
   before do
-    @driver = Vfs::Drivers::Local.new spec_dir
+    @driver = Vfs::Drivers::Local.new root: spec_dir
     @driver.open
   end
 

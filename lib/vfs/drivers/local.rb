@@ -11,8 +11,10 @@ module Vfs
 
       DEFAULT_BUFFER = 1000 * 1024
 
-      def initialize root = ''
-        @root = root
+      def initialize options = {}
+        options = options.clone
+        @root = options.delete(:root) || ''
+        raise "invalid options #{options}" unless options.empty?
       end
 
       def open &block
