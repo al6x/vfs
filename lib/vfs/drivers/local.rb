@@ -6,7 +6,9 @@ module Vfs
       class Writer
         def initialize out; @out = out end
 
-        def write data; @out.write data end
+        def write data
+          @out.write data
+        end
       end
 
       DEFAULT_BUFFER = 1000 * 1024
@@ -71,7 +73,7 @@ module Vfs
         path = with_root original_path
 
         option = append ? 'a' : 'w'
-        ::File.open path, option do |out|
+        ::File.open path, "#{option}b" do |out|
           block.call Writer.new(out)
         end
       end
