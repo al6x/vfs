@@ -24,17 +24,13 @@ describe 'UniversalEntry' do
     it "should destroy both files and dirs" do
       @path.dir.create
       @path.should be_dir
-      @path.destroy
+      @path.entry.destroy
       @path.should_not exist
 
       @path.file.create
       @path.should be_file
-      @path.destroy
+      @path.entry.destroy
       @path.should_not exist
-
-      @path.file.create
-      @path.destroy
-      @path.file.should_not exist
     end
 
     it "shouldn't raise if file not exist" do
