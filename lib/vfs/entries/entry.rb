@@ -19,7 +19,7 @@ module Vfs
     # Navigation
     #
     def parent
-      Dir.new(driver, path_cache + '..')
+      Dir.new(driver, path_cache.parent)
     end
 
 

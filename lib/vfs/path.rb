@@ -84,12 +84,10 @@ module Vfs
         parts = path.split('/')[1..-1]
         if parts
           parts.each do |part|
-            if part == '..' and root != '.'
+            if part == '..' and (root != '.' or (root == '.' and result.size > 0))
               return nil, false unless result.size > 0
               result.pop
               probably_dir ||= true
-            # elsif part == '.'
-            #   # do nothing
             else
               result << part
               probably_dir &&= false

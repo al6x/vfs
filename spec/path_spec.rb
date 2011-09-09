@@ -73,6 +73,8 @@ describe "Path" do
     ]
     (%w(
       /a/b/c    /a/b
+      ./a/b/c   ./a/b
+      ~/a/b/c   ~/a/b
     ) + special).each_slice(2) do |path, parent|
       Path.new(path).parent.should == parent
     end
