@@ -13,7 +13,7 @@ Currently, there are following implementations available: Local FS, SFTP, S3.
 
 ## Example:
 
-Note: the script below runs on local file system, to see this script running on S3 and SFTP please take a look at the examples folder, there are also samples for S3 backup and deployment over SSH/SFTP.
+The script below runs on local file system, to see this script running on S3 and SFTP please take a look at the examples folder, there are also samples for S3 backup and deployment over SSH/SFTP.
 
 ``` ruby
 require 'vfs'
