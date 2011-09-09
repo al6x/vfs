@@ -13,6 +13,8 @@ Currently, there are following implementations available: Local FS, SFTP, S3.
 
 ## Example:
 
+Note: the script below runs on local file system, to see this script running on S3 and SFTP please take a look at the examples folder, there are also samples for S3 backup and deployment over SSH/SFTP.
+
 ``` ruby
 require 'vfs'
 
@@ -88,8 +90,6 @@ sandbox.destroy
 
 API is the same for all storage types (Local, S3, SFTP, ...). Also API are the same for transfers (copy_to, move_to, ...) between any storage types.
 So, for example backup from S3 looks exactly the same as if files are located on the local folder.
-
-To see this script running on S3 and SFTP please take a look at the examples folder, there are also samples for S3 backup and SSH deployment.
 
 ## Installation
 
