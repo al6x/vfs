@@ -19,7 +19,7 @@ Currently, there are following implementations available: Local FS, SFTP, S3.
 require 'vfs'
 
 # Preparing temporary dir for sample and cleaning it before starting.
-sandbox = $sandbox || '/tmp/vfs_sandbox'.to_dir.destroy
+sandbox = '/tmp/vfs_sandbox'.to_dir.destroy
 
 # Let's create simple Hello World project.
 project = sandbox['hello_world']            # Our Hello World project.
