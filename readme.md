@@ -1,4 +1,4 @@
-Virtual File System provides **clean, simple and unified API for different storage systems** (Local File System, AWS S3, SFTP, Hadoop DFS, LDAP, Document Oriented DBs, In-Memory, ...).
+Virtual File System provides **clean, simple and unified API over different storage systems** (Local File System, AWS S3, SFTP, Hadoop DFS, LDAP, Document Oriented DBs, In-Memory, ...).
 It is possible to provide such unified API because although those storages have different API the core concept are almost the same.
 
 Currently, there are following implementations available: Local FS, SFTP, S3.
