@@ -1,7 +1,5 @@
-# Vfs - Virtual File System
-
-Handy and simple abstraction over any storage that can represent concept of File and Directory - (File System, AWS S3, SFTP, Hadoop DFS, LDAP, Document Oriented DBs, In-Memory, ...).
-The Vfs for File System is kinda the same as ActiveRecord is for Relational Databases.
+Virtual File System provides **clean, simple and unified API for different storage systems** (Local File System, AWS S3, SFTP, Hadoop DFS, LDAP, Document Oriented DBs, In-Memory, ...).
+It is possible to provide such unified API because although those storages have different API the core concept are almost the same.
 
 Currently, there are following implementations available: Local FS, SFTP, S3.
 
@@ -11,9 +9,9 @@ Currently, there are following implementations available: Local FS, SFTP, S3.
 - same API for different storages (Local FS, SSH, Hadoop, or any other , ...).
 - should work **simultaneously with different storages**.
 - small codebase, easy to extend and understand.
-- simple driver implementation, easy to add new storage types.
+- driver implementation should be simple, is should be easy to create new drivers.
 
-## Examples:
+## Example:
 
 ``` ruby
 require 'vfs'
