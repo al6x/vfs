@@ -102,7 +102,7 @@ $ gem install vos
 
 ## Integration with [Vos][vos] (Virtual Operating System)
 
-Vos can be used toghether with Virtual Operating System Tool, and while the Vfs covers all the I/O operations the Vos provides support for remote command execution.
+Vfs can be used toghether with the Virtual Operating System Tool, and while the Vfs covers all the I/O operations the Vos provides support for remote command execution.
 You can use this combination to fully control remote machines, for example - I'm using it to manage my production servers (setup, administration, deployment, migration, ...).
 
 For more details please go to [Vos][vos] project page.
