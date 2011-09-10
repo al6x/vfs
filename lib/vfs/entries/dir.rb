@@ -8,6 +8,8 @@ module Vfs
       if path =~ /.+[\/]$/
         path = path.sub /\/$/, ''
         dir path
+      elsif path =~ /\*/
+        entries path
       else
         entry path
       end

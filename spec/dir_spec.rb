@@ -138,6 +138,10 @@ describe 'Dir' do
       @path.empty?.should be_false
       @path.dir('empty_dir').create.empty?.should be_true
     end
+
+    it "should threat ['**/*.rb'] as glob" do
+      @path['**/*nother*'].first.name.should == 'another_dir'
+    end
   end
 
   describe 'copying' do
