@@ -7,7 +7,7 @@ project(
   # version: '0.4.0',
 
   author: "Alexey Petrushin",
-  homepage: "http://github.com/alexeypetrushin/vfs"
+  homepage: "http://alexeypetrushin.github.com/vfs"
 )
 
 desc "Generate documentation"

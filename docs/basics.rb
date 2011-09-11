@@ -88,8 +88,8 @@ p project.include?('Rakefile')              # => true
 
 # You can also use glob (if storage support it).
 if project.driver.local?
-  p project.entries('**/Rake*')               # => [/.../Rakefile]
-  p project['**/Rake*']                       # => [/.../Rakefile]
+  p project.entries('**/Rake*')             # => [/.../Rakefile]
+  p project['**/Rake*']                     # => [/.../Rakefile]
 end
 
 # The result of dir listing is just an array of Entries, so
