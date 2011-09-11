@@ -1,0 +1,8 @@
+tmp/*
+spec/config.yml
+
+*~
+.DS_Store
+.idea
+.idea/**/*
+Thumbs.db
