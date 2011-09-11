@@ -1,6 +1,6 @@
 $LOAD_PATH << File.expand_path("#{__FILE__}/../../..")
 
-require 'examples/ssh/sandbox'
+require 'docs/ssh/sandbox'
 sandbox = $sandbox
 
 # Preparing sample files.

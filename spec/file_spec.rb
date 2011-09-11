@@ -64,6 +64,11 @@ describe 'File' do
       @path.read.should == 'something'
     end
 
+    it 'should write empty file' do
+      @path.write
+      @path.read.should == ''
+    end
+
     it 'should override existing file' do
       @path.write 'something'
       @path.should be_file

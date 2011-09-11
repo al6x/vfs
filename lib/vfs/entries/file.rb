@@ -53,6 +53,7 @@ module Vfs
         options = args.first || {}
       else
         data, options = *args
+        data ||= ""
         options ||= {}
       end
       raise "can't do :override and :append at the same time!" if options[:override] and options[:append]
@@ -144,7 +145,7 @@ module Vfs
     def size; get :size end
 
     def basename
-      ::File.basename(name, File.extname(name))
+      ::File.basename(name, ::File.extname(name))
     end
 
     def extension

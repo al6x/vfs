@@ -1,104 +1,20 @@
-Virtual File System provides **clean, simple and unified API over different storages** (Local File System, AWS S3, SFTP, Hadoop DFS, LDAP, Document Oriented DBs, In-Memory, ...).
-It is possible to provide such unified API because although those storages have different API the core concept are almost the same.
+Virtual File System provides **clean, simple and unified API over different storages** (Local File System, AWS S3, SFTP, ...).
 
-Currently, there are following implementations available: Local FS, SFTP, S3.
+- very simple and intuitive API.
+- same API for different storages.
+- work simultaneously with multiple storages.
+- small codebase, easy to learn and extend.
+- driver implementation is very simple, it is easy to create new drivers.
 
-## Goals
+Such unified API is possible because although the API of storages are different the core concept are almost the same.
 
-- **handy, simple and clean** API.
-- same API for different storages (Local FS, SSH, Hadoop, or any other , ...).
-- should work **simultaneously with different storages**.
-- small codebase, easy to extend and understand.
-- driver implementation should be simple, is should be easy to create new drivers.
+Install Vfs with Rubygems:
 
-## Example:
+    gem install vfs
 
-The script below runs on local file system, to see this script running on S3 and SFTP please take a look at the examples folder, there are also samples for S3 backup and deployment over SSH/SFTP.
+Once installed, You can proceed with the [basic example][basics], there's also [S3 version][s3_basics] and [SFTP version][ssh_basics] (also [S3 backup][s3_backup] and [SSH/SFTP deployment][ssh_deployment] examples availiable).
 
-``` ruby
-require 'vfs'
-
-# Preparing temporary dir for sample and cleaning it before starting.
-sandbox = '/tmp/vfs_sandbox'.to_dir.destroy
-
-# Let's create simple Hello World project.
-project = sandbox['hello_world']            # Our Hello World project.
-
-project['readme.txt'].write 'My shiny App'  # Writing readme file, note that parent dirs
-                                            # where created automatically.
-
-# File operations.
-readme = project['readme.txt']
-
-# Checking that it's all ok with our readme.
-p readme.name                               # => readme.txt
-p readme.path                               # => /.../readme.txt
-p readme.exist?                             # => true
-p readme.file?                              # => true
-p readme.dir?                               # => false
-p readme.size                               # => 12
-p readme.created_at                         # => 2011-09-09 13:20:43 +0400
-p readme.updated_at                         # => 2011-09-09 13:20:43 +0400
-
-# Reading.
-p readme.read                               # => "My shiny App"
-readme.read{|chunk| p chunk}                # => "My shiny App"
-
-# Writing.
-readme.append "2 + 2 = 4"
-p readme.size                               # => 21
-
-readme.write "My shiny App v2"              # Writing new version of readme.
-p readme.read                               # => "My shiny App v2"
-
-readme.write{|s| s.write "My shiny App v3"} # Writing another new version of readme.
-p readme.read                               # => "My shiny App v3"
-
-# Copying & Moving.
-readme.copy_to project['docs/readme.txt']   # Copying to ./docs folder.
-p project['docs/readme.txt'].exist?         # => true
-p readme.exist?                             # => true
-
-readme.move_to project['docs/readme.txt']   # Moving to ./docs folder.
-p project['docs/readme.txt'].exist?         # => true
-p readme.exist?                             # => false
-
-
-# Dir operations.
-project.file('Rakefile').create             # Creating empty Rakefile.
-
-# Checking our project exists and not empty.
-p project.exist?                            # => true
-p project.empty?                            # => false
-
-# Listing dir content.
-p project.entries                           # => [/.../docs, .../Rakefile]
-p project.files                             # => [/.../Rakefile]
-p project.dirs                              # => [/.../docs]
-project.entries do |entry|                  # => ["docs", false]
-  p [entry.name, entry.file?]               # => ["Rakefile", true]
-end
-p project.include?('Rakefile')              # => true
-
-# Copying & Moving, let's create another project by cloning our hello_world.
-project.copy_to sandbox['another_project']
-p sandbox['another_project'].entries        # => [/.../docs, .../Rakefile]
-
-# Cleaning sandbox.
-sandbox.destroy
-```
-
-API is the same for all storage types (Local, S3, SFTP, ...). Also API are the same for transfers (copy_to, move_to, ...) between any storage types.
-So, for example backup from S3 looks exactly the same as if files are located on the local folder.
-
-## Installation
-
-``` bash
-$ gem install vfs
-
-# For S3 and SFTP support install also vos
-$ gem install vos
-```
+You can report bugs and discuss features on the [issues page][issues].
 
 ## Integration with [Vos][vos] (Virtual Operating System)
 
@@ -124,3 +40,4 @@ Copyright (c) Alexey Petrushin http://petrush.in, released under the MIT license
 [vos]: http://github.com/alexeypetrushin/vos
 [cluster_management]: http://github.com/alexeypetrushin/cluster_management
 [my_cluster]: http://github.com/alexeypetrushin/my_cluster
+[basics]:      http://alexeypetrushin.github.com/vfs/basics.html

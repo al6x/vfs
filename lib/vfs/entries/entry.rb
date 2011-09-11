@@ -124,6 +124,11 @@ module Vfs
       driver.eql?(other.driver) and path.eql?(other.path)
     end
 
+    def delete *args
+      raise "use :destroy!"
+    end
+    alias_method :remove, :delete
+
     protected
       def destroy_entry first = :file, second = :dir
         driver.open do
