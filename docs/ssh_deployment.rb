@@ -4,17 +4,17 @@
 # write database configuration file and restart the server on remote machine.
 
 # Adding examples folder to load paths.
-$LOAD_PATH << File.expand_path("#{__FILE__}/../../..")
+$LOAD_PATH << File.expand_path("#{__FILE__}/../..")
 
 # Connecting to SFTP and preparing sandbox. You may take a look at
-# the [docs/ssh/sandbox.rb][ssh_sandbox] to see the actual code.
-require 'docs/ssh/sandbox'
+# the [docs/ssh_sandbox.rb][ssh_sandbox] to see the actual code.
+require 'docs/ssh_sandbox'
 sandbox = $sandbox
 
 # Preparing sample files located in our local folder in
 # current directory.
 current_dir = __FILE__.to_entry.parent
-sample_app = current_dir['deployment/app']
+sample_app = current_dir['ssh_deployment/app']
 
 # Copying application files to remote machine.
 app = sandbox['apps/app']
@@ -31,5 +31,5 @@ p app['config.yml'].exist?                       # => true
 p app.bash("echo 'bundle install'")              # => bundle install
 p app.bash("echo 'server start'")                # => server start
 
-# [vfs]:         ..
-# [ssh_sandbox]: sandbox.html
+# [vfs]:         index.html
+# [ssh_sandbox]: ssh_sandbox.html

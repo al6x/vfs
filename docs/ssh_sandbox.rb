@@ -25,4 +25,4 @@ box = Vos::Box.new driver
 # Preparing temporary dir for sample and cleaning it before starting.
 $sandbox = box['/tmp/vfs_sandbox'].to_dir.destroy
 
-# [vfs]: ..
+# [vfs]: index.html

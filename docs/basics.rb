@@ -86,14 +86,18 @@ project.entries do |entry|                  # => ["docs", false]
 end
 p project.include?('Rakefile')              # => true
 
-# You can also use glob (if the storage support it).
-p project.entries('**/Rake*')               # => [/.../Rakefile]
-p project['**/Rake*']                       # => [/.../Rakefile]
+# You can also use glob (if storage support it).
+if project.driver.local?
+  p project.entries('**/Rake*')               # => [/.../Rakefile]
+  p project['**/Rake*']                       # => [/.../Rakefile]
+end
 
 # The result of dir listing is just an array of Entries, so
 # You can use it to do interesting things. For example this code will
 # calculates the size of sources in our project.
-project['**/*.rb'].collect(&:size).reduce(0, :+)
+if project.driver.local?
+  project['**/*.rb'].collect(&:size).reduce(0, :+)
+end
 
 # Copying and moving - let's create another project by cloning our hello_world.
 project.copy_to sandbox['another_project']
@@ -106,10 +110,10 @@ sandbox.destroy
 # a look at [S3 backup][s3_backup] and [SSH/SFTP deployment][ssh_deployment] examples.
 #
 #
-# [s3_basics]:      s3/basics.html
-# [ssh_basics]:     ssh/basics.html
-# [s3_backup]:      s3/backup.html
-# [ssh_deployment]: ssh/deployment.html
+# [s3_basics]:      s3_basics.html
+# [s3_backup]:      s3_backup.html
+# [ssh_basics]:     ssh_basics.html
+# [ssh_deployment]: ssh_deployment.html
 #
 # [project]:        https://github.com/alexeypetrushin/vfs
 # [issues]:         https://github.com/alexeypetrushin/vfs/issues
