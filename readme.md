@@ -18,6 +18,98 @@ Once installed, You can proceed with the [basic example][basics], there's also [
 
 You can report bugs and discuss features on the [issues page][issues].
 
+## Sample
+
+``` ruby
+# Preparing sandbox for our sample and cleaning it before starting
+# (ignore the `$sandbox` variable, it's needed to reuse this code in S3 and SSH samples).
+require 'vfs'
+sandbox = $sandbox || '/tmp/vfs_sandbox'.to_dir.destroy
+
+# Creating simple Hello World project.
+project = sandbox['hello_world']
+
+# Writing readme file (note that parent dirs where created automatically).
+project['readme.txt'].write 'My App'
+
+# We can assign files and dirs to variables, now the `readme` variable refers to our readme.txt file.
+readme = project['readme.txt']
+
+# Let's ensure that it's all ok with our readme file and check it's attributes.
+p readme.name                               # => readme.txt
+p [readme.basename, readme.extension]       # => ['readme', 'txt']
+p readme.path                               # => /.../readme.txt
+p readme.exist?                             # => true
+p readme.file?                              # => true
+p readme.dir?                               # => false
+p readme.size                               # => 6
+p readme.created_at                         # => 2011-09-09 13:20:43 +0400
+p readme.updated_at                         # => 2011-09-09 13:20:43 +0400
+
+# Reading - You can read all at once or do it sequentially (input stream
+# will be automatically splitted into chunks of reasonable size).
+p readme.read                               # => "My shiny App"
+readme.read{|chunk| p chunk}                # => "My shiny App"
+
+# The same for writing - write all at once or do it sequentially
+# (if there's no file it will be created, if it exists it will be rewriten).
+readme.write "My App v2"
+readme.write{|stream| stream.write "My App v3"}
+p readme.read                               # => "My shiny App v3"
+
+# Appending content to existing file.
+readme.append "How to install ..."
+p readme.size                               # => 27
+
+# Copying and Moving. It also works exactly the same
+# way if You copy or move files and dirs to other storages.
+readme.copy_to project['docs/readme.txt']
+p project['docs/readme.txt'].exist?         # => true
+p readme.exist?                             # => true
+
+readme.move_to project['docs/readme.txt']
+p project['docs/readme.txt'].exist?         # => true
+p readme.exist?                             # => false
+
+# Let's add empty Rakefile to our project.
+project['Rakefile'].write
+
+# Operations with directories - checking our project exists and not empty.
+p project.exist?                            # => true
+p project.empty?                            # => false
+
+# Listing dir content. There are two versions of methods -
+# without block the result will be Array of Entries, with block
+# it will iterate over directory sequentially.
+p project.entries                           # => [/.../docs, /.../Rakefile]
+p project.files                             # => [/.../Rakefile]
+p project.dirs                              # => [/.../docs]
+project.entries do |entry|                  # => ["docs", false]
+  p [entry.name, entry.file?]               # => ["Rakefile", true]
+end
+p project.include?('Rakefile')              # => true
+
+# You can also use glob (if storage support it).
+if project.driver.local?
+  p project.entries('**/Rake*')             # => [/.../Rakefile]
+  p project['**/Rake*']                     # => [/.../Rakefile]
+end
+
+# The result of dir listing is just an array of Entries, so
+# You can use it to do interesting things. For example this code will
+# calculates the size of sources in our project.
+if project.driver.local?
+  project['**/*.rb'].collect(&:size).reduce(0, :+)
+end
+
+# Copying and moving - let's create another project by cloning our hello_world.
+project.copy_to sandbox['another_project']
+p sandbox['another_project'].entries        # => [/.../docs, .../Rakefile]
+
+# Cleaning sandbox.
+sandbox.destroy
+```
+
 ## Integration with [Vos][vos] (Virtual Operating System)
 
 Vfs can be used toghether with the Virtual Operating System Tool, and while the Vfs covers all the I/O operations the Vos provides support for remote command execution.
