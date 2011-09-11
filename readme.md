@@ -42,4 +42,9 @@ Copyright (c) Alexey Petrushin http://petrush.in, released under the MIT license
 [vos]: http://github.com/alexeypetrushin/vos
 [cluster_management]: http://github.com/alexeypetrushin/cluster_management
 [my_cluster]: http://github.com/alexeypetrushin/my_cluster
-[basics]:      http://alexeypetrushin.github.com/vfs/basics.html
+
+[basics]:         http://alexeypetrushin.github.com/vfs/basics.html
+[s3_basics]:      http://alexeypetrushin.github.com/vfs/s3_basics.html
+[s3_backup]:      http://alexeypetrushin.github.com/vfs/s3_backup.html
+[ssh_basics]:     http://alexeypetrushin.github.com/vfs/ssh_basics.html
+[ssh_deployment]: http://alexeypetrushin.github.com/vfs/ssh_deployment.html
