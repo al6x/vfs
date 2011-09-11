@@ -14,6 +14,6 @@ require 'docs/ssh/sandbox'
 # but with the `$storage` set to SFTP.
 require 'docs/basics'
 
-# [vfs]:         http://alexeypetrushin.github.com/vfs/basics.html
-# [basics]:      http://alexeypetrushin.github.com/vfs/basics.html
-# [ssh_sandbox]: http://alexeypetrushin.github.com/vfs/ssh/sandbox.html
+# [vfs]:         ..
+# [basics]:      ../basics.html
+# [ssh_sandbox]: sandbox.html

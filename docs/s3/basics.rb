@@ -14,6 +14,6 @@ require 'docs/s3/sandbox'
 # but with the `$storage` set to AWS S3.
 require 'docs/basics'
 
-# [vfs]:        http://alexeypetrushin.github.com/vfs/basics.html
-# [basics]:     http://alexeypetrushin.github.com/vfs/basics.html
-# [s3_sandbox]: http://alexeypetrushin.github.com/vfs/s3/sandbox.html
+# [vfs]:        ..
+# [basics]:     ../basics.html
+# [s3_sandbox]: sandbox.html

@@ -21,4 +21,4 @@ box = Vos::Box.new driver
 # for sandbox and cleaning it before starting.
 $sandbox = box['/tmp/vfs_sandbox'].to_dir.destroy
 
-# [vfs]:        http://alexeypetrushin.github.com/vfs/basics.html
+# [vfs]: ..

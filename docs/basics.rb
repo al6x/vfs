@@ -106,10 +106,10 @@ sandbox.destroy
 # a look at [S3 backup][s3_backup] and [SSH/SFTP deployment][ssh_deployment] examples.
 #
 #
-# [s3_basics]:      http://alexeypetrushin.github.com/vfs/s3/basics.html
-# [ssh_basics]:     http://alexeypetrushin.github.com/vfs/ssh/basics.html
-# [s3_backup]:      http://alexeypetrushin.github.com/vfs/s3/backup.html
-# [ssh_deployment]: http://alexeypetrushin.github.com/vfs/ssh/deployment.html
+# [s3_basics]:      s3/basics.html
+# [ssh_basics]:     ssh/basics.html
+# [s3_backup]:      s3/backup.html
+# [ssh_deployment]: ssh/deployment.html
 #
 # [project]:        https://github.com/alexeypetrushin/vfs
 # [issues]:         https://github.com/alexeypetrushin/vfs/issues

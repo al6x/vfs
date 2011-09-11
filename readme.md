@@ -1,3 +1,7 @@
+New documentation http://alexeypetrushin.github.com/vfs
+
+## Readme
+
 Virtual File System provides **clean, simple and unified API over different storages** (Local File System, AWS S3, SFTP, ...).
 
 - very simple and intuitive API.

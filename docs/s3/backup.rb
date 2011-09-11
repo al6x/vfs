@@ -25,5 +25,5 @@ local_backup = '/tmp/vfs_sandbox/backup'.to_dir.destroy
 s3['app'].copy_to local_backup['app']
 p local_backup['app/files/bos.png'].exist?   # => true
 
-# [vfs]:     http://alexeypetrushin.github.com/vfs/basics.html
-# [s3_sandbox]: http://alexeypetrushin.github.com/vfs/s3/sandbox.html
+# [vfs]:        ..
+# [s3_sandbox]: sandbox.html
