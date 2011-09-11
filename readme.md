@@ -48,3 +48,4 @@ Copyright (c) Alexey Petrushin http://petrush.in, released under the MIT license
 [s3_backup]:      http://alexeypetrushin.github.com/vfs/s3_backup.html
 [ssh_basics]:     http://alexeypetrushin.github.com/vfs/ssh_basics.html
 [ssh_deployment]: http://alexeypetrushin.github.com/vfs/ssh_deployment.html
+[issues]:         https://github.com/alexeypetrushin/vfs/issues
