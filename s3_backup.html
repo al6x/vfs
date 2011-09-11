@@ -2,16 +2,30 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <title>backup.rb</title>
+  <title>s3_backup.rb</title>
   <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
 </head>
 <body>
 <div id='container'>
   <div id="background"></div>
+  <div id="jump_to">
+    Jump To &hellip;
+    <div id="jump_wrapper">
+      <div id="jump_page">
+          <a class="source" href="basics.html">basics.rb</a>
+          <a class="source" href="s3_backup.html">s3_backup.rb</a>
+          <a class="source" href="s3_basics.html">s3_basics.rb</a>
+          <a class="source" href="s3_sandbox.html">s3_sandbox.rb</a>
+          <a class="source" href="ssh_basics.html">ssh_basics.rb</a>
+          <a class="source" href="ssh_deployment.html">ssh_deployment.rb</a>
+          <a class="source" href="ssh_sandbox.html">ssh_sandbox.rb</a>
+      </div>
+    </div>
+  </div>
   <table cellspacing=0 cellpadding=0>
   <thead>
     <tr>
-      <th class=docs><h1>backup.rb</h1></th>
+      <th class=docs><h1>s3_backup.rb</h1></th>
       <th class=code></th>
     </tr>
   </thead>
@@ -21,7 +35,7 @@
         <div class="pilwrap">
           <a class="pilcrow" href="#section-1">&#182;</a>
         </div>
-        <p>Example of creating AWS S3 Backup with <a href="http://alexeypetrushin.github.com/vfs/basics.html">Virtual File System</a>.</p>
+        <p>Example of creating AWS S3 Backup with <a href="index.html">Virtual File System</a>.</p>
 
 <p>In this example we uploading sample files to S3 and then
 copying it back to local folder.</p>
@@ -36,11 +50,11 @@ copying it back to local folder.</p>
           <a class="pilcrow" href="#section-2">&#182;</a>
         </div>
         <p>Connecting to S3 and preparing sandbox. You may take a look at
-the <a href="http://alexeypetrushin.github.com/vfs/s3/sandbox.html">docs/s3/sandbox.rb</a> to see actual code.</p>
+the <a href="s3_sandbox.html">docs/s3_sandbox.rb</a> to see the actual code.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="vg">$LOAD_PATH</span> <span class="o">&lt;&lt;</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="bp">__FILE__</span><span class="si">}</span><span class="s2">/../../..&quot;</span><span class="p">)</span>
-<span class="nb">require</span> <span class="s1">&#39;docs/s3/sandbox&#39;</span>
+        <div class='highlight'><pre><span class="vg">$LOAD_PATH</span> <span class="o">&lt;&lt;</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="bp">__FILE__</span><span class="si">}</span><span class="s2">/../..&quot;</span><span class="p">)</span>
+<span class="nb">require</span> <span class="s1">&#39;docs/s3_sandbox&#39;</span>
 <span class="n">s3</span> <span class="o">=</span> <span class="vg">$sandbox</span></pre></div>
       </td>
     </tr>
@@ -54,7 +68,7 @@ current directory.</p>
       </td>
       <td class=code>
         <div class='highlight'><pre><span class="n">current_dir</span> <span class="o">=</span> <span class="bp">__FILE__</span><span class="o">.</span><span class="n">to_entry</span><span class="o">.</span><span class="n">parent</span>
-<span class="n">sample_files</span> <span class="o">=</span> <span class="n">current_dir</span><span class="o">[</span><span class="s1">&#39;backup/app&#39;</span><span class="o">]</span></pre></div>
+<span class="n">sample_files</span> <span class="o">=</span> <span class="n">current_dir</span><span class="o">[</span><span class="s1">&#39;s3_backup/app&#39;</span><span class="o">]</span></pre></div>
       </td>
     </tr>
     <tr id='section-4'>
@@ -74,7 +88,7 @@ current directory.</p>
         <div class="pilwrap">
           <a class="pilcrow" href="#section-5">&#182;</a>
         </div>
-        <p>Preparing local storage for S3 backup (a temporary directory).</p>
+        <p>Preparing local storage for S3 backup.</p>
       </td>
       <td class=code>
         <div class='highlight'><pre><span class="n">local_backup</span> <span class="o">=</span> <span class="s1">&#39;/tmp/vfs_sandbox/backup&#39;</span><span class="o">.</span><span class="n">to_dir</span><span class="o">.</span><span class="n">destroy</span></pre></div>

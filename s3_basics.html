@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <title>basics.rb</title>
+  <title>s3_basics.rb</title>
   <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
 </head>
 <body>
@@ -12,19 +12,20 @@
     Jump To &hellip;
     <div id="jump_wrapper">
       <div id="jump_page">
-          <a class="source" href="backup.html">backup.rb</a>
           <a class="source" href="basics.html">basics.rb</a>
-          <a class="source" href="sandbox.html">sandbox.rb</a>
-          <a class="source" href="../ssh/basics.html">basics.rb</a>
-          <a class="source" href="../ssh/deployment.html">deployment.rb</a>
-          <a class="source" href="../ssh/sandbox.html">sandbox.rb</a>
+          <a class="source" href="s3_backup.html">s3_backup.rb</a>
+          <a class="source" href="s3_basics.html">s3_basics.rb</a>
+          <a class="source" href="s3_sandbox.html">s3_sandbox.rb</a>
+          <a class="source" href="ssh_basics.html">ssh_basics.rb</a>
+          <a class="source" href="ssh_deployment.html">ssh_deployment.rb</a>
+          <a class="source" href="ssh_sandbox.html">ssh_sandbox.rb</a>
       </div>
     </div>
   </div>
   <table cellspacing=0 cellpadding=0>
   <thead>
     <tr>
-      <th class=docs><h1>basics.rb</h1></th>
+      <th class=docs><h1>s3_basics.rb</h1></th>
       <th class=code></th>
     </tr>
   </thead>
@@ -34,9 +35,9 @@
         <div class="pilwrap">
           <a class="pilcrow" href="#section-1">&#182;</a>
         </div>
-        <p>Example of <a href="http://alexeypetrushin.github.com/vfs/basics.html">Virtual File System</a> working with AWS S3.</p>
+        <p>Example of <a href="index.html">Virtual File System</a> working with AWS S3.</p>
 
-<p>This is exactly the same <a href="http://alexeypetrushin.github.com/vfs/basics.html">basic example</a> but this time
+<p>This is exactly the same <a href="basics.html">basic example</a> but this time
 we using S3 as storage instead of local file system.</p>
       </td>
       <td class=code>
@@ -51,7 +52,7 @@ we using S3 as storage instead of local file system.</p>
         <p>Adding examples folder to load paths.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="vg">$LOAD_PATH</span> <span class="o">&lt;&lt;</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="bp">__FILE__</span><span class="si">}</span><span class="s2">/../../..&quot;</span><span class="p">)</span></pre></div>
+        <div class='highlight'><pre><span class="vg">$LOAD_PATH</span> <span class="o">&lt;&lt;</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="bp">__FILE__</span><span class="si">}</span><span class="s2">/../..&quot;</span><span class="p">)</span></pre></div>
       </td>
     </tr>
     <tr id='section-3'>
@@ -60,10 +61,10 @@ we using S3 as storage instead of local file system.</p>
           <a class="pilcrow" href="#section-3">&#182;</a>
         </div>
         <p>Connecting to S3 and preparing sandbox. You may take a look at
-the <a href="http://alexeypetrushin.github.com/vfs/s3/sandbox.html">docs/s3/sandbox.rb</a> to see the actual code.</p>
+the <a href="s3_sandbox.html">docs/s3_sandbox.rb</a> to see the actual code.</p>
       </td>
       <td class=code>
-        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;docs/s3/sandbox&#39;</span></pre></div>
+        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;docs/s3_sandbox&#39;</span></pre></div>
       </td>
     </tr>
     <tr id='section-4'>
@@ -71,7 +72,7 @@ the <a href="http://alexeypetrushin.github.com/vfs/s3/sandbox.html">docs/s3/sand
         <div class="pilwrap">
           <a class="pilcrow" href="#section-4">&#182;</a>
         </div>
-        <p>Now we just executig <a href="http://alexeypetrushin.github.com/vfs/basics.html">basic example</a>
+        <p>Now we just executig <a href="basics.html">basic example</a>
 but with the <code>$storage</code> set to AWS S3.</p>
       </td>
       <td class=code>
