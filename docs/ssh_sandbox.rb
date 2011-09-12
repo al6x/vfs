@@ -1,14 +1,14 @@
 # Example of using AWS S3 as a storage for [Virtual File System][vfs]
 
-# To use S3 we need the S3 driver, You need 'vos' and 'aws-sdk' gems installed.
+# To use SSH/SFTP we need the SSH driver, You need 'vos', 'net-ssh' and 'net-sftp' gems installed.
 #
-#     gem install vos aws-sdk
+#     gem install vos net-ssh net-sftp
 #
 require 'vfs'
 require 'vos'
 require 'vos/drivers/ssh'
 
-# Initializing S3 driver, if You can connect to server using identity file provide host only.
+# Initializing SSH driver, if You can connect to server using identity file provide host only.
 #
 # If the connection requires login and password You need to provide it:
 #
