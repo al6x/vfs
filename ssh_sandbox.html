@@ -46,9 +46,9 @@
         <div class="pilwrap">
           <a class="pilcrow" href="#section-2">&#182;</a>
         </div>
-        <p>To use S3 we need the S3 driver, You need &lsquo;vos&rsquo; and &lsquo;aws-sdk&rsquo; gems installed.</p>
+        <p>To use SSH/SFTP we need the SSH driver, You need &lsquo;vos&rsquo;, &lsquo;net-ssh&rsquo; and &lsquo;net-sftp&rsquo; gems installed.</p>
 
-<pre><code>gem install vos aws-sdk
+<pre><code>gem install vos net-ssh net-sftp
 </code></pre>
       </td>
       <td class=code>
@@ -62,7 +62,7 @@
         <div class="pilwrap">
           <a class="pilcrow" href="#section-3">&#182;</a>
         </div>
-        <p>Initializing S3 driver, if You can connect to server using identity file provide host only.</p>
+        <p>Initializing SSH driver, if You can connect to server using identity file provide host only.</p>
 
 <p>If the connection requires login and password You need to provide it:</p>
 
