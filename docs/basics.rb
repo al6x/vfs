@@ -109,7 +109,6 @@ sandbox.destroy
 # In this example we covering basics of **Virtual File System**, if You are interesting You can also take
 # a look at [S3 backup][s3_backup] and [SSH/SFTP deployment][ssh_deployment] examples.
 #
-#
 # [s3_basics]:      s3_basics.html
 # [s3_backup]:      s3_backup.html
 # [ssh_basics]:     ssh_basics.html
