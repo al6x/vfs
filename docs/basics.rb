@@ -32,7 +32,7 @@ project['readme.txt'].write 'My App'
 # We can assign files and dirs to variables, now the `readme` variable refers to our readme.txt file.
 readme = project['readme.txt']
 
-# Let's ensure that it's all ok with our readme file and check it's attributes.
+# Let's ensure that it's all ok with our readme file and check its attributes.
 p readme.name                               # => readme.txt
 p [readme.basename, readme.extension]       # => ['readme', 'txt']
 p readme.path                               # => /.../readme.txt
@@ -90,12 +90,10 @@ p project.include?('Rakefile')              # => true
 if project.driver.local?
   p project.entries('**/Rake*')             # => [/.../Rakefile]
   p project['**/Rake*']                     # => [/.../Rakefile]
-end
 
-# The result of dir listing is just an array of Entries, so
-# You can use it to do interesting things. For example this code will
-# calculates the size of sources in our project.
-if project.driver.local?
+  # The result of dir listing is just an array of Entries, so
+  # You can use it to do interesting things. For example this code will
+  # calculates the size of sources in our project.
   project['**/*.rb'].collect(&:size).reduce(0, :+)
 end
 

@@ -35,7 +35,7 @@ project['readme.txt'].write 'My App'
 # We can assign files and dirs to variables, now the `readme` variable refers to our readme.txt file.
 readme = project['readme.txt']
 
-# Let's ensure that it's all ok with our readme file and check it's attributes.
+# Let's ensure that it's all ok with our readme file and check its attributes.
 p readme.name                               # => readme.txt
 p [readme.basename, readme.extension]       # => ['readme', 'txt']
 p readme.path                               # => /.../readme.txt

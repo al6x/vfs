@@ -9,8 +9,3 @@ project(
   author: "Alexey Petrushin",
   homepage: "http://alexeypetrushin.github.com/vfs"
 )
-
-desc "Generate documentation"
-task :docs do
-  %x(cd docs && rocco -o site *.rb)
-end
