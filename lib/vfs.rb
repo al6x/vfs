@@ -1,20 +1,18 @@
-require 'fileutils'
-require 'set'
+module Vfs
+  autoload :Path,           'vfs/path'
+  autoload :Error,          'vfs/error'
 
-%w(
-  path
-  error
+  autoload :Entry,          'vfs/entries/entry'
+  autoload :File,           'vfs/entries/file'
+  autoload :Dir,            'vfs/entries/dir'
+  autoload :UniversalEntry, 'vfs/entries/universal_entry'
 
-  entries/entry
-  entries/file
-  entries/dir
-  entries/universal_entry
+  autoload :EntryProxy,     'vfs/entry_proxy'
 
-  entry_proxy
+  module Drivers
+    autoload :Local, 'vfs/drivers/local'
+  end
+end
 
-  drivers/local
-
-  integration
-
-  vfs
-).each{|f| require "vfs/#{f}"}
+require 'vfs/vfs'
+require 'vfs/integration'
