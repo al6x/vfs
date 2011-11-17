@@ -1,6 +1,6 @@
 require 'rake_ext'
 
-project(
+project \
   name: "vfs",
   gem: true,
   summary: "Virtual File System - simple and unified API over different storages (Local, S3, SFTP, ...)",
@@ -8,4 +8,3 @@ project(
 
   author: "Alexey Petrushin",
   homepage: "http://alexeypetrushin.github.com/vfs"
-)
