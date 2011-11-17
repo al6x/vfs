@@ -1,6 +1,4 @@
-#
-# It allows dynamically (magically) switching between UniversalEntry/Dir/File
-#
+# It allows dynamically (magically) switching between UniversalEntry/Dir/File.
 module Vfs
   class EntryProxy < BasicObject
     attr_reader :_target

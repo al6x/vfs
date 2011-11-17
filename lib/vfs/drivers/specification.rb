@@ -35,16 +35,16 @@ shared_examples_for 'vfs driver files' do
   end
 
   it "read, write, append" do
-    # write
+    # Write.
     @driver.write_file('/file', false){|w| w.write 'something'}
     @driver.attributes('/file')[:file].should == true
 
-    # read
+    # Read.
     data = ""
     @driver.read_file('/file'){|buff| data << buff}
     data.should == 'something'
 
-    # append
+    # Append.
     @driver.write_file('/file', true){|w| w.write ' another'}
     data = ""
     @driver.read_file('/file'){|buff| data << buff}

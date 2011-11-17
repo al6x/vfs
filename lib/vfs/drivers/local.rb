@@ -30,9 +30,8 @@ module Vfs
         @buffer || DEFAULT_BUFFER
       end
 
-      #
-      # Attributes
-      #
+      # Attributes.
+      
       def attributes path
         path = with_root path
 
@@ -53,14 +52,12 @@ module Vfs
       end
 
       def set_attributes path, attrs
-        # TODO2 set attributes
+        # TODO2 set attributes.
         not_implemented
       end
 
+      # File.
 
-      #
-      # File
-      #
       def read_file path, &block
         path = with_root path
         ::File.open path, 'r' do |is|
@@ -88,10 +85,7 @@ module Vfs
       #   FileUtils.mv from, to
       # end
 
-
-      #
-      # Dir
-      #
+      # Dir.
       def create_dir path
         path = with_root path
         ::Dir.mkdir path
@@ -110,21 +104,11 @@ module Vfs
           ::Dir["#{path_with_trailing_slash}#{query}"].each do |absolute_path|
             name = absolute_path.sub path_with_trailing_slash, ''
             block.call name, ->{::File.directory?(absolute_path) ? :dir : :file}
-            # if ::File.directory? absolute_path
-            #   block.call relative_path, :dir
-            # else
-            #   block.call relative_path, :file
-            # end
           end
         else
           ::Dir.foreach path do |name|
             next if name == '.' or name == '..'
             block.call name, ->{::File.directory?("#{path}/#{name}") ? :dir : :file}
-            # if ::File.directory? "#{path}/#{relative_name}"
-            #   block.call relative_name, :dir
-            # else
-            #   block.call relative_name, :file
-            # end
           end
         end
       end
@@ -144,14 +128,12 @@ module Vfs
       #   end
       # end
 
-      #
-      # Other
-      #
+      # Other.
+
       def local?; true end
 
       def tmp &block
         path = "/tmp/#{rand(10**6)}"
-        # tmp_dir = "#{::Dir.tmpdir}/#{rand(10**6)}"
         if block
           begin
             ::FileUtils.mkdir_p with_root(path)

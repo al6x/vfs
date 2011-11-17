@@ -1,8 +1,7 @@
 module Vfs
   class Dir < Entry
-    #
-    # Container
-    #
+
+    # Container.
     def [] path
       path = path.to_s
       if path =~ /.+[\/]$/
@@ -17,15 +16,11 @@ module Vfs
     alias_method :/, :[]
 
 
-    #
-    # Attributes
-    #
+    # Attributes.
     alias_method :exist?, :dir?
 
+    # CRUD.
 
-    #
-    # CRUD
-    #
     def create options = {}
       driver.open do
         try = 0
@@ -56,14 +51,12 @@ module Vfs
       self
     end
 
-    def destroy options = {}
-      destroy_entry :dir, :file
+    def delete options = {}
+      delete_entry :dir, :file
     end
 
+    # Content.
 
-    #
-    # Content
-    #
     def entries *args, &block
       raise "invalid arguments #{args.inspect}!" if args.size > 2
       options = args.last.is_a?(Hash) ? args.pop : {}
@@ -75,9 +68,9 @@ module Vfs
       driver.open do
         begin
           list = []
-          # query option is optional and supported only for some drivers (local driver for example)
+          # Query option is optional and supported only for some drivers (local driver for example).
           driver.each_entry path, query do |name, type|
-            # for performance reasons some drivers may return the type of entry as
+            # For performance reasons some drivers may return the type of entry as
             # optionally evaluated callback.
             type = type.call if (filter or type_required) and type.is_a?(Proc)
 
@@ -98,10 +91,10 @@ module Vfs
           if attrs and attrs[:file]
             raise Error, "can't query entries on File ('#{self}')!"
           elsif attrs and attrs[:dir]
-            # some unknown error
+            # Some unknown error.
             raise error
           else
-            # TODO2 remove :bang
+            # TODO2 remove :bang.
             raise Error, "'#{self}' not exist!" if options[:bang]
             []
           end
@@ -138,10 +131,8 @@ module Vfs
       end
     end
 
+    # Transfers.
 
-    #
-    # Transfers
-    #
     def copy_to to, options = {}
       options[:bang] = true unless options.include? :bang
 
@@ -151,10 +142,9 @@ module Vfs
       target = if to.is_a? File
         to.dir
       elsif to.is_a? Dir
-        to.dir #(name)
+        to.dir
       elsif to.is_a? UniversalEntry
-        # raise "can't copy Dir to File ('#{self}')!" if to.file? and !options[:override]
-        to.dir #.create
+        to.dir
       else
         raise "can't copy to unknown Entry!"
       end
@@ -171,10 +161,6 @@ module Vfs
       to
     end
 
-    # class << self
-    #   attr_accessor :dont_use_efficient_dir_copy
-    # end
-
     protected
       def unefficient_dir_copy to, options
         to.create options
@@ -188,7 +174,6 @@ module Vfs
           end
         end
       end
-
 
       # def efficient_dir_copy to, options
       #   return false if self.class.dont_use_efficient_dir_copy

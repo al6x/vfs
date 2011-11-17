@@ -1,14 +1,10 @@
 module Vfs
   class File < Entry
-    #
-    # Attributes
-    #
+    # Attributes.
     alias_method :exist?, :file?
 
-
-    #
-    # CRUD
-    #
+    # CRUD.
+    
     def read options = {}, &block
       options[:bang] = true unless options.include? :bang
       driver.open do
@@ -95,14 +91,12 @@ module Vfs
       write block.call(data), options
     end
 
-    def destroy
-      destroy_entry
+    def delete
+      delete_entry
     end
 
+    # Transfers.
 
-    #
-    # Transfers
-    #
     def copy_to to, options = {}
       raise Error, "you can't copy to itself" if self == to
 
@@ -129,10 +123,8 @@ module Vfs
       to
     end
 
+    # Extra Stuff.
 
-    #
-    # Extra Stuff
-    #
     def render *args
       require 'tilt'
 

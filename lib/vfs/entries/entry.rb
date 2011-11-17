@@ -15,17 +15,13 @@ module Vfs
       raise "driver not defined!" unless self.driver
     end
 
-    #
-    # Navigation
-    #
+    # Navigation.
     def parent
       Dir.new(driver, path_cache.parent)
     end
 
+    # Transformations.
 
-    #
-    # Transformations
-    #
     def dir path = nil
       if path
         new_path = path_cache + path
@@ -58,10 +54,8 @@ module Vfs
     end
     alias_method :to_entry, :entry
 
+    # Attributes.
 
-    #
-    # Attributes
-    #
     def get attr_name = nil
       attrs = driver.open{driver.attributes(path)}
       (attr_name and attrs) ? attrs[attr_name] : attrs
@@ -77,10 +71,8 @@ module Vfs
     def created_at; get :created_at end
     def updated_at; get :updated_at end
 
+    # Miscellaneous.
 
-    #
-    # Miscellaneous
-    #
     def name
       path_cache.name
     end
@@ -101,10 +93,8 @@ module Vfs
       driver.local?
     end
 
+    # Utils.
 
-    #
-    # Utils
-    #
     def inspect
       "#{driver}#{':' unless driver.to_s.empty?}#{path}"
     end
@@ -124,13 +114,11 @@ module Vfs
       driver.eql?(other.driver) and path.eql?(other.path)
     end
 
-    def delete *args
-      raise "use :destroy!"
-    end
-    alias_method :remove, :delete
+    def destroy *args; delete *args end
+    def remove *args; delete *args end
 
     protected
-      def destroy_entry first = :file, second = :dir
+      def delete_entry first = :file, second = :dir
         driver.open do
           begin
             driver.send :"delete_#{first}", path
@@ -142,7 +130,7 @@ module Vfs
             elsif attrs and attrs[second]
               driver.send :"delete_#{second}", path
             else
-              # do nothing, entry already not exist
+              # Do nothing, entry already not exist.
             end
           end
         end

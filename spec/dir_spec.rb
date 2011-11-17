@@ -189,7 +189,8 @@ describe 'Dir' do
         # copied files
         @to['file'].read.should == 'something'
         @to['dir/file2'].read.should == 'something2'
-        # shouldn't delete already existing files
+        
+        # Shouldn't delete already existing files.
         @to.file('existing_file').read.should == 'existing_content'
         @to.dir('existing_dir').should exist
         @to.file('dir/existing_file2').read.should == 'existing_content2'
@@ -218,7 +219,7 @@ describe 'Dir' do
       it_should_behave_like 'copy_to behavior'
 
       before do
-        # prevenging usage of :efficient_dir_copy
+        # Prevenging usage of :efficient_dir_copy.
         # Vfs::Dir.dont_use_efficient_dir_copy = true
 
         @to = test_dir['to']
