@@ -19,6 +19,6 @@ box = Vos::Box.new driver
 
 # Preparing temporary dir (actually, S3 has no dirs, but it can mimic it)
 # for sandbox and cleaning it before starting.
-$sandbox = box['/tmp/vfs_sandbox'].to_dir.destroy
+$sandbox = box['/tmp/vfs_sandbox'].to_dir.delete
 
 # [vfs]: index.html

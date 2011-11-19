@@ -24,7 +24,7 @@ You can report bugs and discuss features on the [issues page][issues].
 # Preparing sandbox for our sample and cleaning it before starting
 # (ignore the `$sandbox` variable, it's needed to reuse this code in S3 and SSH samples).
 require 'vfs'
-sandbox = $sandbox || '/tmp/vfs_sandbox'.to_dir.destroy
+sandbox = $sandbox || '/tmp/vfs_sandbox'.to_dir.delete
 
 # Creating simple Hello World project.
 project = sandbox['hello_world']
@@ -107,7 +107,7 @@ project.copy_to sandbox['another_project']
 p sandbox['another_project'].entries        # => [/.../docs, .../Rakefile]
 
 # Cleaning sandbox.
-sandbox.destroy
+sandbox.delete
 ```
 
 ## Integration with [Vos][vos] (Virtual Operating System)

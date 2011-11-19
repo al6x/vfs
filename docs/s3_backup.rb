@@ -19,7 +19,7 @@ sample_files.copy_to s3['app']
 p s3['app/files/bos.png'].exist?             # => true
 
 # Preparing local storage for S3 backup.
-local_backup = '/tmp/vfs_sandbox/backup'.to_dir.destroy
+local_backup = '/tmp/vfs_sandbox/backup'.to_dir.delete
 
 # Copying files from S3 to local backup directory.
 s3['app'].copy_to local_backup['app']

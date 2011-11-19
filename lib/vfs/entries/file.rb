@@ -4,7 +4,7 @@ module Vfs
     alias_method :exist?, :file?
 
     # CRUD.
-    
+
     def read options = {}, &block
       options[:bang] = true unless options.include? :bang
       driver.open do
@@ -66,7 +66,7 @@ module Vfs
         rescue StandardError => error
           parent = self.parent
           if entry.exist?
-            entry.destroy
+            entry.delete
           elsif !parent.exist?
             parent.create(options)
           else
@@ -119,7 +119,7 @@ module Vfs
 
     def move_to to
       copy_to to
-      destroy
+      delete
       to
     end
 

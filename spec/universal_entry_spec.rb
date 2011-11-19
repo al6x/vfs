@@ -20,21 +20,21 @@ describe 'UniversalEntry' do
     end
   end
 
-  describe 'destroying' do
-    it "should destroy both files and dirs" do
+  describe 'deleting' do
+    it "should delete both files and dirs" do
       @path.dir.create
       @path.should be_dir
-      @path.entry.destroy
+      @path.entry.delete
       @path.should_not exist
 
       @path.file.create
       @path.should be_file
-      @path.entry.destroy
+      @path.entry.delete
       @path.should_not exist
     end
 
     it "shouldn't raise if file not exist" do
-      @path.destroy
+      @path.delete
     end
   end
 

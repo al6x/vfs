@@ -31,7 +31,7 @@ module Vfs
       end
 
       # Attributes.
-      
+
       def attributes path
         path = with_root path
 

@@ -59,18 +59,18 @@ describe 'Dir' do
     end
   end
 
-  describe 'destroying' do
-    it "should destroy a file" do
+  describe 'deleting' do
+    it "should delete a file" do
       @path.file.create
-      @path.dir.destroy
+      @path.dir.delete
       @path.entry.should_not exist
     end
 
     it "shouldn't raise if dir not exist" do
-      @path.dir.destroy
+      @path.dir.delete
     end
 
-    it 'should destroy recursivelly' do
+    it 'should delete recursivelly' do
       dir = @path.dir
       dir.create
       dir.file(:file).write 'something'
@@ -78,12 +78,12 @@ describe 'Dir' do
         dir.file(:file2).write 'something2'
       end
 
-      dir.destroy
+      dir.delete
       dir.should_not exist
     end
 
     it 'should be chainable' do
-      @path.dir.destroy.should == @path
+      @path.dir.delete.should == @path
     end
   end
 
@@ -189,7 +189,7 @@ describe 'Dir' do
         # copied files
         @to['file'].read.should == 'something'
         @to['dir/file2'].read.should == 'something2'
-        
+
         # Shouldn't delete already existing files.
         @to.file('existing_file').read.should == 'existing_content'
         @to.dir('existing_dir').should exist
@@ -242,7 +242,7 @@ describe 'Dir' do
     it 'move_to' do
       from, to = @path.file('from'), @path.file('to')
       from.should_receive(:copy_to).with(to)
-      from.should_receive(:destroy).with()
+      from.should_receive(:delete).with()
       from.move_to to
     end
 

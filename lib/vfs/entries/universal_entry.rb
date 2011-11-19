@@ -1,7 +1,7 @@
 module Vfs
   class UniversalEntry < Entry
     # Attributes.
-    
+
     def exist?
       !!get
     end
@@ -12,7 +12,7 @@ module Vfs
     end
 
     # CRUD.
-    
+
     def delete
       delete_entry
     end

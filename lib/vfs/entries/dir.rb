@@ -31,7 +31,7 @@ module Vfs
           entry = self.entry
           attrs = entry.get
           if attrs and attrs[:file] #entry.exist?
-            entry.destroy
+            entry.delete
           elsif attrs and attrs[:dir]
             # dir already exist, no need to recreate it
             return self
@@ -157,7 +157,7 @@ module Vfs
 
     def move_to to, options = {}
       copy_to to, options
-      destroy options
+      delete options
       to
     end
 
@@ -200,14 +200,14 @@ module Vfs
       #       attrs = to.get
       #       if attrs and attrs[:file]
       #         if options[:override]
-      #           to.destroy
+      #           to.delete
       #         else
       #           raise Vfs::Error, "entry #{to} already exist!"
       #         end
       #       elsif attrs and attrs[:dir]
       #         unknown_errors += 1
       #         # if options[:override]
-      #         #   to.destroy
+      #         #   to.delete
       #         # else
       #         #   dir_already_exist = true
       #         #   # raise Vfs::Error, "entry #{to} already exist!"

@@ -1,7 +1,7 @@
 - add drivers: Hadoop DFS, MongoDB, Amazon S3
 - remove :host from Vfs to Vos
 - efficient version of :copy for files and dirs (there's a problem thought, FileUtils.cp_r overrides files silntly, don't know how to do it)?
-- efficient (not copy/destroy) versions of move_to, rename
+- efficient (not copy/delete) versions of move_to, rename
 - handy :chmod helpers (via attributes)
 - add drivers: remote FS over HTTP?
 

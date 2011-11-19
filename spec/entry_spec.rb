@@ -19,7 +19,7 @@ describe 'Entry' do
   it 'tmp' do
     tmp = test_dir.tmp
     tmp.should be_dir
-    tmp.destroy
+    tmp.delete
 
     tmp = nil
     test_dir.tmp do |path|

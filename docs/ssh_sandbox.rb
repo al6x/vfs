@@ -23,6 +23,6 @@ driver = Vos::Drivers::Ssh.new host: 'xxx.com'
 box = Vos::Box.new driver
 
 # Preparing temporary dir for sample and cleaning it before starting.
-$sandbox = box['/tmp/vfs_sandbox'].to_dir.destroy
+$sandbox = box['/tmp/vfs_sandbox'].to_dir.delete
 
 # [vfs]: index.html

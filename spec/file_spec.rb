@@ -163,7 +163,7 @@ describe 'File' do
     it 'move_to' do
       from, to = @path.file('from'), @path.file('to')
       from.should_receive(:copy_to).with(to)
-      from.should_receive(:destroy).with()
+      from.should_receive(:delete).with()
       from.move_to to
     end
 
@@ -173,19 +173,19 @@ describe 'File' do
     end
   end
 
-  describe 'destroying' do
-    it "should not raise error if it's trying to destroy a dir" do
+  describe 'deleting' do
+    it "should not raise error if it's trying to delete a dir" do
       @path.dir.create
-      @path.file.destroy
+      @path.file.delete
       @path.entry.should_not exist
     end
 
     it "shouldn't raise if file not exist" do
-      @path.file.destroy
+      @path.file.delete
     end
 
     it 'should be chainable' do
-      @path.file.destroy.should == @path
+      @path.file.delete.should == @path
     end
   end
 
