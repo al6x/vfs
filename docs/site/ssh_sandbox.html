@@ -1,103 +1,153 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
   <title>ssh_sandbox.rb</title>
-  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
 </head>
 <body>
-<div id='container'>
-  <div id="background"></div>
-  <div id="jump_to">
-    Jump To &hellip;
-    <div id="jump_wrapper">
-      <div id="jump_page">
-          <a class="source" href="basics.html">basics.rb</a>
-          <a class="source" href="s3_backup.html">s3_backup.rb</a>
-          <a class="source" href="s3_basics.html">s3_basics.rb</a>
-          <a class="source" href="s3_sandbox.html">s3_sandbox.rb</a>
-          <a class="source" href="ssh_basics.html">ssh_basics.rb</a>
-          <a class="source" href="ssh_deployment.html">ssh_deployment.rb</a>
-          <a class="source" href="ssh_sandbox.html">ssh_sandbox.rb</a>
-      </div>
-    </div>
-  </div>
-  <table cellspacing=0 cellpadding=0>
-  <thead>
-    <tr>
-      <th class=docs><h1>ssh_sandbox.rb</h1></th>
-      <th class=code></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr id='section-1'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-1">&#182;</a>
-        </div>
-        <p>Example of using SFTP as a storage for <a href="index.html">Virtual File System</a></p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre></pre></div>
-      </td>
-    </tr>
-    <tr id='section-2'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-2">&#182;</a>
-        </div>
-        <p>To use SSH/SFTP we need the SSH driver, You need &lsquo;vos&rsquo;, &lsquo;net-ssh&rsquo; and &lsquo;net-sftp&rsquo; gems installed.</p>
+  <div id="container">
+    <div id="background"></div>
 
-<pre><code>gem install vos net-ssh net-sftp
-</code></pre>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;vfs&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;vos&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;vos/drivers/ssh&#39;</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-3'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-3">&#182;</a>
-        </div>
-        <p>Initializing SSH driver, if You can connect to server using identity file provide host only.</p>
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
 
+
+              <a class="source" href="basics.html">
+                basics.rb
+              </a>
+
+
+              <a class="source" href="s3_backup.html">
+                s3_backup.rb
+              </a>
+
+
+              <a class="source" href="s3_basics.html">
+                s3_basics.rb
+              </a>
+
+
+              <a class="source" href="s3_sandbox.html">
+                s3_sandbox.rb
+              </a>
+
+
+              <a class="source" href="ssh_basics.html">
+                ssh_basics.rb
+              </a>
+
+
+              <a class="source" href="ssh_deployment.html">
+                ssh_deployment.rb
+              </a>
+
+
+              <a class="source" href="ssh_sandbox.html">
+                ssh_sandbox.rb
+              </a>
+
+          </div>
+        </li>
+      </ul>
+
+    <ul class="sections">
+
+          <li id="title">
+              <div class="annotation">
+                  <h1>ssh_sandbox.rb</h1>
+              </div>
+          </li>
+
+
+
+        <li id="section-1">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Example of using SFTP as a storage for [Virtual File System][vfs]</p>
+<p>To use SSH/SFTP we need the SSH driver, You need &#39;vos&#39;, &#39;net-ssh&#39; and &#39;net-sftp&#39; gems installed.</p>
+<pre><code>gem install vos net-ssh net-sftp</code></pre>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="keyword">require</span> <span class="string">'vfs'</span>
+<span class="keyword">require</span> <span class="string">'vos'</span>
+<span class="keyword">require</span> <span class="string">'vos/drivers/ssh'</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-2">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Initializing SSH driver, if You can connect to server using identity file provide host only.</p>
 <p>If the connection requires login and password You need to provide it:</p>
-
 <pre><code>driver = Vos::Drivers::Ssh.new \
-  host:     &lsquo;xxx.com&rsquo;,
-  user:     &lsquo;xxx&rsquo;,
-  password: &lsquo;xxx&rsquo;
-</code></pre>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="n">driver</span> <span class="o">=</span> <span class="no">Vos</span><span class="o">::</span><span class="no">Drivers</span><span class="o">::</span><span class="no">Ssh</span><span class="o">.</span><span class="n">new</span> <span class="n">host</span><span class="p">:</span> <span class="s1">&#39;xxx.com&#39;</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-4'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-4">&#182;</a>
-        </div>
-        <p>After creating driver we can create storage.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="n">box</span> <span class="o">=</span> <span class="no">Vos</span><span class="o">::</span><span class="no">Box</span><span class="o">.</span><span class="n">new</span> <span class="n">driver</span></pre></div>
-      </td>
-    </tr>
-    <tr id='section-5'>
-      <td class=docs>
-        <div class="pilwrap">
-          <a class="pilcrow" href="#section-5">&#182;</a>
-        </div>
-        <p>Preparing temporary dir for sample and cleaning it before starting.</p>
-      </td>
-      <td class=code>
-        <div class='highlight'><pre><span class="vg">$sandbox</span> <span class="o">=</span> <span class="n">box</span><span class="o">[</span><span class="s1">&#39;/tmp/vfs_sandbox&#39;</span><span class="o">].</span><span class="n">to_dir</span><span class="o">.</span><span class="n">destroy</span></pre></div>
-      </td>
-    </tr>
-  </table>
-</div>
+  host:     &#39;xxx.com&#39;,
+  user:     &#39;xxx&#39;,
+  password: &#39;xxx&#39;</code></pre>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>driver = <span class="constant">Vos::Drivers::Ssh</span>.new <span class="symbol">host:</span> <span class="string">'xxx.com'</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-3">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>After creating driver we can create storage.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>box = <span class="constant">Vos::Box</span>.new driver</pre></div></div>
+
+        </li>
+
+
+        <li id="section-4">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Preparing temporary dir for sample and cleaning it before starting.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="variable">$sandbox</span> = box[<span class="string">'/tmp/vfs_sandbox'</span>].to_dir.destroy</pre></div></div>
+
+        </li>
+
+
+        <li id="section-5">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+
+            </div>
+
+        </li>
+
+    </ul>
+  </div>
 </body>
+</html>
