@@ -32,7 +32,8 @@ project = sandbox['hello_world']
 # Writing readme file (note that parent dirs where created automatically).
 project['readme.txt'].write 'My App'
 
-# We can assign files and dirs to variables, now the `readme` variable refers to our readme.txt file.
+# We can assign files and dirs to variables, now the `readme` variable refers to our 
+# readme.txt file.
 readme = project['readme.txt']
 
 # Let's ensure that it's all ok with our readme file and check its attributes.
