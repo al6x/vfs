@@ -32,7 +32,7 @@ project = sandbox['hello_world']
 # Writing readme file (note that parent dirs where created automatically).
 project['readme.txt'].write 'My App'
 
-# We can assign files and dirs to variables, now the `readme` variable refers to our 
+# We can assign files and dirs to variables, now the `readme` variable refers to our
 # readme.txt file.
 readme = project['readme.txt']
 
@@ -131,6 +131,11 @@ different API than local FS, and you has to remember all thouse little quirks).
 # Generate documentation
 
 `cd docs && docco -o site *.rb`
+
+# Contributors
+
+- [Alexey Petrushin](https://github.com/alexeypetrushin)
+- [momolog](https://github.com/momolog)
 
 ## License
 
