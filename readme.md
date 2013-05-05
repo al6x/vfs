@@ -127,6 +127,10 @@ Because the API of standard File/Dir/FileUtils classes are just terrible. And th
 And if you want to use remote FS - things are getting even worse and more complicated (Net::SSH & Net::SFTP use a little
 different API than local FS, and you has to remember all thouse little quirks).
 
+# Generate documentation
+
+`cd docs && docco -o site *.rb`
+
 ## License
 
 Copyright (c) Alexey Petrushin http://petrush.in, released under the MIT license.
