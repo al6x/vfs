@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'vfs'
-  s.version     = '0.5.0'
+  s.version     = '0.5.1'
   s.summary     = "Virtual File System - simple and unified API over different storages (Local, S3, SFTP, ...)"
   s.files       = Dir.glob('lib/**/*.rb')
   s.authors     = ["Alexey Petrushin"]
