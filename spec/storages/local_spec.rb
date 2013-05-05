@@ -2,10 +2,10 @@ require 'vfs/drivers/local'
 require 'vfs/drivers/specification'
 
 describe Vfs::Drivers::Local do
-  with_tmp_spec_dir
+  with_test_dir
 
   before do
-    @driver = Vfs::Drivers::Local.new root: spec_dir
+    @driver = Vfs::Drivers::Local.new root: test_dir.to_s
     @driver.open
   end
 

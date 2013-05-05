@@ -190,10 +190,16 @@ describe 'File' do
   end
 
   describe "extra stuff" do
-    it 'render' do
-      template = test_dir / 'letter.erb'
-      template.write "Hello dear <%= name %>"
-      template.render(name: 'Mary').should == "Hello dear Mary"
+    # Executing specs for templates only if tilt is available.
+    begin require 'tilt'; rescue; end
+    if Object.const_defined? :Tilt
+      it 'render' do
+        template = test_dir / 'letter.erb'
+        template.write "Hello dear <%= name %>"
+        template.render(name: 'Mary').should == "Hello dear Mary"
+      end
+    else
+      warn 'Tilt template engine not available, skipping specs.'
     end
 
     begin

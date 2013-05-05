@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Path" do
   before(:all){Path = Vfs::Path}
-  after(:all){remove_constants :Path}
+  after(:all){Object.send :remove_const, :Path}
 
   it 'validations' do
     %w(

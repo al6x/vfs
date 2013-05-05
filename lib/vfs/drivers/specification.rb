@@ -1,6 +1,3 @@
-require 'rspec_ext'
-require 'ruby_ext'
-
 shared_examples_for 'vfs driver basic' do
   it 'should respond to :local?' do
     @driver.should respond_to(:local?)

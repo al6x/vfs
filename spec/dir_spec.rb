@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'set'
 
 describe 'Dir' do
   with_test_dir
