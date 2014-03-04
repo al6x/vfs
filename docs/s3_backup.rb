@@ -1,10 +1,10 @@
-# Example of creating AWS S3 Backup with [Virtual File System][vfs].
+# Example of creating AWS S3 Backup with [Virtual File System](index.html).
 #
 # In this example we uploading sample files to S3 and then
 # copying it back to local folder.
 
 # Connecting to S3 and preparing sandbox. You may take a look at
-# the [docs/s3_sandbox.rb][s3_sandbox] to see the actual code.
+# the [docs/s3_sandbox.rb](s3_sandbox.html) to see the actual code.
 $LOAD_PATH << File.expand_path("#{__FILE__}/../..")
 require 'docs/s3_sandbox'
 s3 = $sandbox
@@ -24,6 +24,3 @@ local_backup = '/tmp/vfs_sandbox/backup'.to_dir.delete
 # Copying files from S3 to local backup directory.
 s3['app'].copy_to local_backup['app']
 p local_backup['app/files/bos.png'].exist?   # => true
-
-# [vfs]:        index.html
-# [s3_sandbox]: s3_sandbox.html

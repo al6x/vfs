@@ -1,4 +1,4 @@
-# Example of Application Deployment using [Virtual File System][vfs].
+# Example of Application Deployment using [Virtual File System](index.html).
 #
 # In this example we uploading sample app files to remote server,
 # write database configuration file and restart the server on remote machine.
@@ -7,7 +7,7 @@
 $LOAD_PATH << File.expand_path("#{__FILE__}/../..")
 
 # Connecting to SFTP and preparing sandbox. You may take a look at
-# the [docs/ssh_sandbox.rb][ssh_sandbox] to see the actual code.
+# the [docs/ssh_sandbox.rb](ssh_sandbox.html) to see the actual code.
 require 'docs/ssh_sandbox'
 sandbox = $sandbox
 
@@ -30,6 +30,3 @@ p app['config.yml'].exist?                       # => true
 # Updating gems and restarting the server.
 p app.bash("echo 'bundle install'")              # => bundle install
 p app.bash("echo 'server start'")                # => server start
-
-# [vfs]:         index.html
-# [ssh_sandbox]: ssh_sandbox.html

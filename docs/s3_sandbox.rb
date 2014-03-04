@@ -1,4 +1,4 @@
-# Example of using AWS S3 as a storage for [Virtual File System][vfs]
+# Example of using AWS S3 as a storage for [Virtual File System](index.html)
 
 # To use S3 we need the S3 driver, You need 'vos' and 'aws-sdk' gems installed.
 #
@@ -20,5 +20,3 @@ box = Vos::Box.new driver
 # Preparing temporary dir (actually, S3 has no dirs, but it can mimic it)
 # for sandbox and cleaning it before starting.
 $sandbox = box['/tmp/vfs_sandbox'].to_dir.delete
-
-# [vfs]: index.html

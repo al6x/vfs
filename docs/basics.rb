@@ -1,4 +1,5 @@
-# Virtual File System provides **clean, simple and unified API over different storages** (Local File System, AWS S3, SFTP, ...).
+# Virtual File System provides **clean, simple and unified API over different storages**
+# (Local File System, AWS S3, SFTP, ...).
 #
 # - very simple and intuitive API.
 # - same API for different storages.
@@ -6,15 +7,21 @@
 # - small codebase, easy to learn and extend.
 # - driver implementation is very simple, it is easy to create new drivers.
 #
-# Such unified API is possible because although the API of storages are different the core concept are almost the same.
+# Such unified API is possible because although the API of storages are different the core
+# concept are almost the same.
 #
 # Install Vfs with Rubygems:
 #
 #     gem install vfs
 #
-# Once installed, You can proceed with the example below. It uses local file system as storage, there's also [S3 version][s3_basics] and [SFTP version][ssh_basics] (also [S3 backup][s3_backup] and [SSH/SFTP deployment][ssh_deployment] examples availiable).
+# Once installed, You can proceed with the example below. It uses local file system as storage,
+# there's also [S3 version](s3_basics.html) and [SFTP version](ssh_basics.html) 
+# (also [S3 backup](s3_backup.html) and [SSH/SFTP deployment](ssh_deployment.html) examples 
+# availiable).
 #
-# The project is [hosted on GitHub][project]. You can report bugs and discuss features on the [issues page][issues].
+# The project is [hosted on GitHub](https://github.com/alexeypetrushin/vfs).
+# You can report bugs and discuss features on the
+# [issues page](https://github.com/alexeypetrushin/vfs/issues).
 
 # ### Example
 
@@ -105,12 +112,4 @@ p sandbox['another_project'].entries        # => [/.../docs, .../Rakefile]
 sandbox.delete
 
 # In this example we covering basics of **Virtual File System**, if You are interesting You can also take
-# a look at [S3 backup][s3_backup] and [SSH/SFTP deployment][ssh_deployment] examples.
-#
-# [s3_basics]:      s3_basics.html
-# [s3_backup]:      s3_backup.html
-# [ssh_basics]:     ssh_basics.html
-# [ssh_deployment]: ssh_deployment.html
-#
-# [project]:        https://github.com/alexeypetrushin/vfs
-# [issues]:         https://github.com/alexeypetrushin/vfs/issues
+# a look at [S3 backup](s3_backup.html) and [SSH/SFTP deployment](ssh_deployment.html) examples.

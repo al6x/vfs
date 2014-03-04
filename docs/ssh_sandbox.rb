@@ -1,4 +1,4 @@
-# Example of using SFTP as a storage for [Virtual File System][vfs]
+# Example of using SFTP as a storage for [Virtual File System](vfs)
 
 # To use SSH/SFTP we need the SSH driver, You need 'vos', 'net-ssh' and 'net-sftp' gems installed.
 #
@@ -24,5 +24,3 @@ box = Vos::Box.new driver
 
 # Preparing temporary dir for sample and cleaning it before starting.
 $sandbox = box['/tmp/vfs_sandbox'].to_dir.delete
-
-# [vfs]: index.html
