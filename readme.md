@@ -113,6 +113,16 @@ sandbox.delete
 
 ## Integration with [Vos][vos] (Virtual Operating System)
 
+## Exemple
+
+``` ruby
+  Vos::Drivers::S3.new(
+  access_key_id:     ENV['S3_ACCESS_KEY'],
+  secret_access_key: ENV['S3_SECRET_KEY'],
+  bucket:            ENV['BUCKET_NAME']
+)
+```
+
 Vfs can be used toghether with the Virtual Operating System Tool, and while the Vfs covers all the I/O operations the Vos provides support for remote command execution.
 You can use this combination to fully control remote machines, for example - I'm using it to manage my production servers (setup, administration, deployment, migration, ...).
 
